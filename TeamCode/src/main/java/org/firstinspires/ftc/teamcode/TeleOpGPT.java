@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@TeleOp(name="TeleOpMode_Lite", group="TeleOp")
+@TeleOp(name="LinearOp-Team", group="TeleOp")
 public class TeleOpGPT extends LinearOpMode {
 
     private DcMotor M_LF; // มอเตอร์ซ้ายหน้า
