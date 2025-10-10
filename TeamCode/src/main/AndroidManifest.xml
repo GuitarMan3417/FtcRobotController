@@ -5,6 +5,7 @@
     <application
         android:allowBackup="true"
         android:supportsRtl="true"
+        android:theme="@style/AppTheme"
         tools:replace="android:theme">
 
         <!-- Permission Validator Activity -->
@@ -28,5 +29,4 @@
         </activity>
 
     </application>
-
 </manifest>
