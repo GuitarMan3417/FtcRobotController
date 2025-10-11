@@ -34,7 +34,7 @@ public class TeleOpGPT extends LinearOpMode {
         while (opModeIsActive()) {
 
             // --- รับค่าจากจอย ---
-            double drive = -gamepad1.left_stick_y;  // เดินหน้า/ถอยหลัง
+            double drive = -(gamepad1.right_trigger - gamepad1.left_trigger);  // เดินหน้า/ถอยหลัง
             double strafe = gamepad1.left_stick_x;  // เลื่อนข้าง
             double turn = gamepad1.right_stick_x;   // หมุนซ้าย/ขวา
 
