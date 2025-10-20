@@ -5,11 +5,17 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@TeleOp(name = "TeleOpNew", group = "TeleOp")
-public class TeleOpNew extends LinearOpMode {
+@TeleOp(name = "TeleOpNew1", group = "TeleOp")
+public class TeleOpNew1 extends LinearOpMode {
 
+    // --- มอเตอร์ขับเคลื่อน Mecanum ---
     DcMotor M_LF, M_RF, M_LR, M_RR;
-    DcMotor intakeMotor; // มอเตอร์ดูดบอล (port 0)
+
+    // --- มอเตอร์ดูดบอล ---
+    DcMotor intakeMotor; // port 0
+
+    // --- มอเตอร์ gamepad2 ---
+    DcMotor motor1, motor2;
 
     @Override
     public void runOpMode() {
@@ -20,8 +26,12 @@ public class TeleOpNew extends LinearOpMode {
         M_LR = hardwareMap.get(DcMotor.class, "M_LR");
         M_RR = hardwareMap.get(DcMotor.class, "M_RR");
 
-        // --- Map มอเตอร์ดูดบอล (ต่อที่พอร์ต 0 ของ Expansion Hub) ---
+        // --- Map มอเตอร์ดูดบอล ---
         intakeMotor = hardwareMap.get(DcMotor.class, "motor0");
+
+        // --- Map มอเตอร์ gamepad2 ---
+        motor1 = hardwareMap.get(DcMotor.class, "motor1");
+        motor2 = hardwareMap.get(DcMotor.class, "motor2");
 
         // --- ตั้งทิศทางมอเตอร์ ---
         M_LF.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -30,12 +40,16 @@ public class TeleOpNew extends LinearOpMode {
         M_RR.setDirection(DcMotorSimple.Direction.REVERSE);
         intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
+        motor2.setDirection(DcMotor.Direction.REVERSE); // motor2 หมุนตรงข้าม motor1
+
         // --- เปิดเบรกอัตโนมัติทุกมอเตอร์ ---
         M_LF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         M_RF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         M_LR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         M_RR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         waitForStart();
 
@@ -47,7 +61,7 @@ public class TeleOpNew extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            // --- ปรับความเร็ว ---
+            // --- ปรับความเร็ว Mecanum ---
             if (gamepad1.left_bumper) { // L1 เพิ่มความเร็ว
                 speedMultiplier += 0.05;
                 if (speedMultiplier > 1.0) speedMultiplier = 1.0;
@@ -86,7 +100,7 @@ public class TeleOpNew extends LinearOpMode {
             double powerLR = (drive - strafe + rotate) * speedMultiplier;
             double powerRR = (drive + strafe - rotate) * speedMultiplier;
 
-            // จำกัดค่า
+            // --- จำกัดค่า ---
             double max = Math.max(1.0,
                     Math.max(Math.abs(powerLF),
                             Math.max(Math.abs(powerRF),
@@ -109,6 +123,11 @@ public class TeleOpNew extends LinearOpMode {
                 intakeMotor.setPower(0.15);  // ไม่กด → หมุนเบาๆ ตลอด
             }
 
+            // --- ควบคุมมอเตอร์ gamepad2 ---
+            double powerMotor2 = gamepad2.a ? 1.0 : 0.1; // กด A → full, ไม่กด → idle
+            motor1.setPower(powerMotor2);
+            motor2.setPower(powerMotor2);
+
             // --- แสดงสถานะบนหน้าจอ ---
             telemetry.addLine("=== 24552 KhonNex ===");
             telemetry.addData("Speed", "%.2f", speedMultiplier);
@@ -117,6 +136,7 @@ public class TeleOpNew extends LinearOpMode {
             telemetry.addData("L3", "%.2f", strafe);
             telemetry.addData("L2/R2", "%.2f/%.2f", forward, backward);
             telemetry.addData("LF/RF/LR/RR", "%.2f/%.2f/%.2f/%.2f", powerLF, powerRF, powerLR, powerRR);
+            telemetry.addData("Motor1/2 (GP2)", "%.2f/%.2f", motor1.getPower(), motor2.getPower());
             telemetry.update();
         }
     }
