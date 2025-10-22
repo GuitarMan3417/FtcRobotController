@@ -58,19 +58,18 @@ public class TeleOpServo extends LinearOpMode {
         motor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // --- ตั้งค่า Servo ---
-        double servoMin = 30.0;
-        double servoMax = 180.0;
+        double servoMin = 0.0;
+        double servoMax = 160.0;
         double minPos = servoMin / 180.0;
         double maxPos = servoMax / 180.0;
         double targetPos = minPos;
         double currentPos = minPos;
-        double step = 0.01;  // ความเร็วในการเคลื่อนที่ servo
+        double step = 0.01;
         servo0.setPosition(currentPos);
 
         waitForStart();
 
-        double speedMultiplier = 1;
-        boolean reversed = false;
+        double speedMultiplier = 1.0;
 
         // --- ให้มอเตอร์ดูดลูกบอลทำงานเบาๆ ตั้งแต่เริ่ม ---
         intakeMotor.setPower(0.15);
@@ -89,12 +88,6 @@ public class TeleOpServo extends LinearOpMode {
                 sleep(150);
             }
 
-            // --- กลับหน้าหุ่น (Y) ---
-            if (gamepad1.y) {
-                reversed = !reversed;
-                sleep(300);
-            }
-
             // --- อ่านค่าจากจอย ---
             double forward = gamepad1.left_trigger;    // L2 เดินหน้า
             double backward = gamepad1.right_trigger;  // R2 ถอยหลัง
@@ -102,13 +95,6 @@ public class TeleOpServo extends LinearOpMode {
             double rotate = gamepad1.right_stick_x;    // R3 หมุน
 
             double drive = forward - backward;
-
-            // --- กลับทิศทางหุ่น ---
-            if (reversed) {
-                drive *= -1;
-                rotate *= -1;
-                strafe *= -1;
-            }
 
             // --- คำนวณกำลัง Mecanum ---
             double powerLF = (drive + strafe + rotate) * speedMultiplier;
@@ -169,7 +155,6 @@ public class TeleOpServo extends LinearOpMode {
             // --- แสดงสถานะบนหน้าจอ ---
             telemetry.addLine("=== 24552 KhonNex ===");
             telemetry.addData("Speed", "%.2f", speedMultiplier);
-            telemetry.addData("Direction", reversed ? "REVERSED (Y)" : "NORMAL");
             telemetry.addData("Intake", gamepad1.a ? "FULL (1.0)" : "IDLE (0.15)");
             telemetry.addData("Servo Target", "%.0f°", targetAngle);
             telemetry.addData("Servo Current", "%.0f°", currentAngle);
