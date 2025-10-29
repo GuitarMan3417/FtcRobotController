@@ -101,11 +101,11 @@ public class TeleOpOp extends LinearOpMode {
             // --- มอเตอร์ดูดบอล (motor0) gamepad1 ---
             double intakePower = 0.0;
             if (gamepad1.b) {
-                intakePower = -0.60;   // ปล่อยบอลออก
+                intakePower = 0.60;   // ปล่อยบอลออก
             } else if (gamepad1.left_bumper) {
-                intakePower = 0.24;    // ดูดช้า
+                intakePower = -0.13;    // ดูดช้า
             } else if (gamepad1.right_bumper) {
-                intakePower = 0.85;    // ดูดเร็ว
+                intakePower = -0.50;    // ดูดเร็ว
             }
             motor0.setPower(intakePower);
 
