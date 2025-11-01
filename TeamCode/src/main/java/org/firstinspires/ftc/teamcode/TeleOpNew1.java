@@ -114,7 +114,6 @@ public class TeleOpNew1 extends LinearOpMode {
             // --- ส่งกำลังขับเคลื่อน ---
             M_LF.setPower(powerLF);
             M_RF.setPower(powerRF);
-            M_LR.setPower(powerLR);
             M_RR.setPower(powerRR);
 
             // --- ควบคุมมอเตอร์ดูดบอล ---

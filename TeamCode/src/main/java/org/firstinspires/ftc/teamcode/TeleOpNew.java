@@ -22,10 +22,10 @@ public class TeleOpNew extends LinearOpMode {
         M_RR = hardwareMap.get(DcMotor.class, "M_RR");
 
         // --- Map มอเตอร์ดูดบอล (ต่อที่พอร์ต 0 ของ Expansion Hub) ---
-        intakeMotor = hardwareMap.get(DcMotor.class, "motor0");
+            intakeMotor = hardwareMap.get(DcMotor.class, "motor0");
 
-        // --- ตั้งทิศทางมอเตอร์ ---
-        M_LF.setDirection(DcMotorSimple.Direction.FORWARD);
+            // --- ตั้งทิศทางมอเตอร์ ---
+            M_LF.setDirection(DcMotorSimple.Direction.FORWARD);
         M_LR.setDirection(DcMotorSimple.Direction.FORWARD);
         M_RF.setDirection(DcMotorSimple.Direction.REVERSE);
         M_RR.setDirection(DcMotorSimple.Direction.REVERSE);
