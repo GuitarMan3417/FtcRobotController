@@ -6,12 +6,13 @@ import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@TeleOp(name = "sensor_servo", group = "Sensor")
+@TeleOp(name = "sensor", group = "Sensor")
 public class sensor extends LinearOpMode {
 
     // --- ประกาศอุปกรณ์ ---
     private Rev2mDistanceSensor distanceSensor;
-    private Servo servo;
+    private Servo SVR_L0;
+    private Servo SVR_L1;
 
     // --- กำหนดระยะตรวจจับลูกบอล (หน่วย: เซนติเมตร) ---
     private static final double BALL_DETECT_DISTANCE_CM = 25.0;
@@ -31,10 +32,12 @@ public class sensor extends LinearOpMode {
 
         // --- Map อุปกรณ์กับชื่อใน Configuration ---
         distanceSensor = hardwareMap.get(Rev2mDistanceSensor.class, "distanceSensor");
-        servo = hardwareMap.get(Servo.class, "servohitech");
+        SVR_L0 = hardwareMap.get(Servo.class, "SVR_L0");
+        SVR_L1 = hardwareMap.get(Servo.class, "SVR_L1");
 
         // --- ตั้งค่าเริ่มต้นของเซอร์โวที่ 90 องศา ---
-        servo.setPosition(SERVO_POS_90);
+        SVR_L0.setPosition(SERVO_POS_90);
+        SVR_L1.setPosition(SERVO_POS_90);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -54,14 +57,16 @@ public class sensor extends LinearOpMode {
 
                     // หมุนเซอร์โวลง 180 องศา
                     servoStatus = "Moving Down (180°)";
-                    servo.setPosition(SERVO_POS_180);
+                    SVR_L0.setPosition(SERVO_POS_180);
+                    SVR_L1.setPosition(SERVO_POS_180);
                     telemetry.addData("Servo Status", servoStatus);
                     telemetry.update();
                     sleep(1000); // พัก 1 วิ
 
                     // หมุนกลับ 90 องศา
                     servoStatus = "Returning to 90°";
-                    servo.setPosition(SERVO_POS_90);
+                    SVR_L0.setPosition(SERVO_POS_90);
+                    SVR_L1.setPosition(SERVO_POS_90);
                 }
 
             } else {
