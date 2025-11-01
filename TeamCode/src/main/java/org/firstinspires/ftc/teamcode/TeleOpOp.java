@@ -45,7 +45,7 @@ public class TeleOpOp extends LinearOpMode {
         M_LR.setDirection(DcMotorSimple.Direction.FORWARD);
         M_RF.setDirection(DcMotorSimple.Direction.REVERSE);
         M_RR.setDirection(DcMotorSimple.Direction.REVERSE);
-        motor2.setDirection(DcMotor.Direction.REVERSE); // motor2 หมุนตรงข้าม motor1
+        //motor2.setDirection(DcMotor.Direction.REVERSE); // motor2 หมุนตรงข้าม motor1
 
         // --- เปิดเบรกอัตโนมัติทุกมอเตอร์ ---
         M_LF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

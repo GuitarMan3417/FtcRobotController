@@ -23,12 +23,15 @@ public class sensor extends LinearOpMode {
     // --- ตัวแปรช่วยป้องกันการทำซ้ำ ---
     private boolean ballDetected = false;
 
+    // --- ตัวแปรแสดงสถานะเซอร์โว ---
+    private String servoStatus = "Ready";
+
     @Override
     public void runOpMode() {
 
         // --- Map อุปกรณ์กับชื่อใน Configuration ---
         distanceSensor = hardwareMap.get(Rev2mDistanceSensor.class, "distanceSensor");
-        servo = hardwareMap.get(Servo.class, "servo0");
+        servo = hardwareMap.get(Servo.class, "servohitech");
 
         // --- ตั้งค่าเริ่มต้นของเซอร์โวที่ 90 องศา ---
         servo.setPosition(SERVO_POS_90);
@@ -50,18 +53,25 @@ public class sensor extends LinearOpMode {
                     ballDetected = true;
 
                     // หมุนเซอร์โวลง 180 องศา
+                    servoStatus = "Moving Down (180°)";
                     servo.setPosition(SERVO_POS_180);
+                    telemetry.addData("Servo Status", servoStatus);
+                    telemetry.update();
                     sleep(1000); // พัก 1 วิ
 
                     // หมุนกลับ 90 องศา
+                    servoStatus = "Returning to 90°";
                     servo.setPosition(SERVO_POS_90);
                 }
 
             } else {
                 telemetry.addData("Ball Status", "❌ No Ball");
                 ballDetected = false;
+                servoStatus = "Waiting for Ball";
             }
 
+            // --- แสดงผลสถานะทั้งหมด ---
+            telemetry.addData("Servo Status", servoStatus);
             telemetry.addData("Distance (cm)", "%.2f", distance);
             telemetry.update();
 
