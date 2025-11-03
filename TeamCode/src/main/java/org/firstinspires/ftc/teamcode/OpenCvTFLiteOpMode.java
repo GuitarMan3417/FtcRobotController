@@ -27,7 +27,7 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
 
-@Disabled
+
 @TeleOp(name="OpenCV + TFLite OpMode", group="Vision")
 public class OpenCvTFLiteOpMode extends LinearOpMode {
 
