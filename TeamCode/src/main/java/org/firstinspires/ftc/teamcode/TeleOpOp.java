@@ -19,7 +19,7 @@ public class TeleOpOp extends LinearOpMode {
     DcMotor M_S0, M_S1;
 
     // --- Servo Smart Servo ---
-    Servo servo0;
+    Servo SVR_L0, SVR_L1;
 
     @Override
     public void runOpMode() {
@@ -38,14 +38,14 @@ public class TeleOpOp extends LinearOpMode {
         M_S1 = hardwareMap.get(DcMotor.class, "M_S1");
 
         // --- Map Servo ---
-        servo0 = hardwareMap.get(Servo.class, "servo0");
+        SVR_L0 = hardwareMap.get(Servo.class, "SVR_L0");
+        SVR_L1 = hardwareMap.get(Servo.class, "SVR_L1");
 
         // --- ตั้งทิศทางมอเตอร์ ---
         M_LF.setDirection(DcMotorSimple.Direction.FORWARD);
         M_LR.setDirection(DcMotorSimple.Direction.FORWARD);
         M_RF.setDirection(DcMotorSimple.Direction.REVERSE);
         M_RR.setDirection(DcMotorSimple.Direction.REVERSE);
-        //M_S1.setDirection(DcMotor.Direction.REVERSE); // M_S1 หมุนตรงข้าม M_S0
 
         // --- เปิดเบรกอัตโนมัติทุกมอเตอร์ ---
         M_LF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -56,15 +56,14 @@ public class TeleOpOp extends LinearOpMode {
         M_S0.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         M_S1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        // --- ตั้งค่า Servo ---
+        // --- ตั้งค่า Servo เริ่มต้น ---
         double servoMin = 0.0;
         double servoMax = 160.0;
         double minPos = servoMin / 180.0;
         double maxPos = servoMax / 180.0;
-        double targetPos = minPos;
         double currentPos = minPos;
-        double step = 0.01;
-        servo0.setPosition(currentPos);
+        SVR_L0.setPosition(currentPos);
+        SVR_L1.setPosition(currentPos);
 
         waitForStart();
 
@@ -114,29 +113,11 @@ public class TeleOpOp extends LinearOpMode {
             M_S0.setPower(powerM_S1);
             M_S1.setPower(powerM_S1);
 
-            // --- ควบคุม Servo ด้วย L2/R2 ของ Gamepad2 ---
-            if (gamepad2.left_trigger > 0.5) {
-                targetPos = maxPos;  // ไป 160° (ประมาณ 180°)
-            } else if (gamepad2.right_trigger > 0.5) {
-                targetPos = minPos;  // กลับ 0° (ประมาณ 30°)
-            }
-
-            if (Math.abs(currentPos - targetPos) > 0.005) {
-                if (currentPos < targetPos)
-                    currentPos += step;
-                else
-                    currentPos -= step;
-
-                currentPos = Math.max(minPos, Math.min(maxPos, currentPos));
-                servo0.setPosition(currentPos);
-            }
-
+            // --- แสดงสถานะ Servo ---
             double currentAngle = currentPos * 180.0;
-            double targetAngle = targetPos * 180.0;
 
             telemetry.addLine("=== 24552 KhonNex ===");
             telemetry.addData("Speed", "%.2f", speedMultiplier);
-            telemetry.addData("Servo Target", "%.0f°", targetAngle);
             telemetry.addData("Servo Current", "%.0f°", currentAngle);
             telemetry.addData("Intake (M_AIN)", "%.2f", M_AIN.getPower());
             telemetry.addData("L3", "%.2f", strafe);
