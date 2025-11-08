@@ -6,20 +6,18 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "TeleOpOp", group = "TeleOp")
-public class TeleOpOp extends LinearOpMode {
+@TeleOp(name = "TeleOp", group = "TeleOp1")
+public class TeleOp1 extends LinearOpMode {
 
     // --- มอเตอร์ขับเคลื่อน Mecanum ---
     DcMotor M_LF, M_RF, M_LR, M_RR;
 
-    // --- มอเตอร์ gamepad1 ดูดบอล ---
+    // --- มอเตอร์ดูดบอล (gamepad1) ---
     DcMotor M_AIN;
 
-    // --- มอเตอร์ gamepad2 ---
+    // --- มอเตอร์และเซอร์โว (gamepad2) ---
     DcMotor M_S0, M_S1;
-
-    // --- Servo Smart Servo ---
-    Servo SVR_L0, SVR_L1;
+    Servo SVR_L0;
 
     @Override
     public void runOpMode() {
@@ -33,13 +31,10 @@ public class TeleOpOp extends LinearOpMode {
         // --- Map มอเตอร์ดูดบอล (gamepad1) ---
         M_AIN = hardwareMap.get(DcMotor.class, "M_AIN");
 
-        // --- Map มอเตอร์ gamepad2 ---
+        // --- Map มอเตอร์และเซอร์โว (gamepad2) ---
         M_S0 = hardwareMap.get(DcMotor.class, "M_S0");
         M_S1 = hardwareMap.get(DcMotor.class, "M_S1");
-
-        // --- Map Servo ---
         SVR_L0 = hardwareMap.get(Servo.class, "SVR_L0");
-        SVR_L1 = hardwareMap.get(Servo.class, "SVR_L1");
 
         // --- ตั้งทิศทางมอเตอร์ ---
         M_LF.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -63,7 +58,6 @@ public class TeleOpOp extends LinearOpMode {
         double maxPos = servoMax / 180.0;
         double currentPos = minPos;
         SVR_L0.setPosition(currentPos);
-        SVR_L1.setPosition(currentPos);
 
         waitForStart();
 
@@ -71,7 +65,7 @@ public class TeleOpOp extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            // --- ควบคุมการขับเคลื่อน (gamepad1) ---
+            // --- ระบบขับเคลื่อน (gamepad1) ---
             double forward = gamepad1.left_trigger;    // L2 เดินหน้า
             double backward = gamepad1.right_trigger;  // R2 ถอยหลัง
             double strafe = gamepad1.left_stick_x;     // L3 สไลด์
@@ -108,24 +102,32 @@ public class TeleOpOp extends LinearOpMode {
             }
             M_AIN.setPower(intakePower);
 
-            // --- มอเตอร์ดูดบอล (M_S0, M_S1) gamepad2 ---
-            double powerM_S1 = gamepad2.a ? 1.0 : 0.1;
-            M_S0.setPower(powerM_S1);
-            M_S1.setPower(powerM_S1);
+            // --- มอเตอร์ M_S0 (Gamepad2 ปุ่ม A) ---
+            double powerM_S0 = gamepad2.a ? 1.0 : 0.0;
+            M_S0.setPower(powerM_S0);
 
-            // --- แสดงสถานะ Servo ---
-            double currentAngle = currentPos * 180.0;
+            // --- มอเตอร์ M_S1 + Servo SVR_L0 (Gamepad2 ปุ่ม B) ---
+            if (gamepad2.b) {
+                M_S1.setPower(1.0);       // หมุนเต็มสปีดก่อน
+                sleep(300);               // รอให้มอเตอร์หมุนก่อน 0.3 วินาที
+                currentPos = maxPos;      // ดันบอลขึ้น
+            } else {
+                M_S1.setPower(0.1);       // หมุนเบา ๆ ตลอดเวลา
+                currentPos = minPos;      // Servo กลับตำแหน่งเริ่มต้น
+            }
 
+            SVR_L0.setPosition(currentPos);
+
+            // --- แสดงสถานะ ---
             telemetry.addLine("=== 24552 KhonNex ===");
             telemetry.addData("Speed", "%.2f", speedMultiplier);
-            telemetry.addData("Servo Current", "%.0f°", currentAngle);
             telemetry.addData("Intake (M_AIN)", "%.2f", M_AIN.getPower());
-            telemetry.addData("L3", "%.2f", strafe);
+            telemetry.addData("M_S0 Power", "%.2f", M_S0.getPower());
+            telemetry.addData("M_S1 Power", "%.2f", M_S1.getPower());
+            telemetry.addData("Servo SVR_L0", "%.0f°", currentPos * 180.0);
             telemetry.addData("L2/R2", "%.2f/%.2f", forward, backward);
             telemetry.addData("LF/RF/LR/RR", "%.2f/%.2f/%.2f/%.2f",
                     powerLF, powerRF, powerLR, powerRR);
-            telemetry.addData("M_S0/2 (GP2)", "%.2f/%.2f",
-                    M_S0.getPower(), M_S1.getPower());
             telemetry.update();
 
             sleep(20);
