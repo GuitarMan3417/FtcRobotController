@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-@Disabled
+
 @TeleOp(name="LinearOp-Team", group="TeleOp")
 public class TeleOpGPT extends LinearOpMode {
 
@@ -29,13 +29,12 @@ public class TeleOpGPT extends LinearOpMode {
         telemetry.addLine("System Ready!");
         telemetry.update();
 
-        waitForStart(); // รอจนผู้ใช้กดปุ่ม Start
+        waitForStart();
 
-        // --- ลูปควบคุมหลัก ---
         while (opModeIsActive()) {
 
-            // --- รับค่าจากจอย ---
-            double drive = -(gamepad1.right_trigger - gamepad1.left_trigger);  // เดินหน้า/ถอยหลัง
+            // --- ใช้ Analog ซ้าย Y แทน Trigger ---
+            double drive = -gamepad1.left_stick_y;  // เดินหน้า/ถอยหลัง (ขึ้น = เดินหน้า)
             double strafe = gamepad1.left_stick_x;  // เลื่อนข้าง
             double turn = gamepad1.right_stick_x;   // หมุนซ้าย/ขวา
 
@@ -61,14 +60,10 @@ public class TeleOpGPT extends LinearOpMode {
             M_LR.setPower(powerLR);
             M_RR.setPower(powerRR);
 
-            // --- แสดงค่าทางจอ (Debug) ---
+            // --- แสดงค่าทางจอ ---
             telemetry.addData("Drive", drive);
             telemetry.addData("Strafe", strafe);
             telemetry.addData("Turn", turn);
-            telemetry.addData("LF", M_LF.getPower());
-            telemetry.addData("RF", M_RF.getPower());
-            telemetry.addData("LR", M_LR.getPower());
-            telemetry.addData("RR", M_RR.getPower());
             telemetry.update();
         }
     }
