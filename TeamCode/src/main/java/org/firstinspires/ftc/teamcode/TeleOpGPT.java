@@ -36,7 +36,7 @@ public class TeleOpGPT extends LinearOpMode {
             // --- ใช้ Analog ซ้าย Y แทน Trigger ---
             double drive = -gamepad1.left_stick_y;  // เดินหน้า/ถอยหลัง (ขึ้น = เดินหน้า)
             double strafe = gamepad1.left_stick_x;  // เลื่อนข้าง
-            double turn = gamepad1.right_stick_x;   // หมุนซ้าย/ขวา
+            double turn = gamepad1.righst_stick_x;   // หมุนซ้าย/ขวา
 
             // --- สูตรควบคุมแบบ Mecanum ---
             double powerLF = drive + strafe + turn;
