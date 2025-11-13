@@ -27,10 +27,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.unused;
 
 import android.util.Size;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -41,7 +42,6 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.opencv.ImageRegion;
 import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
-
 
 import java.util.List;
 
@@ -67,15 +67,25 @@ import java.util.List;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
 @TeleOp(name = "Vision Detect", group = "Vision")
-
+@Disabled
 public class VisionDetect extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
-    private AprilTagProcessor aprilTag; //Create AprilTag Variable
-    private VisionPortal visionPortal; //Create VisionPortal Variable
+
+    /**
+     * The variable to store our instance of the AprilTag processor.
+     */
+    private AprilTagProcessor aprilTag;
+
+    /**
+     * The variable to store our instance of the vision portal.
+     */
+    private VisionPortal visionPortal;
+
     @Override
     public void runOpMode() {
-        //Create Vision Color
+
+        initAprilTag();
         PredominantColorProcessor colorSensor = new PredominantColorProcessor.Builder()
                 .setRoi(ImageRegion.asUnityCenterCoordinates(-0.1, 0.1, 0.1, -0.1))
                 .setSwatches(
@@ -87,30 +97,34 @@ public class VisionDetect extends LinearOpMode {
                         PredominantColorProcessor.Swatch.BLACK,
                         PredominantColorProcessor.Swatch.WHITE)
                 .build();
-        visionPortal = new VisionPortal.Builder()
+        VisionPortal portal = new VisionPortal.Builder()
                 .addProcessor(colorSensor)
-                .setCameraResolution(new Size(1024, 576))
-                .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
+                .setCameraResolution(new Size(320, 240))
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-                .addProcessor(aprilTag)
                 .build();
-        aprilTag = new AprilTagProcessor.Builder()
-                .build();
-
+        // Wait for the DS start button to be touched.
+        telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
+        telemetry.addData(">", "Touch START to start OpMode");
+        telemetry.update();
         waitForStart();
+
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-               PredominantColorProcessor.Result result = colorSensor.getAnalysis();
-                telemetry.addData("Best Match", result.closestSwatch);
-                telemetry.addLine(String.format("RGB   (%3d, %3d, %3d)",
-                        result.RGB[0], result.RGB[1], result.RGB[2]));
-                telemetry.addLine(String.format("HSV   (%3d, %3d, %3d)",
-                        result.HSV[0], result.HSV[1], result.HSV[2]));
-                telemetry.addLine(String.format("YCrCb (%3d, %3d, %3d)",
-                        result.YCrCb[0], result.YCrCb[1], result.YCrCb[2]));
-                telemetry.addLine();
+
                 telemetryAprilTag();
+                PredominantColorProcessor.Result result = colorSensor.getAnalysis();
+                // Push telemetry to the Driver Station.
                 telemetry.update();
+
+                // Save CPU resources; can resume streaming when needed.
+                if (gamepad1.dpad_down) {
+                    visionPortal.stopStreaming();
+                } else if (gamepad1.dpad_up) {
+                    visionPortal.resumeStreaming();
+                }
+
+                // Share the CPU.
+                sleep(20);
             }
         }
 
@@ -119,6 +133,24 @@ public class VisionDetect extends LinearOpMode {
 
     }   // end method runOpMode()
 
+    /**
+     * Initialize the AprilTag processor.
+     */
+    private void initAprilTag() {
+
+        // Create the AprilTag processor the easy way.
+        aprilTag = AprilTagProcessor.easyCreateWithDefaults();
+
+        // Create the vision portal the easy way.
+        if (USE_WEBCAM) {
+            visionPortal = VisionPortal.easyCreateWithDefaults(
+                hardwareMap.get(WebcamName.class, "Webcam 1"), aprilTag);
+        } else {
+            visionPortal = VisionPortal.easyCreateWithDefaults(
+                BuiltinCameraDirection.BACK, aprilTag);
+        }
+
+    }   // end method initAprilTag()
 
     /**
      * Add telemetry about AprilTag detections.
@@ -148,6 +180,4 @@ public class VisionDetect extends LinearOpMode {
 
     }   // end method telemetryAprilTag()
 
-
-
-    }   // end class
+}   // end class
