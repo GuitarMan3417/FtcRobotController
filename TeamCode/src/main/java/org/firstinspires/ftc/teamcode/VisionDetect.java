@@ -94,8 +94,7 @@ public class VisionDetect extends LinearOpMode {
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
                 .addProcessor(aprilTag)
                 .build();
-        aprilTag = new AprilTagProcessor.Builder()
-                .build();
+
 
         waitForStart();
         if (opModeIsActive()) {
@@ -111,6 +110,7 @@ public class VisionDetect extends LinearOpMode {
                 telemetry.addLine();
                 telemetryAprilTag();
                 telemetry.update();
+                sleep(20);
             }
         }
 
