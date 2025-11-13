@@ -30,7 +30,7 @@ public class FollowBall extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        M_LF  = hardwareMap.get(DcMotor.class, "M_LF");
+        M_LF = hardwareMap.get(DcMotor.class, "M_LF");
         M_RF = hardwareMap.get(DcMotor.class, "M_RF");
 
         M_LF.setDirection(DcMotorSimple.Direction.REVERSE); // ให้หมุนทิศเดียวกัน
@@ -45,8 +45,15 @@ public class FollowBall extends LinearOpMode {
         camera.setPipeline(pipeline);
 
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override public void onOpened() { camera.startStreaming(640,480, OpenCvCameraRotation.UPRIGHT); }
-            @Override public void onError(int errorCode) { telemetry.addData("Camera error", errorCode); }
+            @Override
+            public void onOpened() {
+                camera.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                telemetry.addData("Camera error", errorCode);
+            }
         });
 
         telemetry.addLine("READY - Press Play");
@@ -101,23 +108,39 @@ public class FollowBall extends LinearOpMode {
         private final Object sync = new Object();
         private volatile Detection last = new Detection(false, 0, 0, 0);
 
-        private Scalar lowHSV = new Scalar(5, 120, 120);   // สีส้ม (ตัวอย่าง)
-        private Scalar highHSV = new Scalar(25, 255, 255);
+        // --- สีเขียว (Green)
+        private Scalar lowHSV_green = new Scalar(35, 80, 80);
+        private Scalar highHSV_green = new Scalar(85, 255, 255);
+
+        // --- สีม่วง (Purple / Magenta)
+        private Scalar lowHSV_purple = new Scalar(130, 80, 80);
+        private Scalar highHSV_purple = new Scalar(160, 255, 255);
 
         @Override
         public Mat processFrame(Mat input) {
             Mat hsv = new Mat();
-            Mat mask = new Mat();
+            Mat maskGreen = new Mat();
+            Mat maskPurple = new Mat();
+            Mat maskCombined = new Mat();
             Mat morphed = new Mat();
 
-            Imgproc.GaussianBlur(input, input, new Size(5,5), 0);
+            Imgproc.GaussianBlur(input, input, new Size(5, 5), 0);
             Imgproc.cvtColor(input, hsv, Imgproc.COLOR_BGR2HSV);
-            Core.inRange(hsv, lowHSV, highHSV, mask);
 
-            Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, new Size(5,5));
-            Imgproc.morphologyEx(mask, morphed, Imgproc.MORPH_OPEN, kernel);
+            // กรองสีเขียว
+            Core.inRange(hsv, lowHSV_green, highHSV_green, maskGreen);
+            // กรองสีม่วง
+            Core.inRange(hsv, lowHSV_purple, highHSV_purple, maskPurple);
+
+            // รวมสองสีเข้าด้วยกัน
+            Core.bitwise_or(maskGreen, maskPurple, maskCombined);
+
+            // ทำความสะอาด noise
+            Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, new Size(5, 5));
+            Imgproc.morphologyEx(maskCombined, morphed, Imgproc.MORPH_OPEN, kernel);
             Imgproc.morphologyEx(morphed, morphed, Imgproc.MORPH_CLOSE, kernel);
 
+            // หาขอบและ contour
             List<MatOfPoint> contours = new ArrayList<>();
             Mat hierarchy = new Mat();
             Imgproc.findContours(morphed, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
@@ -143,14 +166,23 @@ public class FollowBall extends LinearOpMode {
             }
 
             if (found) {
-                Imgproc.circle(input, bestC, (int)bestR, new Scalar(0,255,0), 3);
-                synchronized (sync) { last = new Detection(true, bestC.x, bestC.y, bestR); }
+                // วาดวงกลมรอบลูกบอล
+                Imgproc.circle(input, bestC, (int) bestR, new Scalar(0, 255, 0), 3);
+                Imgproc.putText(input, "BALL", bestC, Imgproc.FONT_HERSHEY_SIMPLEX, 0.8, new Scalar(255, 255, 255), 2);
+                synchronized (sync) {
+                    last = new Detection(true, bestC.x, bestC.y, bestR);
+                }
             } else {
-                synchronized (sync) { last = new Detection(false, 0,0,0); }
+                synchronized (sync) {
+                    last = new Detection(false, 0, 0, 0);
+                }
             }
 
+            // clear memory
             hsv.release();
-            mask.release();
+            maskGreen.release();
+            maskPurple.release();
+            maskCombined.release();
             morphed.release();
             hierarchy.release();
 
@@ -158,14 +190,20 @@ public class FollowBall extends LinearOpMode {
         }
 
         public Detection getLastDetection() {
-            synchronized (sync) { return last; }
+            synchronized (sync) {
+                return last;
+            }
         }
 
         public static class Detection {
             public final boolean found;
             public final double cx, cy, radius;
+
             public Detection(boolean f, double x, double y, double r) {
-                found = f; cx = x; cy = y; radius = r;
+                found = f;
+                cx = x;
+                cy = y;
+                radius = r;
             }
         }
     }
