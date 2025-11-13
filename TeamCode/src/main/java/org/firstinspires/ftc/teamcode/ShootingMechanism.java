@@ -14,6 +14,7 @@ public class ShootingMechanism extends LinearOpMode {
 
 
     public void runOpMode(){
+        int MDirection = 0;
         //Define Variables (Min/Max Angle) (Degrees Unit)
         double svrAdjMin = 0;
         double svrAdjMax = 160;
@@ -24,7 +25,7 @@ public class ShootingMechanism extends LinearOpMode {
 
         //Define Variables (Min/Max Power value)
         double M_AINMin = 0.12;
-        double M_AINMax = 0.5;
+        double M_AINMax = 1;
         double M_SMin = 0.1;
         double M_SMax = 1;
 
@@ -59,13 +60,38 @@ public class ShootingMechanism extends LinearOpMode {
         svr_P.setPosition(svrPMin/180);
         telemetry.addLine("Init Complete!");
         waitForStart();
-        while(opModeIsActive()){
+        while(opModeIsActive()){ //OpMode Started
+
+            if(gamepad2.startWasPressed()){ //Direction Check
+                if(gamepad2.startWasReleased()){
+                    if(MDirection == 0){
+                        MDirection = 1;
+                    }
+                    else{
+                        MDirection++;
+                    }
+                    if(MDirection >= 2){
+                        MDirection = 0;
+                    }
+                }
+            }
+
             //Artifact to RestPoint0
             if(gamepad2.right_trigger > 0.8){
-                M_AIN.setPower(M_AINMax);
+                if(MDirection == 0){
+                    M_AIN.setPower(M_AINMax);
+                }
+                else{
+                    M_AIN.setPower(M_AINMax*-1);
+                }
             }
             else{
-                M_AIN.setPower(M_AINMin);
+                if(MDirection == 0){
+                    M_AIN.setPower(M_AINMin);
+                }
+                else{
+                    M_AIN.setPower(M_AINMin*-1);
+                }
             }
             //RestPoint0 to RestPoint1
             if(gamepad2.a){
@@ -98,6 +124,7 @@ public class ShootingMechanism extends LinearOpMode {
             }
 
 
+
             telemetry.addLine("System Inspection");
             telemetry.addLine("Motor Details");
             telemetry.addData("M_S0", M_S0.getPower());
@@ -108,6 +135,7 @@ public class ShootingMechanism extends LinearOpMode {
             telemetry.addData("svr_L0", svr_L0.getPosition());
             telemetry.addData("svr_L1", svr_L1.getPosition());
             telemetry.addData("svr_P", svr_P.getPosition());
+            telemetry.addData("MDirection", MDirection);
             telemetry.update();
         }
     }

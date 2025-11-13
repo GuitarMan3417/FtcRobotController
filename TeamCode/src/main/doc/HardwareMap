@@ -1,0 +1,28 @@
+Hardware mapping
+
+--- Wheels (L/R = Left/Right)(F/R = Front/Rear)---
+M_LF
+M_RF
+M_LR
+M_RR
+--------------------------------------------------
+
+
+--- Artifact Mechanism -------------
+
+--Motors--
+M_S0 = Spin 1
+M_S1 = Spin 2
+M_AIN = Artifact in
+
+--Servos--
+svr_Adj = Adjust Angle
+svr_L0 = Restpoint 0 (Artifact hit)
+svr_L1 = Restpoint 1 (Artifact hit)
+svr_P = Protection
+------------------------------------
+
+---Vision System---
+Webcam 1: Webcam 1
+-------------------
+
