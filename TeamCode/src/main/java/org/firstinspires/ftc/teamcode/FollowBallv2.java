@@ -6,20 +6,23 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
 import org.openftc.easyopencv.*;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
-@TeleOp(name="FollowBall (OpenCV Auto)", group="Vision")
-public class FollowBall extends LinearOpMode {
+@TeleOp(name="FollowBall Mecanum (OpenCV)", group="Vision")
+public class FollowBallv2 extends LinearOpMode {
 
-    // --- มอเตอร์ขับเคลื่อน 2 ข้าง (แทนหุ่น differential drive)
-    private DcMotor M_LF, M_RF;
+    // --- มอเตอร์ Mecanum 4 ล้อ
+    private DcMotor M_LF, M_RF, M_LR, M_RR;
 
     // --- กล้อง
     OpenCvCamera camera;
@@ -30,12 +33,16 @@ public class FollowBall extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        // --- Map มอเตอร์
         M_LF = hardwareMap.get(DcMotor.class, "M_LF");
         M_RF = hardwareMap.get(DcMotor.class, "M_RF");
+        M_LR = hardwareMap.get(DcMotor.class, "M_LR");
+        M_RR = hardwareMap.get(DcMotor.class, "M_RR");
 
-        M_LF.setDirection(DcMotorSimple.Direction.REVERSE); // ให้หมุนทิศเดียวกัน
+        M_LF.setDirection(DcMotorSimple.Direction.REVERSE);
+        M_LR.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        // ตั้งค่ากล้อง
+        // --- ตั้งค่ากล้อง
         int cameraMonitorViewId = hardwareMap.appContext.getResources()
                 .getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
@@ -63,41 +70,63 @@ public class FollowBall extends LinearOpMode {
         while (opModeIsActive()) {
             BallDetectPipeline.Detection d = pipeline.getLastDetection();
 
+            double forward = 0;
+            double strafe = 0;
+            double rotate = 0;
+
             if (d.found) {
                 double error = d.cx - CENTER_X;   // ค่าความคลาดจากกลางภาพ
-                double turn = error / 320.0;      // ปรับให้อยู่ในช่วง -1 ถึง 1
-                double basePower = 0.25;          // ความเร็วพื้นฐาน
+                strafe = error / 320.0;           // ปรับให้เป็น -1..1
+                forward = 0.3;                     // ความเร็วเดินหน้า
+                rotate = 0;
 
-                // ปรับทิศทางเลี้ยวตามตำแหน่งลูกบอล
-                double leftPower = basePower - turn * 0.3;
-                double rightPower = basePower + turn * 0.3;
-
-                // ถ้าลูกบอลใกล้มาก (รัศมีใหญ่)
-                if (d.radius > 80) { // ปรับตามระยะจริง
-                    leftPower = 0;
-                    rightPower = 0;
+                // หยุดถ้าลูกบอลใกล้
+                if (d.radius > 80) {
+                    forward = strafe = rotate = 0;
                 }
 
-                M_LF.setPower(leftPower);
-                M_RF.setPower(rightPower);
-
                 telemetry.addData("FOUND", true);
+                telemetry.addData("Color", d.colorName);
                 telemetry.addData("Center", "(%.1f, %.1f)", d.cx, d.cy);
                 telemetry.addData("Radius", "%.1f px", d.radius);
-                telemetry.addData("Turn Error", "%.1f", error);
+                telemetry.addData("Strafe Error", "%.1f", error);
             } else {
                 // ไม่เจอ → หมุนหา
-                M_LF.setPower(-0.2);
-                M_RF.setPower(0.2);
+                forward = 0;
+                strafe = 0;
+                rotate = 0.3; // หมุนตัวเองช้า
                 telemetry.addData("FOUND", false);
             }
+
+            // --- Mecanum drive power
+            double lf = forward + strafe + rotate;
+            double rf = forward - strafe - rotate;
+            double lr = forward - strafe + rotate;
+            double rr = forward + strafe - rotate;
+
+            // --- Limit power -1..1
+            double max = Math.max(Math.max(Math.abs(lf), Math.abs(rf)),
+                    Math.max(Math.abs(lr), Math.abs(rr)));
+            if (max > 1.0) {
+                lf /= max;
+                rf /= max;
+                lr /= max;
+                rr /= max;
+            }
+
+            M_LF.setPower(lf);
+            M_RF.setPower(rf);
+            M_LR.setPower(lr);
+            M_RR.setPower(rr);
 
             telemetry.update();
         }
 
-        // ปิดระบบเมื่อหยุด
+        // ปิดระบบ
         M_LF.setPower(0);
         M_RF.setPower(0);
+        M_LR.setPower(0);
+        M_RR.setPower(0);
         camera.stopStreaming();
     }
 

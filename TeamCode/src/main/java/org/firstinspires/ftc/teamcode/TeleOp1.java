@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.unused;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "TeleOp", group = "TeleOp1")
-@Disabled
-public class TeleOp1 extends LinearOpMode {
+
+public class  TeleOp1 extends LinearOpMode {
 
     // --- มอเตอร์ขับเคลื่อน Mecanum ---
     DcMotor M_LF, M_RF, M_LR, M_RR;
