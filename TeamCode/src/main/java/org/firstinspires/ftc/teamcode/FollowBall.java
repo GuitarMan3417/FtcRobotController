@@ -113,14 +113,19 @@ public class FollowBall extends LinearOpMode {
         private Scalar highHSV_green = new Scalar(85, 255, 255);
 
         // --- สีม่วง (Purple / Magenta)
-        private Scalar lowHSV_purple = new Scalar(130, 80, 80);
-        private Scalar highHSV_purple = new Scalar(160, 255, 255);
+        private Scalar lowHSV_purple = new Scalar(120, 50, 50);
+        private Scalar highHSV_purple = new Scalar(170, 255, 255);
+
+        // --- สีน้ำเงิน (Blue)
+        private Scalar lowHSV_blue = new Scalar(90, 80, 80);
+        private Scalar highHSV_blue = new Scalar(130, 255, 255);
 
         @Override
         public Mat processFrame(Mat input) {
             Mat hsv = new Mat();
             Mat maskGreen = new Mat();
             Mat maskPurple = new Mat();
+            Mat maskBlue = new Mat();
             Mat maskCombined = new Mat();
             Mat morphed = new Mat();
 
@@ -131,9 +136,12 @@ public class FollowBall extends LinearOpMode {
             Core.inRange(hsv, lowHSV_green, highHSV_green, maskGreen);
             // กรองสีม่วง
             Core.inRange(hsv, lowHSV_purple, highHSV_purple, maskPurple);
+            // กรองสีน้ำเงิน
+            Core.inRange(hsv, lowHSV_blue, highHSV_blue, maskBlue);
 
-            // รวมสองสีเข้าด้วยกัน
+            // รวมทุกสีเข้าด้วยกัน
             Core.bitwise_or(maskGreen, maskPurple, maskCombined);
+            Core.bitwise_or(maskCombined, maskBlue, maskCombined);
 
             // ทำความสะอาด noise
             Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, new Size(5, 5));
@@ -167,7 +175,7 @@ public class FollowBall extends LinearOpMode {
 
             if (found) {
                 // วาดวงกลมรอบลูกบอล
-                Imgproc.circle(input, bestC, (int) bestR, new Scalar(0, 255, 0), 3);
+                Imgproc.circle(input, bestC, (int) bestR, new Scalar(255, 0, 0), 3); // วาดขอบสีน้ำเงิน
                 Imgproc.putText(input, "BALL", bestC, Imgproc.FONT_HERSHEY_SIMPLEX, 0.8, new Scalar(255, 255, 255), 2);
                 synchronized (sync) {
                     last = new Detection(true, bestC.x, bestC.y, bestR);
@@ -178,10 +186,10 @@ public class FollowBall extends LinearOpMode {
                 }
             }
 
-            // clear memory
             hsv.release();
             maskGreen.release();
             maskPurple.release();
+            maskBlue.release();
             maskCombined.release();
             morphed.release();
             hierarchy.release();
