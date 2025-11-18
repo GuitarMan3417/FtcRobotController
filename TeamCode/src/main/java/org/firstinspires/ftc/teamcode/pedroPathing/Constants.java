@@ -11,29 +11,30 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants() //Weight Declaration
             .mass(5.1);
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
-            .rightFrontMotorName("rf")
-            .rightRearMotorName("rr")
-            .leftRearMotorName("lr")
-            .leftFrontMotorName("lf")
+            .rightFrontMotorName("M_RF")
+            .rightRearMotorName("M_RR")
+            .leftRearMotorName("M_LR")
+            .leftFrontMotorName("M_LF")
             .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD);
     public static DriveEncoderConstants localizerConstants = new DriveEncoderConstants()
-            .forwardTicksToInches(0) //Insert ticks (push robot 2 inches)
-            .strafeTicksToInches(0)//Insert ticks (push robot 2 inches)
-            .turnTicksToInches(0)  //Insert ticks (rotate robot full counterclockwise 1 time)
-            .robotLength(2)//Inch Unit
-            .robotWidth(2)//Inch Unit
-            .rightFrontMotorName("rf")
-            .rightRearMotorName("rr")
-            .leftRearMotorName("lr")
-            .leftFrontMotorName("lf")
+            .forwardTicksToInches(1.084) //Insert ticks (push robot 2 inches)
+            .strafeTicksToInches(0.3)//Insert ticks (push robot 2 inches)
+            .turnTicksToInches(-0.73)  //Insert ticks (rotate robot full counterclockwise 1 time)
+            .robotLength(17)//Inch Unit
+            .robotWidth(16.5)//Inch Unit
+            .rightFrontMotorName("M_RF")
+            .rightRearMotorName("M_RR")
+            .leftRearMotorName("M_LR")
+            .leftFrontMotorName("M_LF")
             .leftFrontEncoderDirection(Encoder.FORWARD)
             .leftRearEncoderDirection(Encoder.FORWARD)
             .rightFrontEncoderDirection(Encoder.FORWARD)
@@ -44,6 +45,7 @@ public class Constants {
         return new FollowerBuilder(followerConstants, hardwareMap)
                 .pathConstraints(pathConstraints)
                 .driveEncoderLocalizer(localizerConstants)
+                .mecanumDrivetrain(driveConstants)
                 /* other builder steps */
                 .build();
     }
