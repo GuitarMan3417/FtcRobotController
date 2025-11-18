@@ -1,12 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
 import android.graphics.Canvas;
-
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -21,34 +18,19 @@ import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
+
 import java.util.ArrayList;
 import java.util.List;
-@Disabled
 
-@TeleOp(name="FollowBall + AprilTag FINAL", group="Vision")
-public class FollowBallAprilTagFinal extends LinearOpMode {
-
-    private DcMotor M_LF, M_RF, M_LR, M_RR;
+@TeleOp(name="FollowBall + AprilTag (Vision Only)", group="Vision")
+public class BallDetection_AprilTag extends LinearOpMode {
 
     private VisionPortal visionPortal;
     private BallDetectionProcessor ballDetectionProcessor;
     private AprilTagProcessor aprilTagProcessor;
 
-    static final double CENTER_X = 320;
-
     @Override
     public void runOpMode() throws InterruptedException {
-
-        // ───────────────────────────────────────────
-        //              MOTOR SETUP
-        // ───────────────────────────────────────────
-        M_LF = hardwareMap.get(DcMotor.class, "M_LF");
-        M_RF = hardwareMap.get(DcMotor.class, "M_RF");
-        M_LR = hardwareMap.get(DcMotor.class, "M_LR");
-        M_RR = hardwareMap.get(DcMotor.class, "M_RR");
-
-        M_LF.setDirection(DcMotorSimple.Direction.REVERSE);
-        M_LR.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // ───────────────────────────────────────────
         //              CAMERA SETUP
@@ -61,11 +43,9 @@ public class FollowBallAprilTagFinal extends LinearOpMode {
                 .addProcessors(aprilTagProcessor, ballDetectionProcessor)
                 .build();
 
-
         telemetry.addLine("READY - Press PLAY");
         telemetry.update();
         waitForStart();
-
 
         // ───────────────────────────────────────────
         //                 MAIN LOOP
@@ -73,56 +53,14 @@ public class FollowBallAprilTagFinal extends LinearOpMode {
         while (opModeIsActive()) {
 
             BallDetectionProcessor.BallDetection ball = ballDetectionProcessor.getLastBall();
-            
+
             List<AprilTagDetection> aprilTagDetections = aprilTagProcessor.getDetections();
-            AprilTagDetection tag = null;
-            if (!aprilTagDetections.isEmpty()){
-                tag = aprilTagDetections.get(0);
-            }
+            AprilTagDetection tag = aprilTagDetections.isEmpty() ? null : aprilTagDetections.get(0);
 
             double[] hsv = ballDetectionProcessor.getLastHSV();
 
-            double forward = 0, strafe = 0, rotate = 0;
-
             // ───────────────────────────────────────────
-            //           FOLLOW BALL LOGIC
-            // ───────────────────────────────────────────
-            if (ball.found) {
-                double error = ball.cx - CENTER_X;
-                strafe = error / 320.0;
-                forward = 0.3;
-                rotate = 0;
-
-                if (ball.r > 80) {
-                    forward = 0;
-                    strafe = 0;
-                }
-            } else {
-                rotate = 0.3;   // หมุนหาลูก
-            }
-
-            // ───────────────────────────────────────────
-            //           MECANUM DRIVE MIXING
-            // ───────────────────────────────────────────
-            double lf = forward + strafe + rotate;
-            double rf = forward - strafe - rotate;
-            double lr = forward - strafe + rotate;
-            double rr = forward + strafe - rotate;
-
-            double max = Math.max(Math.max(Math.abs(lf), Math.abs(rf)),
-                    Math.max(Math.abs(lr), Math.abs(rr)));
-            if (max > 1) {
-                lf /= max; rf /= max; lr /= max; rr /= max;
-            }
-
-            M_LF.setPower(lf);
-            M_RF.setPower(rf);
-            M_LR.setPower(lr);
-            M_RR.setPower(rr);
-
-
-            // ───────────────────────────────────────────
-            //                  TELEMETRY
+            //                  TELEMETRY ONLY
             // ───────────────────────────────────────────
             telemetry.addLine("=== BALL ===");
             telemetry.addData("Found", ball.found);
@@ -152,9 +90,8 @@ public class FollowBallAprilTagFinal extends LinearOpMode {
         visionPortal.close();
     }
 
-
     // =====================================================================
-    //       BALL DETECTION PROCESSOR
+    //       BALL DETECTION PROCESSOR (unchanged)
     // =====================================================================
     public static class BallDetectionProcessor implements VisionProcessor {
 
@@ -169,9 +106,7 @@ public class FollowBallAprilTagFinal extends LinearOpMode {
         private Scalar highHSV_purple = new Scalar(179, 255, 255);
 
         @Override
-        public void init(int width, int height, CameraCalibration calibration) {
-            // Not needed for this processor
-        }
+        public void init(int width, int height, CameraCalibration calibration) {}
 
         @Override
         public Object processFrame(Mat frame, long captureTimeNanos) {
@@ -247,20 +182,16 @@ public class FollowBallAprilTagFinal extends LinearOpMode {
             maskP.release();
             copy.release();
 
-            return frame; // Return the frame to be drawn on the screen
+            return frame;
         }
 
         @Override
-        public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {
-            // Not needed for this processor
-        }
+        public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {}
 
         // Getters
         public BallDetection getLastBall() { return lastBall; }
         public double[] getLastHSV() { return lastHSV; }
 
-
-        // STRUCT
         public static class BallDetection {
             public final boolean found;
             public final double cx, cy, r;

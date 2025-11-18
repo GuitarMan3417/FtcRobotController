@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -14,6 +15,7 @@ import org.opencv.core.Scalar;
 
 import java.util.ArrayList;
 import java.util.List;
+@Disabled
 
 @TeleOp(name="FollowBall Mecanum FINAL", group="Vision")
 public class FollowBallv2Final extends LinearOpMode {
