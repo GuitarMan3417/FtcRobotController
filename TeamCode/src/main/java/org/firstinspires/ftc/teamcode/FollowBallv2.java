@@ -145,9 +145,7 @@ public class FollowBallv2 extends LinearOpMode {
         private Scalar lowHSV_purple = new Scalar(117, 120, 75);
         private Scalar highHSV_purple = new Scalar(179, 255, 255);
 
-        // --- สีน้ำเงิน (Blue)
-        private Scalar lowHSV_blue = new Scalar(90, 80, 80);
-        private Scalar highHSV_blue = new Scalar(130, 255, 255);
+
 
         @Override
         public Mat processFrame(Mat input) {
@@ -162,7 +160,6 @@ public class FollowBallv2 extends LinearOpMode {
             // กรองสี
             Core.inRange(hsv, lowHSV_green, highHSV_green, maskGreen);
             Core.inRange(hsv, lowHSV_purple, highHSV_purple, maskPurple);
-            Core.inRange(hsv, lowHSV_blue, highHSV_blue, maskBlue);
 
             // จัดเก็บ mask / สี / ชื่อ
             List<Mat> masks = new ArrayList<>();
@@ -176,8 +173,7 @@ public class FollowBallv2 extends LinearOpMode {
             colors.add(new Scalar(255, 0, 255));
             names.add("PURPLE");
             masks.add(maskBlue);
-            colors.add(new Scalar(0, 0, 255));
-            names.add("BLUE");
+
 
             boolean found = false;
             double bestR = 0;
