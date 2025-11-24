@@ -16,7 +16,7 @@ public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants() //Weight Declaration
             .mass(5.1);
     public static MecanumConstants driveConstants = new MecanumConstants()
-            .maxPower(1)
+            .maxPower(0.7)
             .rightFrontMotorName("M_RF")
             .rightRearMotorName("M_RR")
             .leftRearMotorName("M_LR")
@@ -31,11 +31,11 @@ public class Constants {
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100,1,1);
 
     public static DriveEncoderConstants localizerConstants = new DriveEncoderConstants()
-            .forwardTicksToInches(0.007) //Insert ticks (push robot 2 inches)
-            .strafeTicksToInches(0.3)//Insert ticks (push robot 2 inches)
-            .turnTicksToInches(-0.73)  //Insert ticks (rotate robot full counterclockwise 1 time)
-            .robotLength(9.5)//Inch Unit
-            .robotWidth(13.5)//Inch Unit
+            .forwardTicksToInches(0.0023) //Insert ticks (push robot 2 inches) 0.0017
+            .strafeTicksToInches(0.0022)//Insert ticks (push robot 2 inches)0.0022
+            .turnTicksToInches(0.0034)  //Insert ticks (rotate robot full counterclockwise 1 time)0.0040
+            .robotLength(13.5)//Inch Unit
+            .robotWidth(9.5)//Inch Unit
             .rightFrontMotorName("M_RF")
             .rightRearMotorName("M_RR")
             .leftRearMotorName("M_LR")
