@@ -25,22 +25,25 @@ public class Constants {
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD);
+
+
+
+    public static PathConstraints pathConstraints = new PathConstraints(0.99, 100,1,1);
+
     public static DriveEncoderConstants localizerConstants = new DriveEncoderConstants()
-            .forwardTicksToInches(1.084) //Insert ticks (push robot 2 inches)
+            .forwardTicksToInches(0.007) //Insert ticks (push robot 2 inches)
             .strafeTicksToInches(0.3)//Insert ticks (push robot 2 inches)
             .turnTicksToInches(-0.73)  //Insert ticks (rotate robot full counterclockwise 1 time)
-            .robotLength(17)//Inch Unit
-            .robotWidth(16.5)//Inch Unit
+            .robotLength(9.5)//Inch Unit
+            .robotWidth(13.5)//Inch Unit
             .rightFrontMotorName("M_RF")
             .rightRearMotorName("M_RR")
             .leftRearMotorName("M_LR")
             .leftFrontMotorName("M_LF")
-            .leftFrontEncoderDirection(Encoder.FORWARD)
-            .leftRearEncoderDirection(Encoder.FORWARD)
+            .leftFrontEncoderDirection(Encoder.REVERSE)
+            .leftRearEncoderDirection(Encoder.REVERSE)
             .rightFrontEncoderDirection(Encoder.FORWARD)
             .rightRearEncoderDirection(Encoder.FORWARD);
-
-    public static PathConstraints pathConstraints = new PathConstraints(0.99, 100,1,1);
     public static Follower createFollower(HardwareMap hardwareMap){
         return new FollowerBuilder(followerConstants, hardwareMap)
                 .pathConstraints(pathConstraints)
