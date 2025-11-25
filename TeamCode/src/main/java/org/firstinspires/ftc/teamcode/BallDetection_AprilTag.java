@@ -22,7 +22,7 @@ import org.opencv.imgproc.Imgproc;
 import java.util.ArrayList;
 import java.util.List;
 
-@TeleOp(name="FollowBall + AprilTag (Vision Only)", group="Vision")
+@TeleOp(name="FollowBall + April Tag (Vision Only)", group="Vision")
 public class BallDetection_AprilTag extends LinearOpMode {
 
     private VisionPortal visionPortal;

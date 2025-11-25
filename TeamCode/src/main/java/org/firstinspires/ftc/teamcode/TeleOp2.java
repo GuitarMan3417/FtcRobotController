@@ -7,9 +7,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "TeleOp", group = "TeleOp1")
+@TeleOp(name = "TeleOp2", group = "TeleOp1")
 
-public class  TeleOp1 extends LinearOpMode {
+public class  TeleOp2 extends LinearOpMode {
 
     // --- มอเตอร์ขับเคลื่อน Mecanum ---
     DcMotor M_LF, M_RF, M_LR, M_RR;
@@ -110,11 +110,11 @@ public class  TeleOp1 extends LinearOpMode {
 
             // --- มอเตอร์ M_S1 + Servo SVR_L0 (Gamepad2 ปุ่ม B) ---
             if (gamepad2.b) {
-                M_S1.setPower(1.0);       // หมุนเต็มสปีดก่อน
+                M_S1.setPower(-1.0);       // หมุนเต็มสปีดก่อน
                 sleep(300);               // รอให้มอเตอร์หมุนก่อน 0.3 วินาที
                 currentPos = maxPos;      // ดันบอลขึ้น
             } else {
-                M_S1.setPower(0.3);       // หมุนเบา ๆ ตลอดเวลา
+                M_S1.setPower(-0.3);       // หมุนเบา ๆ ตลอดเวลา
                 currentPos = minPos;      // Servo กลับตำแหน่งเริ่มต้น
             }
 
