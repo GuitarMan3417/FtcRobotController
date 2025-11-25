@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 
 @Autonomous(name="Autonomous: Artifact Catch", group = "Autonomous")
-public class autonomous_Custom extends OpMode {
+public class autonomous_Defined extends OpMode {
     private int pathState;
     private Follower follower;
     private Timer pathTimer, opModeTimer;

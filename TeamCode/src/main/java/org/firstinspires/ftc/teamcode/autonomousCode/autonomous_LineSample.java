@@ -18,11 +18,10 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
-@Autonomous (name="Autonomous-Custom", group="Autonomous")
-public class autonomous_Test extends OpMode {
+@Autonomous (name="Autonomous-LineSample", group="Autonomous")
+public class autonomous_LineSample extends OpMode {
     //Webcam Declaration
-    private AprilTagProcessor aprilTag;
-    private VisionPortal visionPortal;
+
     private int pathState;
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
@@ -40,7 +39,7 @@ public class autonomous_Test extends OpMode {
         Path2 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(56.175, 83.682), new Pose(126.269, 83.517))
+                        new BezierLine(new Pose(56.000, 83.682), new Pose(126.269, 83.517))
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
@@ -86,33 +85,8 @@ public class autonomous_Test extends OpMode {
         pathTimer.resetTimer();
     }
 
-    private void initAprilTags(){
-        aprilTag = new AprilTagProcessor.Builder()
-                .setOutputUnits(DistanceUnit.CM, AngleUnit.DEGREES)
-                .build();
-        VisionPortal.Builder builder = new VisionPortal.Builder();
-        builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
-        builder.addProcessor(aprilTag);
-        visionPortal = builder.build();
-    }
-    private void telemetryAprilTag(){
-        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-        telemetry.addData("AprilTags Detected", currentDetections.size());
-        for (AprilTagDetection detection : currentDetections){
-            if (detection.metadata != null){
-                telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
-                telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
-                telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
-                telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
-            } else {
-                telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
-                telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
-            }
-        }
-        telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
-        telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
-        telemetry.addLine("RBE = Range, Bearing & Elevation");
-    }
+   
+
     @Override
     public void init(){ //First run
         pathTimer = new Timer();
@@ -130,7 +104,6 @@ public class autonomous_Test extends OpMode {
     public void loop(){ //While OpMode is active
         follower.update();
         pathUpdate();
-        telemetryAprilTag();
         telemetry.addData("Path", pathState);
         telemetry.addData("X", follower.getPose().getX());
         telemetry.addData("Y", follower.getPose().getY());

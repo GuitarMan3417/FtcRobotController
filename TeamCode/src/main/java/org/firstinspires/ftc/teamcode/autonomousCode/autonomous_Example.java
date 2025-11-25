@@ -7,11 +7,13 @@ import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+@Disabled
+@Autonomous (name="Autonomous: Sample", group="Autonomous")
 
-@Autonomous (name="Autonomous0", group="Autonomous")
 public class autonomous_Example extends OpMode {
 
     private Follower follower;
