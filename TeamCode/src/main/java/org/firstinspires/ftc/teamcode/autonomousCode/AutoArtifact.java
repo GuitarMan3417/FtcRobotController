@@ -16,28 +16,28 @@ public class AutoArtifact extends OpMode {
     private int pathState;
     private Follower follower;
     private Timer pathTimer, opModeTimer;
-    public PathChain Path1, Path2, Path3, Path4, Path5, Path6, Path7, Path8, Path9, Path10, Path11 , Path12;
+    public PathChain Path1, Path2, Path3, Path4, Path5, Path6, Path7, Path8;
     public void buildPaths(){
         Path1 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(56.000, 8.000), new Pose(56.526, 87.241))
+                        new BezierLine(new Pose(56.000, 8.000), new Pose(60.730, 82.803))
                 )
-                .setTangentHeadingInterpolation()
+                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(140))
                 .build();
 
         Path2 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(56.526, 87.241), new Pose(43.212, 99.971))
+                        new BezierLine(new Pose(60.730, 82.803), new Pose(35.153, 59.679))
                 )
-                .setTangentHeadingInterpolation()
+                .setLinearHeadingInterpolation(Math.toRadians(140), Math.toRadians(175))
                 .build();
 
         Path3 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(43.212, 99.971), new Pose(42.277, 59.912))
+                        new BezierLine(new Pose(35.153, 59.679), new Pose(13.547, 59.912))
                 )
                 .setTangentHeadingInterpolation()
                 .build();
@@ -45,23 +45,23 @@ public class AutoArtifact extends OpMode {
         Path4 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(42.277, 59.912), new Pose(13.547, 60.146))
+                        new BezierLine(new Pose(13.547, 59.912), new Pose(60.730, 82.803))
                 )
-                .setTangentHeadingInterpolation()
+                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(140))
                 .build();
 
         Path5 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(13.547, 60.146), new Pose(56.526, 87.358))
+                        new BezierLine(new Pose(60.730, 82.803), new Pose(35.153, 35.387))
                 )
-                .setTangentHeadingInterpolation()
+                .setLinearHeadingInterpolation(Math.toRadians(140), Math.toRadians(175))
                 .build();
 
         Path6 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(56.526, 87.358), new Pose(43.095, 100.088))
+                        new BezierLine(new Pose(35.153, 35.387), new Pose(14.015, 35.620))
                 )
                 .setTangentHeadingInterpolation()
                 .build();
@@ -69,49 +69,17 @@ public class AutoArtifact extends OpMode {
         Path7 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(43.095, 100.088), new Pose(41.577, 35.387))
+                        new BezierLine(new Pose(14.015, 35.620), new Pose(60.847, 82.803))
                 )
-                .setTangentHeadingInterpolation()
+                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(140))
                 .build();
 
         Path8 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(41.577, 35.387), new Pose(13.547, 35.620))
+                        new BezierLine(new Pose(60.847, 82.803), new Pose(9.343, 69.956))
                 )
-                .setTangentHeadingInterpolation()
-                .build();
-
-        Path9 = follower
-                .pathBuilder()
-                .addPath(
-                        new BezierLine(new Pose(13.547, 35.620), new Pose(56.292, 87.474))
-                )
-                .setTangentHeadingInterpolation()
-                .build();
-
-        Path10 = follower
-                .pathBuilder()
-                .addPath(
-                        new BezierLine(new Pose(56.292, 87.474), new Pose(43.212, 100.321))
-                )
-                .setTangentHeadingInterpolation()
-                .build();
-
-        Path11 = follower
-                .pathBuilder()
-                .addPath(
-                        new BezierLine(new Pose(43.212, 100.321), new Pose(42.628, 70.540))
-                )
-                .setTangentHeadingInterpolation()
-                .build();
-
-        Path12 = follower
-                .pathBuilder()
-                .addPath(
-                        new BezierLine(new Pose(42.628, 70.540), new Pose(9.109, 69.956))
-                )
-                .setTangentHeadingInterpolation()
+                .setConstantHeadingInterpolation(Math.toRadians(90))
                 .build();
     }
 
@@ -164,30 +132,6 @@ public class AutoArtifact extends OpMode {
                 }
                 break;
             case 8:
-                if(!follower.isBusy()){
-                    follower.followPath(Path9);
-                    setPathState(9);
-                }
-                break;
-            case 9:
-                if(!follower.isBusy()){
-                    follower.followPath(Path10);
-                    setPathState(10);
-                }
-                break;
-            case 10:
-                if(!follower.isBusy()){
-                    follower.followPath(Path11);
-                    setPathState(11);
-                }
-                break;
-            case 11:
-                if(!follower.isBusy()){
-                    follower.followPath(Path11);
-                    setPathState(12);
-                }
-                break;
-            case 12:
                 if(!follower.isBusy()){
                     setPathState(-1);
                 }

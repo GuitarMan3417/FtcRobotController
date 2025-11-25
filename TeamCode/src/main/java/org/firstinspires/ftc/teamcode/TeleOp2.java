@@ -105,7 +105,7 @@ public class  TeleOp2 extends LinearOpMode {
             M_AIN.setPower(intakePower);
 
             // --- มอเตอร์ M_S0 (Gamepad2 ปุ่ม A) ---
-            double powerM_S0 = gamepad2.a ? 1.0 : 0.0;
+            double powerM_S0 = gamepad2.a ? 0.8 : 0.0;
             M_S0.setPower(powerM_S0);
 
             // --- มอเตอร์ M_S1 + Servo SVR_L0 (Gamepad2 ปุ่ม B) ---
