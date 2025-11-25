@@ -98,7 +98,7 @@ public class  TeleOp2 extends LinearOpMode {
             if (gamepad1.b) {
                 intakePower = -0.60;   // ปล่อยบอลออก
             } else if (gamepad1.left_bumper) {
-                intakePower = 0.13;    // ดูดช้า
+                intakePower = 0.18;    // ดูดช้า
             } else if (gamepad1.right_bumper) {
                 intakePower = 0.50;    // ดูดเร็ว
             }
@@ -114,7 +114,7 @@ public class  TeleOp2 extends LinearOpMode {
                 sleep(300);               // รอให้มอเตอร์หมุนก่อน 0.3 วินาที
                 currentPos = maxPos;      // ดันบอลขึ้น
             } else {
-                M_S1.setPower(-0.3);       // หมุนเบา ๆ ตลอดเวลา
+                M_S1.setPower(-0.5);       // หมุนเบา ๆ ตลอดเวลา
                 currentPos = minPos;      // Servo กลับตำแหน่งเริ่มต้น
             }
 
