@@ -16,7 +16,8 @@ public class AutoArtifact extends OpMode {
     private int pathState;
     private Follower follower;
     private Timer pathTimer, opModeTimer;
-    public PathChain Path1, Path2, Path3, Path4, Path5, Path6, Path7, Path8, Path9;    public void buildPaths(){
+    public PathChain Path1, Path2, Path3, Path4, Path5, Path6, Path7, Path8, Path9;
+    public void buildPaths(){
         Path1 = follower
                 .pathBuilder()
                 .addPath(
