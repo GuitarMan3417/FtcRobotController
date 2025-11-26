@@ -161,6 +161,9 @@ class LocalizationTest extends OpMode {
         telemetryM.debug("y:" + follower.getPose().getY());
         telemetryM.debug("heading:" + follower.getPose().getHeading());
         telemetryM.debug("total heading:" + follower.getTotalHeading());
+        telemetryM.debug("Velocity All", follower.getVelocity());
+        telemetryM.debug("Velocity X", follower.getVelocity().getXComponent());
+        telemetryM.debug("Velocity Y", follower.getVelocity().getYComponent());
         telemetryM.update(telemetry);
 
         draw();
@@ -970,6 +973,7 @@ class Line extends OpMode {
     /** This initializes the Follower and creates the forward and backward Paths. */
     @Override
     public void init_loop() {
+
         telemetryM.debug("This will activate all the PIDF(s)");
         telemetryM.debug("The robot will go forward and backward continuously along the path while correcting.");
         telemetryM.debug("You can adjust the PIDF values to tune the robot's drive PIDF(s).");
@@ -1003,8 +1007,10 @@ class Line extends OpMode {
                 follower.followPath(forwards);
             }
         }
-
         telemetryM.debug("Driving Forward?: " + forward);
+        telemetryM.debug("Velocity All", follower.getVelocity());
+        telemetryM.debug("Velocity X", follower.getVelocity().getXComponent());
+        telemetryM.debug("Velocity Y", follower.getVelocity().getYComponent());
         telemetryM.update(telemetry);
     }
 }
@@ -1181,6 +1187,7 @@ class Circle extends OpMode {
         telemetryM.debug("It will also continuously face the center of the circle to test your heading and centripetal correction.");
         telemetryM.update(telemetry);
         follower.update();
+        follower.setMaxPower(0.4);
         drawOnlyCurrent();
     }
 

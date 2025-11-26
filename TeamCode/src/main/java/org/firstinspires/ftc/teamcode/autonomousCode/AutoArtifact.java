@@ -173,6 +173,7 @@ public class AutoArtifact extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         buildPaths();
         follower.setStartingPose(new Pose(56,8, Math.toRadians(90)));
+        follower.setMaxPower(0.5);
     }
     @Override
     public void loop(){

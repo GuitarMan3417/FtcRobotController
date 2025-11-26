@@ -42,10 +42,10 @@ public class TeleOp2 extends LinearOpMode {
         //   ตั้งทิศทางมอเตอร์ (สำคัญมากสำหรับ Mecanum ให้วิ่งตรง)
         // ========================================================
 
-        M_LF.setDirection(DcMotorSimple.Direction.REVERSE);  // ล้อซ้ายหน้า
-        M_LR.setDirection(DcMotorSimple.Direction.REVERSE);  // ล้อซ้ายหลัง
-        M_RF.setDirection(DcMotorSimple.Direction.FORWARD);  // ล้อขวาหน้า กลับทิศ
-        M_RR.setDirection(DcMotorSimple.Direction.FORWARD);  // ล้อขวาหลัง กลับทิศ
+        M_LF.setDirection(DcMotorSimple.Direction.FORWARD);  // ล้อซ้ายหน้า
+        M_LR.setDirection(DcMotorSimple.Direction.FORWARD);  // ล้อซ้ายหลัง
+        M_RF.setDirection(DcMotorSimple.Direction.REVERSE);  // ล้อขวาหน้า กลับทิศ
+        M_RR.setDirection(DcMotorSimple.Direction.REVERSE);  // ล้อขวาหลัง กลับทิศ
 
         // ====================================
         //   ทำให้มอเตอร์เบรกเมื่อปล่อยคันโยก
@@ -79,7 +79,7 @@ public class TeleOp2 extends LinearOpMode {
         waitForStart();
 
         // ใช้คูณความเร็ว (1.0 = เต็ม)
-        double speedMultiplier = 1.0;
+        double speedMultiplier = 0.5;
 
         while (opModeIsActive()) {
 

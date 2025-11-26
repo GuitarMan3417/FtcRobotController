@@ -14,36 +14,38 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants() //Weight Declaration
-            .mass(5.1);
+            .mass(7);
     public static MecanumConstants driveConstants = new MecanumConstants()
-            .maxPower(1)
+            .maxPower(0.45)
             .rightFrontMotorName("M_RF")
             .rightRearMotorName("M_RR")
             .leftRearMotorName("M_LR")
             .leftFrontMotorName("M_LF")
-            .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
-            .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
-            .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD);
+            .leftFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
+            .leftRearMotorDirection(DcMotorSimple.Direction.FORWARD)
+            .rightFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
+            .rightRearMotorDirection(DcMotorSimple.Direction.REVERSE);
 
 
 
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100,1,1);
 
+
+
     public static DriveEncoderConstants localizerConstants = new DriveEncoderConstants()
-            .forwardTicksToInches(0.0023) //Insert ticks (push robot 2 inches) 0.0017
-            .strafeTicksToInches(0.0022)//Insert ticks (push robot 2 inches)0.0022
-            .turnTicksToInches(0.0034)  //Insert ticks (rotate robot full counterclockwise 1 time)0.0040
-            .robotLength(13.5)//Inch Unit
-            .robotWidth(9.5)//Inch Unit
+            .forwardTicksToInches(0.0083) //Insert ticks (push robot 2 inches) 0.0017
+            .strafeTicksToInches(0.0092)//Insert ticks (push robot 2 inches)0.0022
+            .turnTicksToInches(0.0089)  //Insert ticks (rotate robot full counterclockwise 1 time)0.0040
+            .robotLength(13)//Inch Unit
+            .robotWidth(3.5)//Inch Unit
             .rightFrontMotorName("M_RF")
             .rightRearMotorName("M_RR")
             .leftRearMotorName("M_LR")
             .leftFrontMotorName("M_LF")
-            .leftFrontEncoderDirection(Encoder.REVERSE)
-            .leftRearEncoderDirection(Encoder.REVERSE)
-            .rightFrontEncoderDirection(Encoder.FORWARD)
-            .rightRearEncoderDirection(Encoder.FORWARD);
+            .leftFrontEncoderDirection(Encoder.FORWARD)
+            .leftRearEncoderDirection(Encoder.FORWARD)
+            .rightFrontEncoderDirection(Encoder.REVERSE)
+            .rightRearEncoderDirection(Encoder.REVERSE);
     public static Follower createFollower(HardwareMap hardwareMap){
         return new FollowerBuilder(followerConstants, hardwareMap)
                 .pathConstraints(pathConstraints)
