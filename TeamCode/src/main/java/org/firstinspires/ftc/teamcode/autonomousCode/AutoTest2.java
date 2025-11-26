@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.autonomousCode;
 
+import static java.lang.Thread.sleep;
+
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
@@ -11,8 +13,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 
-@Autonomous(name="Autonomous", group = "Autonomous")
-public class AutoArtifact extends OpMode {
+@Autonomous(name="Test2", group = "Autonomous")
+public class AutoTest2 extends OpMode {
     private int pathState;
     private Follower follower;
     private Timer pathTimer, opModeTimer;
@@ -99,6 +101,13 @@ public class AutoArtifact extends OpMode {
                 break;
             case 1:
                 if(!follower.isBusy()){
+                    try {
+                        sleep(3000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+
+
                     follower.followPath(Path2);
                     pathState++;
                     setPathState(pathState);
