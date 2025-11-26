@@ -16,8 +16,7 @@ public class AutoArtifact extends OpMode {
     private int pathState;
     private Follower follower;
     private Timer pathTimer, opModeTimer;
-    public PathChain Path1, Path2, Path3, Path4, Path5, Path6, Path7, Path8;
-    public void buildPaths(){
+    public PathChain Path1, Path2, Path3, Path4, Path5, Path6, Path7, Path8, Path9;    public void buildPaths(){
         Path1 = follower
                 .pathBuilder()
                 .addPath(
@@ -81,57 +80,79 @@ public class AutoArtifact extends OpMode {
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(90))
                 .build();
+        Path9 = follower
+                .pathBuilder()
+                .addPath(
+                        new BezierLine(new Pose(9.343, 69.956), new Pose(63.63,78.71))
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(75))
+                .build();
     }
 
     public void pathUpdate(){
         switch(pathState){
             case 0:
                 follower.followPath(Path1);
-                setPathState(1);
+                pathState++;
+                setPathState(pathState);
                 break;
             case 1:
                 if(!follower.isBusy()){
                     follower.followPath(Path2);
-                    setPathState(2);
+                    pathState++;
+                    setPathState(pathState);
                 }
                 break;
             case 2:
                 if(!follower.isBusy()){
                     follower.followPath(Path3);
-                    setPathState(3);
+                    pathState++;
+                    setPathState(pathState);
                 }
                 break;
             case 3:
                 if(!follower.isBusy()){
                     follower.followPath(Path4);
-                    setPathState(4);
+                    pathState++;
+                    setPathState(pathState);
                 }
                 break;
             case 4:
                 if(!follower.isBusy()){
                     follower.followPath(Path5);
-                    setPathState(5);
+                    pathState++;
+                    setPathState(pathState);
                 }
                 break;
             case 5:
                 if(!follower.isBusy()){
                     follower.followPath(Path6);
-                    setPathState(6);
+                    pathState++;
+                    setPathState(pathState);
                 }
                 break;
             case 6:
                 if(!follower.isBusy()){
                     follower.followPath(Path7);
-                    setPathState(7);
+                    pathState++;
+                    setPathState(pathState);
                 }
                 break;
             case 7:
                 if(!follower.isBusy()){
                     follower.followPath(Path8);
-                    setPathState(8);
+                    pathState++;
+                    setPathState(pathState);
+                    
                 }
                 break;
             case 8:
+                if(!follower.isBusy()){
+                    follower.followPath(Path9);
+                    pathState++;
+                    setPathState(pathState);
+                }
+            case 9:
                 if(!follower.isBusy()){
                     setPathState(-1);
                 }

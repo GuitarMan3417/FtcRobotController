@@ -85,7 +85,7 @@ public class autonomous_LineSample extends OpMode {
         pathTimer.resetTimer();
     }
 
-   
+
 
     @Override
     public void init(){ //First run
@@ -95,6 +95,7 @@ public class autonomous_LineSample extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         buildPaths();
         follower.setStartingPose(new Pose(56, 8, Math.toRadians(90)));
+        follower.setMaxPower(0.6);
     }
     @Override
     public void init_loop(){ //Loop (Initialize Mode)
