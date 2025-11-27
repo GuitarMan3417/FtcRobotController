@@ -33,11 +33,11 @@ public class Constants {
 
 
     public static DriveEncoderConstants localizerConstants = new DriveEncoderConstants()
-            .forwardTicksToInches(0.0083) //Insert ticks (push robot 2 inches) 0.0017
+            .forwardTicksToInches(0.0091492) //Insert ticks (push robot 2 inches) 0.0083 0.0083535207
             .strafeTicksToInches(0.0092)//Insert ticks (push robot 2 inches)0.0022
-            .turnTicksToInches(0.0089)  //Insert ticks (rotate robot full counterclockwise 1 time)0.0040
-            .robotLength(13)//Inch Unit
-            .robotWidth(3.5)//Inch Unit
+            .turnTicksToInches(0.022)  //Insert ticks (rotate robot full counterclockwise 1 time)0.01795
+            .robotLength(12.5)//Inch Unit
+            .robotWidth(8.5)//Inch Unit (Prev 3.5)
             .rightFrontMotorName("M_RF")
             .rightRearMotorName("M_RR")
             .leftRearMotorName("M_LR")

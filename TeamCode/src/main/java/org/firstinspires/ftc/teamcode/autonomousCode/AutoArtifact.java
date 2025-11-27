@@ -7,12 +7,15 @@ import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 
 @Autonomous(name="Autonomous", group = "Autonomous")
 public class AutoArtifact extends OpMode {
+    DcMotor M_LF, M_RF, M_LR, M_RR;   // มอเตอร์ล้อทั้ง 4 (Mecanum)
+
     private int pathState;
     private Follower follower;
     private Timer pathTimer, opModeTimer;
@@ -21,7 +24,7 @@ public class AutoArtifact extends OpMode {
         Path1 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(56.000, 8.000), new Pose(60.730, 82.803))
+                        new BezierLine(new Pose(56.000, 0.000), new Pose(60.730, 82.803))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(140))
                 .build();
@@ -96,6 +99,7 @@ public class AutoArtifact extends OpMode {
                 follower.followPath(Path1);
                 pathState++;
                 setPathState(pathState);
+                follower.breakFollowing();
                 break;
             case 1:
                 if(!follower.isBusy()){
@@ -170,11 +174,27 @@ public class AutoArtifact extends OpMode {
         pathTimer = new Timer();
         opModeTimer = new Timer();
         opModeTimer.resetTimer();
+
         follower = Constants.createFollower(hardwareMap);
+
+        // ===== ระบบเบรกมอเตอร์ =====
+        DcMotor M_LF = hardwareMap.get(DcMotor.class, "M_LF");
+        DcMotor M_RF = hardwareMap.get(DcMotor.class, "M_RF");
+        DcMotor M_LR = hardwareMap.get(DcMotor.class, "M_LR");
+        DcMotor M_RR = hardwareMap.get(DcMotor.class, "M_RR");
+
+        M_LF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        M_RF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        M_LR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        M_RR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        // ===========================
+
         buildPaths();
         follower.setStartingPose(new Pose(56,8, Math.toRadians(90)));
-        follower.setMaxPower(0.5);
+        follower.setMaxPower(0.4);
     }
+
+
     @Override
     public void loop(){
         follower.update();
