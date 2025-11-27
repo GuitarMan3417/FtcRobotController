@@ -5,8 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-
-import java.security.PublicKey;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name = "TELEOP_AMC_KHON_NEX", group = "TeleOp")
 public class TELEOP_AMC_KHON_NEX extends LinearOpMode {
@@ -70,13 +69,20 @@ public class TELEOP_AMC_KHON_NEX extends LinearOpMode {
         // ==================================
 
         double servo1Min = 0.0;
-        double servo1Max = 180.0;
         double servo1Pos = servo1Min / 180.0; // เริ่มต้น 0°
         SVR_L1.setPosition(servo1Pos);
 
         waitForStart(); //Start Code
 
         double speedMultiplier = 0.5;  //   ความเร็ว ( 0.5 = เต็ม )
+
+        // ==================================
+        //   P2 shooting system state
+        // ==================================
+        ElapsedTime shooterTimer = new ElapsedTime();
+        boolean isShootingActive = false;
+        boolean shooterMotorsStarted = false;
+        final double SHOOTER_DELAY_MS = 300;   // 0.3 วินาที
 
         while (opModeIsActive()) {
 
@@ -123,65 +129,54 @@ public class TELEOP_AMC_KHON_NEX extends LinearOpMode {
             }
             M_AIN.setPower(intakePower);
 
-            // ==================================
-            //   P2 ระบบยิงบอล A ทำงานตามระบบ
-            // ==================================
-
-            double M_S1DelayStartTime = 0;   // เวลาที่กด A
+            ElapsedTime timer = new ElapsedTime();
             boolean isButtonAPressed = false;
-            double delayMillis = 3;        // หน่วงเวลา 0.3 วินาที
-            M_S1.setPower(-0.5);
-            M_S0.setPower(0.0);
-            M_bl.setPower(-0.0);
+            boolean hasMotorStarted = false;
+            double delayMillis = 1000;   // 0.3 วินาที
 
-            if (gamepad2.a && !isButtonAPressed) {
-                // เริ่มกดปุ่ม A
-                M_S1.setPower(-1.0);              // M_S1 ความเร็ว 1
-                M_S1DelayStartTime = getRuntime() * 1000;  // เก็บเวลาใน MS
-                isButtonAPressed = true;
-            }
-            if (isButtonAPressed) {
-                double elapsed = (getRuntime() * 1000) - M_S1DelayStartTime;
-                if (elapsed >= delayMillis) {
-                    M_S0.setPower(1.0);
-                    M_bl.setPower(-1.0);
+            waitForStart();
+
+            while (opModeIsActive()) {
+
+                // ==================================
+                //   ระบบยิงด้วยปุ่ม A
+                // ==================================
+
+                // เมื่อกด A ครั้งแรก
+                if (gamepad2.a && !isButtonAPressed) {
+                    M_S1.setPower(-1.0);     // มอเตอร์ยิงลมเริ่มหมุน
+                    timer.reset();           // เริ่มจับเวลา
+                    isButtonAPressed = true;
+                    hasMotorStarted = false;
                 }
-            }
-            // เมื่อไม่กดอะไรทำงานปกติ
-            if (!gamepad2.a) {
-                isButtonAPressed = false;
-                M_S1.setPower(-0.5);  // กลับไปความเร็วเดิม
-                M_S0.setPower(0.0);
-                M_bl.setPower(-0.0);
+
+                // รอเวลาครบ 0.3 วินาที ก่อนเปิดมอเตอร์ดันลูก
+                if (isButtonAPressed && !hasMotorStarted) {
+                    double elapsed = timer.milliseconds();
+
+                    telemetry.addData("Delay Progress", "%.0f / %.0f ms", elapsed, delayMillis);
+
+                    // เมื่อรอครบดีเลย์
+                    if (elapsed >= delayMillis) {
+                        M_S0.setPower(1.0);     // มอเตอร์ดันลูก
+                        M_bl.setPower(-1.0);    // มอเตอร์ยิงจริง
+                        hasMotorStarted = true;
+                    }
+                }
+
+                // เมื่อปล่อยปุ่ม A → หยุดมอเตอร์ทั้งหมดและรีเซ็ตตัวแปร
+                if (!gamepad2.a && isButtonAPressed) {
+                    M_S1.setPower(0);
+                    M_S0.setPower(0);
+                    M_bl.setPower(0);
+
+                    isButtonAPressed = false;
+                    hasMotorStarted = false;
+                }
+
+                telemetry.update();
             }
 
-            // ==================================
-            // Driver Hub KhonNex
-            // ==================================
-
-            telemetry.addLine("24552 AMC KHONE NEX ");
-
-            // แสดงค่ากำลังล้อ Mecanum
-            telemetry.addData("LF Power", "%.2f", powerLF);
-            telemetry.addData("RF Power", "%.2f", powerRF);
-            telemetry.addData("LR Power", "%.2f", powerLR);
-            telemetry.addData("RR Power", "%.2f", powerRR);
-            // แสดงสถานะระบบดึงบอล
-            telemetry.addData("Intake Power", "%.2f", intakePower);
-            // แสดงสถานะระบบยิงบอล
-            telemetry.addData("M_S1 Power", "%.2f", M_S1.getPower());
-            telemetry.addData("M_S0 Power", "%.2f", M_S0.getPower());
-            telemetry.addData("M_bl Power", "%.2f", M_bl.getPower());
-            // แสดงสถานะปุ่ม A และ delay
-            telemetry.addData("Button A Pressed", isButtonAPressed);
-            if (isButtonAPressed) {
-                double elapsed = (getRuntime() * 1000) - M_S1DelayStartTime;
-                telemetry.addData("M_S1 Delay Elapsed (ms)", "%.0f / %.0f", elapsed, delayMillis);
-            }
-            // แสดงค่า Servo
-            telemetry.addData("Servo L1 Pos", "%.2f°", servo1Pos * 180.0);
-            // อัพเดต telemetry
-            telemetry.update();
             sleep(20); //ลดการกินCPU
         }
     }

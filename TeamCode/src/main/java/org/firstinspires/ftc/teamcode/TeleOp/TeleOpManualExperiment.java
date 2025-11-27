@@ -9,7 +9,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 @TeleOp(name="ExperimentalOp", group = "TeleOp")
 public class TeleOpManualExperiment extends LinearOpMode {
-
+    int lastTime = 0;
+    int lastPos = 0;
     DcMotor M_AIN, M_S0, M_S1, M_bl, M_LF, M_RF, M_LR, M_RR;
     Servo SVR_L0, SVR_L1;
     //System Timer
@@ -44,6 +45,7 @@ public class TeleOpManualExperiment extends LinearOpMode {
         M_S0.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         M_S1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         M_bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        M_S1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         waitForStart();
         while (opModeIsActive()){
             if(gamepad2.right_bumper){
@@ -90,11 +92,22 @@ public class TeleOpManualExperiment extends LinearOpMode {
                 }
                 motorTimer.cancel();
             }
+
+            int pos = M_S1.getCurrentPosition();
+            long now = System.currentTimeMillis();
+
+            double dt = (now - lastTime) / 1000.0;     // วินาที
+            int dPos = pos - lastPos;
+
+            double ticksPerSec = dPos / dt;            // ความเร็วจริง
+            double rpm = (ticksPerSec / 537.7) * 60;   // แปลงเป็น RPM
+
             telemetry.addData("M_AIN", M_AIN.getPower());
             telemetry.addData("M_S0", M_S0.getPower());
             telemetry.addData("M_bl", M_bl.getPower());
             telemetry.addData("M_S1", M_S1.getPower());
             telemetry.addData("SVR_L0", SVR_L0.getPosition());
+            telemetry.addData("M_S1 speed (RPM)", rpm);
             telemetry.update();
 
         }
