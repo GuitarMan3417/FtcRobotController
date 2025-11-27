@@ -124,17 +124,17 @@ public class TELEOP_AMC_KHON_NEX extends LinearOpMode {
             //   P2 ระบบยิงบอล A ทำงานตามระบบ
             // ==================================
 
-            double M_S1DelayStartTime = 0;   // เวลาที่กดปุ่ม A
+            double M_S1DelayStartTime = 0;   // เวลาที่กด A
             boolean isButtonAPressed = false;
-            double delayMillis = 500;        // หน่วงเวลา 0.5 วินาที
+            double delayMillis = 300;        // หน่วงเวลา 0.3 วินาที
             M_S1.setPower(0.5);
             M_S0.setPower(0.0);
             M_bi.setPower(0.0);
 
             if (gamepad2.a && !isButtonAPressed) {
                 // เริ่มกดปุ่ม A
-                M_S1.setPower(1.0);              // M_S1 full speed
-                M_S1DelayStartTime = getRuntime() * 1000;  // เก็บเวลาใน ms
+                M_S1.setPower(1.0);              // M_S1 ความเร็ว 1
+                M_S1DelayStartTime = getRuntime() * 1000;  // เก็บเวลาใน MS
                 isButtonAPressed = true;
             }
             if (isButtonAPressed) {
@@ -156,12 +156,29 @@ public class TELEOP_AMC_KHON_NEX extends LinearOpMode {
             // Driver Hub KhonNex
             // ==================================
 
-            telemetry.addLine("24552 AMC KHONE NEX");
-            telemetry.addData("LF/RF/LR/RR", "%.2f  %.2f  %.2f  %.2f",
-                    powerLF, powerRF, powerLR, powerRR);
-            telemetry.addData("Servo L1", "%.0f°", servo1Pos * 180.0);
-            telemetry.update();
+            telemetry.addLine("24552 AMC KHONE NEX ");
 
+            // แสดงค่ากำลังล้อ Mecanum
+            telemetry.addData("LF Power", "%.2f", powerLF);
+            telemetry.addData("RF Power", "%.2f", powerRF);
+            telemetry.addData("LR Power", "%.2f", powerLR);
+            telemetry.addData("RR Power", "%.2f", powerRR);
+            // แสดงสถานะระบบดึงบอล
+            telemetry.addData("Intake Power", "%.2f", intakePower);
+            // แสดงสถานะระบบยิงบอล
+            telemetry.addData("M_S1 Power", "%.2f", M_S1.getPower());
+            telemetry.addData("M_S0 Power", "%.2f", M_S0.getPower());
+            telemetry.addData("M_bi Power", "%.2f", M_bi.getPower());
+            // แสดงสถานะปุ่ม A และ delay
+            telemetry.addData("Button A Pressed", isButtonAPressed);
+            if (isButtonAPressed) {
+                double elapsed = (getRuntime() * 1000) - M_S1DelayStartTime;
+                telemetry.addData("M_S1 Delay Elapsed (ms)", "%.0f / %.0f", elapsed, delayMillis);
+            }
+            // แสดงค่า Servo
+            telemetry.addData("Servo L1 Pos", "%.2f°", servo1Pos * 180.0);
+            // อัพเดต telemetry
+            telemetry.update();
             sleep(20); //ลดการกินCPU
         }
     }
