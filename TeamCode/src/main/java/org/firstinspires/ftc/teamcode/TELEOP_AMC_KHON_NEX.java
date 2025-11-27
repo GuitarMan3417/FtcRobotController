@@ -19,7 +19,7 @@ public class TELEOP_AMC_KHON_NEX extends LinearOpMode {
 
     DcMotor M_AIN;                   //Motor ดึงบอลเข้า
 
-    DcMotor M_S0, M_S1, M_bi;              //Motor ดันบอลและยิงบอล
+    DcMotor M_S0, M_S1, M_bl;              //Motor ดันบอลและยิงบอล
 
     Servo SVR_L0, SVR_L1;            //Servo 2 ตัว
 
@@ -39,6 +39,9 @@ public class TELEOP_AMC_KHON_NEX extends LinearOpMode {
 
         M_S0 = hardwareMap.get(DcMotor.class, "M_S0");       //Motor ดันบอล
         M_S1 = hardwareMap.get(DcMotor.class, "M_S1");       //Motor ยิงบอล
+        M_bl = hardwareMap.get(DcMotor.class, "M_bl");       //Motor ยิงบอล
+
+
 
         SVR_L0 = hardwareMap.get(Servo.class, "SVR_L0");     //Servo ดันบอลเข้ายิง
         SVR_L1 = hardwareMap.get(Servo.class, "SVR_L1");     //Servo ปรับองศาการยิง
@@ -126,14 +129,14 @@ public class TELEOP_AMC_KHON_NEX extends LinearOpMode {
 
             double M_S1DelayStartTime = 0;   // เวลาที่กด A
             boolean isButtonAPressed = false;
-            double delayMillis = 300;        // หน่วงเวลา 0.3 วินาที
-            M_S1.setPower(0.5);
+            double delayMillis = 3;        // หน่วงเวลา 0.3 วินาที
+            M_S1.setPower(-0.5);
             M_S0.setPower(0.0);
-            M_bi.setPower(0.0);
+            M_bl.setPower(-0.0);
 
             if (gamepad2.a && !isButtonAPressed) {
                 // เริ่มกดปุ่ม A
-                M_S1.setPower(1.0);              // M_S1 ความเร็ว 1
+                M_S1.setPower(-1.0);              // M_S1 ความเร็ว 1
                 M_S1DelayStartTime = getRuntime() * 1000;  // เก็บเวลาใน MS
                 isButtonAPressed = true;
             }
@@ -141,15 +144,15 @@ public class TELEOP_AMC_KHON_NEX extends LinearOpMode {
                 double elapsed = (getRuntime() * 1000) - M_S1DelayStartTime;
                 if (elapsed >= delayMillis) {
                     M_S0.setPower(1.0);
-                    M_bi.setPower(1.0);
+                    M_bl.setPower(-1.0);
                 }
             }
             // เมื่อไม่กดอะไรทำงานปกติ
             if (!gamepad2.a) {
                 isButtonAPressed = false;
-                M_S1.setPower(0.5);  // กลับไปความเร็วเดิม
+                M_S1.setPower(-0.5);  // กลับไปความเร็วเดิม
                 M_S0.setPower(0.0);
-                M_bi.setPower(0.0);
+                M_bl.setPower(-0.0);
             }
 
             // ==================================
@@ -168,7 +171,7 @@ public class TELEOP_AMC_KHON_NEX extends LinearOpMode {
             // แสดงสถานะระบบยิงบอล
             telemetry.addData("M_S1 Power", "%.2f", M_S1.getPower());
             telemetry.addData("M_S0 Power", "%.2f", M_S0.getPower());
-            telemetry.addData("M_bi Power", "%.2f", M_bi.getPower());
+            telemetry.addData("M_bl Power", "%.2f", M_bl.getPower());
             // แสดงสถานะปุ่ม A และ delay
             telemetry.addData("Button A Pressed", isButtonAPressed);
             if (isButtonAPressed) {

@@ -20,6 +20,9 @@ public class PedroPathingTeleOp1 extends LinearOpMode {
         // ถ้าล้อคุณต้องกลับทิศ ให้แก้ตรงนี้
         LF.setDirection(DcMotor.Direction.FORWARD);
         LR.setDirection(DcMotor.Direction.FORWARD);
+        RF.setDirection(DcMotor.Direction.REVERSE);
+        RR.setDirection(DcMotor.Direction.REVERSE);
+
 
         LF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -44,17 +47,17 @@ public class PedroPathingTeleOp1 extends LinearOpMode {
 
             // ========= FORWARD (A) =========
             if (gamepad1.a) {
-                driveForward(0.3);
+                driveForward(1);
             }
 
             // ========= STRAFE (B) =========
             else if (gamepad1.b) {
-                driveStrafe(0.3);
+                driveStrafe(1);
             }
 
             // ========= TURN (X) =========
             else if (gamepad1.x) {
-                driveTurn(0.3);
+                driveTurn(1);
             }
 
             // ========= STOP =========
