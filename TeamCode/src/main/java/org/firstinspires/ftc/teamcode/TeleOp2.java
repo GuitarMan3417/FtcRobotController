@@ -180,7 +180,7 @@ public class TeleOp2 extends LinearOpMode {
             //   แสดงข้อมูลบนหน้าจอ Driver Hub
             // ========================================================
 
-            telemetry.addLine("=== 24552 KhonNex ===");
+            telemetry.addLine("24552 AMC KHONE NEX");
             telemetry.addData("LF/RF/LR/RR", "%.2f  %.2f  %.2f  %.2f",
                     powerLF, powerRF, powerLR, powerRR);
             telemetry.addData("Servo L0", "%.0f°", currentPos * 180.0);
