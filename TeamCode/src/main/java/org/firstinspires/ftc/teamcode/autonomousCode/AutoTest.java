@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.autonomousCode;
 
+import static java.lang.Thread.sleep;
+
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
@@ -140,6 +142,7 @@ public class AutoTest extends OpMode {
                     M_S0.setPower(0.8);
                     M_S1.setPower(1.0);
 
+
                     // ตั้งเวลาเพื่อรอ Servo
                     pathTimer.resetTimer();
 
@@ -248,7 +251,6 @@ public class AutoTest extends OpMode {
 
         telemetry.addLine("---- Servo ----");
         telemetry.addData("SVR_L1 Pos", "%.2f", SVR_L1.getPosition());
-
         telemetry.update();
     }
 }
