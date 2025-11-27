@@ -36,8 +36,8 @@ public class Constants {
             .forwardTicksToInches(0.0091492) //Insert ticks (push robot 2 inches) 0.0083 0.0083535207
             .strafeTicksToInches(0.0092)//Insert ticks (push robot 2 inches)0.0022
             .turnTicksToInches(0.022)  //Insert ticks (rotate robot full counterclockwise 1 time)0.01795
-            .robotLength(12.5)//Inch Unit
-            .robotWidth(8.5)//Inch Unit (Prev 3.5)
+            .robotLength(12.5)//Inch Unit (Needs Adjustment)
+            .robotWidth(8.5)//Inch Unit (Prev 3.5) (Needs Adjustment)
             .rightFrontMotorName("M_RF")
             .rightRearMotorName("M_RR")
             .leftRearMotorName("M_LR")
