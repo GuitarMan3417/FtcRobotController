@@ -30,8 +30,6 @@ public class Constants {
 
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100,1,1);
 
-
-
     public static DriveEncoderConstants localizerConstants = new DriveEncoderConstants()
             .forwardTicksToInches(0.0091492) //Insert ticks (push robot 2 inches) 0.0083 0.0083535207
             .strafeTicksToInches(0.0092)//Insert ticks (push robot 2 inches)0.0022

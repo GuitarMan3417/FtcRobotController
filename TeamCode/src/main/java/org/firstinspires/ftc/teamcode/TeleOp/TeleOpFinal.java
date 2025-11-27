@@ -20,7 +20,7 @@ import java.util.TimerTask;
 import java.util.function.Supplier;
 
 @Configurable
-@TeleOp
+@TeleOp(name = "TeleOp: Final", group = "TeleOp")
 public class TeleOpFinal extends OpMode {
     //Shooting Variables
     private int shootingAngle = 0; //Initial shooting angle
@@ -130,7 +130,7 @@ public class TeleOpFinal extends OpMode {
         //Call this once per loop
         follower.update();
         telemetryM.update();
-
+        shootingAct();
         if (!automatedDrive) {
             //Make the last parameter false for field-centric
             //In case the drivers want to use a "slowMode" you can scale the vectors
@@ -183,7 +183,7 @@ public class TeleOpFinal extends OpMode {
         telemetryM.debug("velocity", follower.getVelocity());
         telemetryM.debug("automatedDrive", automatedDrive);
         telemetryM.debug("Pose X", follower.getPose().getX());
-        telemetryM.debug("Follower Y", follower.getPose().getY());
-
+        telemetryM.debug("Pose Y", follower.getPose().getY());
+        telemetryM.update();
     }
 }
