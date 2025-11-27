@@ -3,29 +3,49 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import java.util.Timer;
 import java.util.TimerTask;
 @TeleOp(name="ExperimentalOp", group = "TeleOp")
 public class TeleOpManualExperiment extends LinearOpMode {
-    int lastTime = 0;
-    int lastPos = 0;
+
     DcMotor M_AIN, M_S0, M_S1, M_bl, M_LF, M_RF, M_LR, M_RR;
     Servo SVR_L0, SVR_L1;
     //System Timer
-    Timer motorTimer = new Timer();
+
     TimerTask motorAct = new TimerTask() {
         @Override
         public void run() {
             M_bl.setPower(1);
         }
     };
+
     private int shootingAngle = 0; //Initial shooting angle
     private int angleAdd = 1; //Servo angle addition value
+    int timerState = 0;
+    int createTimer = 0;
+    long runtime = System.nanoTime();
+    public Timer motorTimer = new Timer();
+    public void shootingAct() throws InterruptedException {
+        if(gamepad2.b){
+            telemetry.addLine("Shooting!");
+            M_S1.setPower(-1);
+            M_S0.setPower(1);
+            Thread.sleep(600);
+            M_bl.setPower(-1);
 
+
+        }
+        else{
+            M_bl.setPower(0);
+            M_S1.setPower(-0.35);
+
+        }
+    }
     @Override
-    public void runOpMode(){
+    public void runOpMode() throws InterruptedException {
         M_LF = hardwareMap.get(DcMotor.class, "M_LF");
         M_RF = hardwareMap.get(DcMotor.class, "M_RF");
         M_LR = hardwareMap.get(DcMotor.class, "M_LR");
@@ -37,6 +57,15 @@ public class TeleOpManualExperiment extends LinearOpMode {
         SVR_L0 = hardwareMap.get(Servo.class, "SVR_L0");
         SVR_L1 = hardwareMap.get(Servo.class, "SVR_L1");
 
+        // ==================================
+        //   ตั้งทิศทางของมอเตอร์สำหรับ Mecanum
+        // ==================================
+
+        M_LF.setDirection(DcMotorSimple.Direction.FORWARD); // ล้อซ้ายบน
+        M_LR.setDirection(DcMotorSimple.Direction.FORWARD); // ล้อขวาบน
+        M_RF.setDirection(DcMotorSimple.Direction.REVERSE); // ล้อซ้ายล่าง
+        M_RR.setDirection(DcMotorSimple.Direction.REVERSE); // ล้อขวาล่าง
+
         M_LF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         M_RF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         M_LR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -45,9 +74,12 @@ public class TeleOpManualExperiment extends LinearOpMode {
         M_S0.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         M_S1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         M_bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        M_S1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         waitForStart();
         while (opModeIsActive()){
+            if(createTimer == 1){
+                Timer motorTimer = new Timer();
+                createTimer = 2;
+            }
             if(gamepad2.right_bumper){
                 shootingAngle += angleAdd;
             }
@@ -76,38 +108,45 @@ public class TeleOpManualExperiment extends LinearOpMode {
             M_S0.setPower(gamepad2.x ? -1:M_S0.getPower()); //X pressed = reverse direction with maximum speed
 
             //Blocking motor & shooting motor
-            if(gamepad2.b){
-                telemetry.addLine("Shooting!");
-                M_S1.setPower(-1);
-                if(gamepad2.bWasPressed()){
-                    motorTimer.schedule(motorAct, 300); //Run this task once within 300 ms
-                }
+            shootingAct();
 
-            }
-            else{
-                M_bl.setPower(0);
-                M_S1.setPower(-0.35);
-                if(gamepad2.bWasReleased()){
-                    motorTimer.cancel();
-                }
-                motorTimer.cancel();
-            }
+            //Driving
+            double forwardBackward = -gamepad1.left_stick_y; //L3 เดินหน้าเดินหลัง
 
-            int pos = M_S1.getCurrentPosition();
-            long now = System.currentTimeMillis();
+            double strafe = gamepad1.left_stick_x;           //L3 สไลด์ซ้ายขวา
 
-            double dt = (now - lastTime) / 1000.0;     // วินาที
-            int dPos = pos - lastPos;
+            double rotate = gamepad1.right_stick_x;          //R3 หันทางซ้ายหันทางขวา
 
-            double ticksPerSec = dPos / dt;            // ความเร็วจริง
-            double rpm = (ticksPerSec / 537.7) * 60;   // แปลงเป็น RPM
+            //ระบบคำนวณกำลังล้อ Mecanum 4 ล้อ
+            double speedMultiplier = 0.5;
+            double powerLF = (forwardBackward + strafe + rotate) * speedMultiplier;
+            double powerRF = (forwardBackward - strafe - rotate) * speedMultiplier;
+            double powerLR = (forwardBackward - strafe + rotate) * speedMultiplier;
+            double powerRR = (forwardBackward + strafe - rotate) * speedMultiplier;
 
+            //ป้องกันค่ากำลังเกิน 1.0
+            double max = Math.max(1.0,
+                    Math.max(Math.abs(powerLF),
+                            Math.max(Math.abs(powerRF),
+                                    Math.max(Math.abs(powerLR), Math.abs(powerRR)))));
+
+            powerLF /= max;
+            powerRF /= max;
+            powerLR /= max;
+            powerRR /= max;
+
+            //ส่งกำลังไป Motor
+            M_LF.setPower(powerLF);
+            M_RF.setPower(powerRF);
+            M_LR.setPower(powerLR);
+            M_RR.setPower(powerRR);
             telemetry.addData("M_AIN", M_AIN.getPower());
             telemetry.addData("M_S0", M_S0.getPower());
             telemetry.addData("M_bl", M_bl.getPower());
             telemetry.addData("M_S1", M_S1.getPower());
             telemetry.addData("SVR_L0", SVR_L0.getPosition());
-            telemetry.addData("M_S1 speed (RPM)", rpm);
+            telemetry.addData("Timer State", timerState);
+            telemetry.addData("Create Timer", createTimer);
             telemetry.update();
 
         }

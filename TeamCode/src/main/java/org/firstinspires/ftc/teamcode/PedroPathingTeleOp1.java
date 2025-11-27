@@ -47,17 +47,17 @@ public class PedroPathingTeleOp1 extends LinearOpMode {
 
             // ========= FORWARD (A) =========
             if (gamepad1.a) {
-                driveForward(1);
+                driveForward(0.3);
             }
 
             // ========= STRAFE (B) =========
             else if (gamepad1.b) {
-                driveStrafe(1);
+                driveStrafe(0.3);
             }
 
             // ========= TURN (X) =========
             else if (gamepad1.x) {
-                driveTurn(1);
+                driveTurn(0.3);
             }
 
             // ========= STOP =========
