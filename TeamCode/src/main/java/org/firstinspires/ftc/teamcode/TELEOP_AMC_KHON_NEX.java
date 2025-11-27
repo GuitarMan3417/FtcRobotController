@@ -139,16 +139,12 @@ public class TELEOP_AMC_KHON_NEX extends LinearOpMode {
             while (opModeIsActive()) {
 
                 // ==================================
-                //   M_S1 หมุนช้า ๆ ตลอดเวลา
-                // ==================================
-                M_S1.setPower(0.5);
-
-                // ==================================
                 //   ระบบยิงด้วยปุ่ม A
                 // ==================================
 
                 // เมื่อกด A ครั้งแรก
                 if (gamepad2.a && !isButtonAPressed) {
+                    M_S1.setPower(-1.0);     // มอเตอร์ยิงลมเริ่มหมุน
                     timer.reset();           // เริ่มจับเวลา
                     isButtonAPressed = true;
                     hasMotorStarted = false;
@@ -168,17 +164,22 @@ public class TELEOP_AMC_KHON_NEX extends LinearOpMode {
                     }
                 }
 
-                // เมื่อปล่อยปุ่ม A → หยุดมอเตอร์ดันลูก/ยิงจริง และรีเซ็ตตัวแปร
-                if (!gamepad2.a && isButtonAPressed) {
+                // เมื่อปล่อยปุ่ม A → M_S1 หมุนช้า ๆ, มอเตอร์อื่นหยุด
+                if (!gamepad2.a) {
+                    M_S1.setPower(-0.5);  // หมุนช้า ๆ
                     M_S0.setPower(0);
                     M_bl.setPower(0);
 
-                    isButtonAPressed = false;
-                    hasMotorStarted = false;
+                    // รีเซ็ตตัวแปรเมื่อก่อนหน้ากด A
+                    if (isButtonAPressed) {
+                        isButtonAPressed = false;
+                        hasMotorStarted = false;
+                    }
                 }
 
                 telemetry.update();
             }
+
 
 
             sleep(20); //ลดการกินCPU
