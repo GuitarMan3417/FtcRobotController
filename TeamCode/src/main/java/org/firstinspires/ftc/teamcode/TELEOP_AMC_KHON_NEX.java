@@ -127,33 +127,39 @@ public class TELEOP_AMC_KHON_NEX extends LinearOpMode {
             //   P2 ระบบยิงบอล A ทำงานตามระบบ
             // ==================================
 
-            double M_S1DelayStartTime = 0;   // เวลาที่กด A
+            long delayStartTime = 0;
             boolean isButtonAPressed = false;
-            double delayMillis = 3;        // หน่วงเวลา 0.3 วินาที
-            M_S1.setPower(-0.5);
-            M_S0.setPower(0.0);
-            M_bl.setPower(-0.0);
+            boolean hasMotorStarted = false;
+            long delayMillis = 300; // 0.3 วินาที
 
+            // ใน loop
             if (gamepad2.a && !isButtonAPressed) {
-                // เริ่มกดปุ่ม A
-                M_S1.setPower(-1.0);              // M_S1 ความเร็ว 1
-                M_S1DelayStartTime = getRuntime() * 1000;  // เก็บเวลาใน MS
+                M_S1.setPower(-1.0);
+                delayStartTime = System.currentTimeMillis();  // เก็บเวลาเริ่มต้น
                 isButtonAPressed = true;
+                hasMotorStarted = false;
             }
-            if (isButtonAPressed) {
-                double elapsed = (getRuntime() * 1000) - M_S1DelayStartTime;
+
+            if (isButtonAPressed && !hasMotorStarted) {
+                long elapsed = System.currentTimeMillis() - delayStartTime;
+                telemetry.addData("Delay Progress", "%d / %d ms", elapsed, delayMillis);
+                telemetry.update();
+
                 if (elapsed >= delayMillis) {
                     M_S0.setPower(1.0);
                     M_bl.setPower(-1.0);
+                    hasMotorStarted = true;
                 }
             }
-            // เมื่อไม่กดอะไรทำงานปกติ
+
             if (!gamepad2.a) {
                 isButtonAPressed = false;
-                M_S1.setPower(-0.5);  // กลับไปความเร็วเดิม
+                hasMotorStarted = false;
+                M_S1.setPower(-0.5);
                 M_S0.setPower(0.0);
-                M_bl.setPower(-0.0);
+                M_bl.setPower(0.0);
             }
+
 
             // ==================================
             // Driver Hub KhonNex
@@ -175,7 +181,7 @@ public class TELEOP_AMC_KHON_NEX extends LinearOpMode {
             // แสดงสถานะปุ่ม A และ delay
             telemetry.addData("Button A Pressed", isButtonAPressed);
             if (isButtonAPressed) {
-                double elapsed = (getRuntime() * 1000) - M_S1DelayStartTime;
+                double elapsed = (getRuntime() * 1000) - delayStartTime;
                 telemetry.addData("M_S1 Delay Elapsed (ms)", "%.0f / %.0f", elapsed, delayMillis);
             }
             // แสดงค่า Servo
