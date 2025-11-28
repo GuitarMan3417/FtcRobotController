@@ -18,7 +18,7 @@ public class TELEOP_AMC_KHON_NEX extends LinearOpMode {
 
     DcMotor M_AIN;                   //Motor ดึงบอลเข้า
 
-    DcMotor M_S0, M_S1, M_bl;              //Motor ดันบอลและยิงบอล
+    DcMotor M_S0, M_S1, M_bl;        //Motor ดันบอลและยิงบอล
 
     Servo SVR_L0, SVR_L1;            //Servo 2 ตัว
 
@@ -119,7 +119,7 @@ public class TELEOP_AMC_KHON_NEX extends LinearOpMode {
             //   P1 ระบบดึงบอลเข้า
             // ==================================
 
-            double intakePower = 0.0;
+            double intakePower = 0.18;
             if (gamepad1.b) {
                 intakePower = -0.60;                // ปล่อย Artifact ออก B
             } else if (gamepad1.left_trigger > 0.1) {
@@ -139,11 +139,11 @@ public class TELEOP_AMC_KHON_NEX extends LinearOpMode {
             while (opModeIsActive()) {
 
                 // ==================================
-                //   ระบบยิงด้วยปุ่ม A
+                //   ระบบยิงด้วยปุ่ม B
                 // ==================================
 
-                // เมื่อกด A ครั้งแรก
-                if (gamepad2.a && !isButtonAPressed) {
+                // เมื่อกด B ครั้งแรก
+                if (gamepad2.b && !isButtonAPressed) {
                     M_S1.setPower(-1.0);     // มอเตอร์ยิงลมเริ่มหมุน
                     timer.reset();           // เริ่มจับเวลา
                     isButtonAPressed = true;
@@ -164,8 +164,8 @@ public class TELEOP_AMC_KHON_NEX extends LinearOpMode {
                     }
                 }
 
-                // เมื่อปล่อยปุ่ม A → M_S1 หมุนช้า ๆ, มอเตอร์อื่นหยุด
-                if (!gamepad2.a) {
+                // เมื่อปล่อยปุ่ม B → M_S1 หมุนช้า ๆ, มอเตอร์อื่นหยุด
+                if (!gamepad2.b) {
                     M_S1.setPower(-0.5);  // หมุนช้า ๆ
                     M_S0.setPower(0);
                     M_bl.setPower(0);
@@ -179,8 +179,6 @@ public class TELEOP_AMC_KHON_NEX extends LinearOpMode {
 
                 telemetry.update();
             }
-
-
 
             sleep(20); //ลดการกินCPU
         }
