@@ -31,23 +31,23 @@ public class autonomous_LineSample extends OpMode {
         Path1 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(56.000, 8.000), new Pose(56.175, 83.682))
+                        new BezierLine(new Pose(56.000, 8.000), new Pose(56.175, 87.994))
                 )
-                .setTangentHeadingInterpolation()
+                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(135))
                 .build();
 
         Path2 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(56.000, 83.682), new Pose(126.269, 83.517))
+                        new BezierLine(new Pose(56.175, 87.994), new Pose(44.771,59.655))
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(180))
                 .build();
 
         Path3 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(126.269, 83.517), new Pose(126.435, 120.470))
+                        new BezierLine(new Pose(44.771,59.655), new Pose(15.245,59.820))
                 )
                 .setTangentHeadingInterpolation()
                 .build();
@@ -95,7 +95,7 @@ public class autonomous_LineSample extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         buildPaths();
         follower.setStartingPose(new Pose(56, 8, Math.toRadians(90)));
-        follower.setMaxPower(0.6);
+        follower.setMaxPower(0.5);
     }
     @Override
     public void init_loop(){ //Loop (Initialize Mode)
