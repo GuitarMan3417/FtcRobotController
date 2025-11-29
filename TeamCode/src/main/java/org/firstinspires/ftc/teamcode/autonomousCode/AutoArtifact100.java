@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 
-@Autonomous(name="Autonomous", group = "Autonomous")
+@Autonomous(name="AutoArtifact100", group = "Autonomous")
 public class AutoArtifact100 extends OpMode {
     DcMotor M_LF, M_RF, M_LR, M_RR;   // มอเตอร์ล้อทั้ง 4 (Mecanum)
 
@@ -40,7 +40,7 @@ public class AutoArtifact100 extends OpMode {
         Path3 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(39.000, 59.600), new Pose(13.500, 59.600))
+                        new BezierLine(new Pose(39.000, 59.600), new Pose(15.000, 59.600))
                 )
                 .setTangentHeadingInterpolation()
                 .build();
@@ -48,7 +48,7 @@ public class AutoArtifact100 extends OpMode {
         Path4 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(13.500, 59.600), new Pose(56.000, 87.500))
+                        new BezierLine(new Pose(15.000, 59.600), new Pose(56.000, 87.500))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(135))
                 .build();
@@ -64,7 +64,7 @@ public class AutoArtifact100 extends OpMode {
         Path6 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(39.000, 35.500), new Pose(13.500, 35.500))
+                        new BezierLine(new Pose(39.000, 35.500), new Pose(15.000, 35.500))
                 )
                 .setTangentHeadingInterpolation()
                 .build();
@@ -145,7 +145,6 @@ public class AutoArtifact100 extends OpMode {
         pathTimer = new Timer();
         opModeTimer = new Timer();
         opModeTimer.resetTimer();
-
         follower = Constants.createFollower(hardwareMap);
 
         // ===== ระบบเบรกมอเตอร์ =====
@@ -162,7 +161,7 @@ public class AutoArtifact100 extends OpMode {
 
         buildPaths();
         follower.setStartingPose(new Pose(56,8, Math.toRadians(90)));
-        follower.setMaxPower(1);
+        follower.setMaxPower(0.8);
     }
 
 
