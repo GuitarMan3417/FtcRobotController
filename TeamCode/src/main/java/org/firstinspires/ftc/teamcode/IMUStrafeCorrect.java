@@ -5,74 +5,116 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@TeleOp(name="IMU", group="TeleOp")
-public class IMUStrafeCorrect extends LinearOpMode {
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-    private DcMotor M_LF, M_RF, M_LR, M_RR;
-    private BNO055IMU imu;
-    private double targetAngle = 0; // มุมเป้าหมาย (เรียบตรง)
+@TeleOp(name = "IMU_STRAFE_FIX", group = "TeleOp")
+public class IMUStrafeCorrect extends LinearOpMode {
 
     @Override
     public void runOpMode() {
 
-        // ผูกมอเตอร์
+        DcMotor M_LF, M_RF, M_LR, M_RR;
+        BNO055IMU imu;
+        final double targetAngle = 0;
+
+        // -------------------------
+        // Motor Mapping
+        // -------------------------
         M_LF = hardwareMap.get(DcMotor.class, "M_LF");
         M_RF = hardwareMap.get(DcMotor.class, "M_RF");
         M_LR = hardwareMap.get(DcMotor.class, "M_LR");
         M_RR = hardwareMap.get(DcMotor.class, "M_RR");
 
+        // ทิศตามบอทของคุณ (รูปที่ส่งมา)
         M_LF.setDirection(DcMotor.Direction.FORWARD);
         M_RF.setDirection(DcMotor.Direction.FORWARD);
         M_LR.setDirection(DcMotor.Direction.REVERSE);
         M_RR.setDirection(DcMotor.Direction.REVERSE);
 
-        // ตั้งค่า IMU
+        // -------------------------
+        // IMU Setup — รองรับวาง Hub แบบที่คุณใช้อยู่
+        // USB = ซ้าย, Motor Ports = หลัง
+        // ต้องกลับแกนมุมรอบ Z
+        // -------------------------
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
+        telemetry.addLine("Calibrating IMU...");
+        telemetry.update();
+
+        while (!isStopRequested() && !imu.isGyroCalibrated()) {
+            sleep(50);
+        }
+
+        telemetry.addLine("READY!");
+        telemetry.update();
+
         waitForStart();
 
+        // -------------------------
+        // LOOP
+        // -------------------------
         while (opModeIsActive()) {
-            // อ่านค่า joystick
-            double drive = -gamepad1.left_stick_y;   // เดินหน้า/ถอยหลัง
-            double strafe = gamepad1.left_stick_x;   // สไลด์ซ้าย/ขวา
-            double rotate = gamepad1.right_stick_x;  // หมุน
 
-            // อ่านมุมปัจจุบันจาก IMU
-            double cuM_RRentAngle = imu.getAngularOrientation().firstAngle;
-            double angleEM_RRor = cuM_RRentAngle - targetAngle;
+            double drive  = -gamepad1.left_stick_y;
+            double strafe =  gamepad1.left_stick_x;
+            double rotate =  gamepad1.right_stick_x;
 
-            // ค่าความแม่นยำในการแก้เอียง (ปรับตามความเร็ว/ความแรง)
+            // อ่านมุม IMU
+            Orientation angles = imu.getAngularOrientation(
+                    AxesReference.INTRINSIC,
+                    AxesOrder.ZYX,
+                    AngleUnit.DEGREES
+            );
+
+            // Control Hub ของคุณวางกลับด้าน → ต้องสลับมุมด้วย (-)
+            double currentAngle = -angles.firstAngle;
+            double angleError = currentAngle - targetAngle;
+
+            // ค่าแก้เอียง
             double kP = 0.05;
-            double coM_RRection = angleEM_RRor * kP;
+            double correction = angleError * kP;
 
-            // คำนวณกำลังมอเตอร์ (รวม strafe + coM_RRection)
-            double M_LFPower = drive + strafe - coM_RRection;
-            double M_RFPower = drive - strafe + coM_RRection;
-            double M_LRPower = drive - strafe - coM_RRection;
-            double M_RRPower = drive + strafe + coM_RRection;
+            // -------------------------
+            // สูตร MECANUM ที่ถูกต้อง
+            // -------------------------
+            double LF = drive + strafe - correction;
+            double RF = drive - strafe + correction;
+            double LR = drive - strafe - correction;
+            double RR = drive + strafe + correction;
 
-            // จำกัดค่ากำลังไม่เกิน 1
-            double max = Math.max(Math.max(Math.abs(M_LFPower), Math.abs(M_RFPower)),
-                    Math.max(Math.abs(M_LRPower), Math.abs(M_RRPower)));
+            // ใส่หมุนตาม joystick
+            LF += rotate;
+            RF -= rotate;
+            LR += rotate;
+            RR -= rotate;
+
+            // Normalize
+            double max = Math.max(Math.max(Math.abs(LF), Math.abs(RF)),
+                    Math.max(Math.abs(LR), Math.abs(RR)));
             if (max > 1.0) {
-                M_LFPower /= max;
-                M_RFPower /= max;
-                M_LRPower /= max;
-                M_RRPower /= max;
+                LF /= max;
+                RF /= max;
+                LR /= max;
+                RR /= max;
             }
 
-            // เซ็ตกำลังมอเตอร์
-            M_LF.setPower(M_LFPower);
-            M_RF.setPower(M_RFPower);
-            M_LR.setPower(M_LRPower);
-            M_RR.setPower(M_RRPower);
+            // Apply power
+            M_LF.setPower(LF);
+            M_RF.setPower(RF);
+            M_LR.setPower(LR);
+            M_RR.setPower(RR);
 
-            // แสดง telemetry
-            telemetry.addData("Angle", cuM_RRentAngle);
-            telemetry.addData("CoM_RRection", coM_RRection);
+            // Debug
+            telemetry.addData("Angle", currentAngle);
+            telemetry.addData("Error", angleError);
+            telemetry.addData("Correction", correction);
             telemetry.update();
         }
     }

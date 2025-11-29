@@ -93,6 +93,7 @@ public class TeleOpManualExperiment extends LinearOpMode {
             //Intake Motor
             double intakePower = 0;
             if(gamepad1.b){
+
                 intakePower = -0.65;
             }
 
