@@ -10,95 +10,77 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @TeleOp(name = "TELEOP_AMC_KHON_NEX", group = "TeleOp")
 public class TELEOP_AMC_KHON_NEX extends LinearOpMode {
 
-    // ==================================
-    //   ประกาศตัวแปรทั้งหมด / Hardware All
-    // ==================================
-
-    DcMotor M_LF, M_RF, M_LR, M_RR; //Motor ขับเคลื่อนที่ 4 ล้อ ( Mecanum )
-
-    DcMotor M_AIN;                   //Motor ดึงบอลเข้า
-
-    DcMotor M_S0, M_S1, M_bl;        //Motor ดันบอลและยิงบอล
-
-    Servo SVR_L0, SVR_L1;            //Servo 2 ตัว
+    DcMotor M_LF, M_RF, M_LR, M_RR;   // Mecanum drive
+    DcMotor M_AIN;                   // Intake motor
+    DcMotor M_S0, M_S1, M_bl;        // Shooting motors
+    Servo SVR_L0, SVR_L1;            // Servos
 
     @Override
     public void runOpMode() {
 
-        // ==================================
-        //   ชื่อตัวแปรทั้งหมด Hardware Config
-        // ==================================
+        // ===============================
+        // Hardware Map
+        // ===============================
+        M_LF = hardwareMap.get(DcMotor.class, "M_LF");
+        M_RF = hardwareMap.get(DcMotor.class, "M_RF");
+        M_LR = hardwareMap.get(DcMotor.class, "M_LR");
+        M_RR = hardwareMap.get(DcMotor.class, "M_RR");
 
-        M_LF = hardwareMap.get(DcMotor.class, "M_LF");       //Motor ล้อซ้ายบน
-        M_RF = hardwareMap.get(DcMotor.class, "M_RF");       //Motor ล้อขวาบน
-        M_LR = hardwareMap.get(DcMotor.class, "M_LR");       //Motor ล้อซ้ายล่าง
-        M_RR = hardwareMap.get(DcMotor.class, "M_RR");       //Motor ล้อขวาล่าง
+        M_AIN = hardwareMap.get(DcMotor.class, "M_AIN");
 
-        M_AIN = hardwareMap.get(DcMotor.class, "M_AIN");     //Motor ดึงบอลเข้า
+        M_S0 = hardwareMap.get(DcMotor.class, "M_S0");
+        M_S1 = hardwareMap.get(DcMotor.class, "M_S1");
+        M_bl = hardwareMap.get(DcMotor.class, "M_bl");
 
-        M_S0 = hardwareMap.get(DcMotor.class, "M_S0");       //Motor ดันบอล
-        M_S1 = hardwareMap.get(DcMotor.class, "M_S1");       //Motor ยิงบอล
-        M_bl = hardwareMap.get(DcMotor.class, "M_bl");       //Motor ยิงบอล
+        SVR_L0 = hardwareMap.get(Servo.class, "SVR_L0");
+        SVR_L1 = hardwareMap.get(Servo.class, "SVR_L1");
 
+        // ===============================
+        // Motor Directions
+        // ===============================
+        M_LF.setDirection(DcMotorSimple.Direction.FORWARD);
+        M_LR.setDirection(DcMotorSimple.Direction.FORWARD);
+        M_RF.setDirection(DcMotorSimple.Direction.REVERSE);
+        M_RR.setDirection(DcMotorSimple.Direction.REVERSE);
 
-
-        SVR_L0 = hardwareMap.get(Servo.class, "SVR_L0");     //Servo ดันบอลเข้ายิง
-        SVR_L1 = hardwareMap.get(Servo.class, "SVR_L1");     //Servo ปรับองศาการยิง
-
-        // ==================================
-        //   ตั้งทิศทางของมอเตอร์สำหรับ Mecanum
-        // ==================================
-
-        M_LF.setDirection(DcMotorSimple.Direction.FORWARD); // ล้อซ้ายบน
-        M_LR.setDirection(DcMotorSimple.Direction.FORWARD); // ล้อขวาบน
-        M_RF.setDirection(DcMotorSimple.Direction.REVERSE); // ล้อซ้ายล่าง
-        M_RR.setDirection(DcMotorSimple.Direction.REVERSE); // ล้อขวาล่าง
-
-        // ==================================
-        //   ระบบเบรกเมื่อปล่อยคันโยก GamePad
-        // ==================================
-
+        // ===============================
+        // Zero Power Behavior
+        // ===============================
         M_LF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         M_RF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         M_LR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         M_RR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         M_AIN.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        // ==================================
-        //   Servo Hardware Config
-        // ==================================
+        // ===============================
+        // Servo init
+        // ===============================
+        SVR_L1.setPosition(0);   // 0 degree
 
-        double servo1Min = 0.0;
-        double servo1Pos = servo1Min / 180.0; // เริ่มต้น 0°
-        SVR_L1.setPosition(servo1Pos);
+        waitForStart();
 
-        waitForStart(); //Start Code
+        double speedMultiplier = 0.5;
 
-        double speedMultiplier = 0.5;  //   ความเร็ว ( 0.5 = เต็ม )
-
-        // ==================================
-        //   P2 shooting system state
-        // ==================================
+        // Shooting System Vars
         ElapsedTime shooterTimer = new ElapsedTime();
-        boolean isShootingActive = false;
-        boolean shooterMotorsStarted = false;
-        final double SHOOTER_DELAY_MS = 300;   // 0.3 วินาที
+        boolean isButtonAPressed = false;
+        boolean hasMotorStarted = false;
+        double delayMillis = 500; // 0.3 second
 
         while (opModeIsActive()) {
 
-            double forwardBackward = -gamepad1.left_stick_y; //L3 เดินหน้าเดินหลัง
+            // ===============================
+            // Mecanum Drive
+            // ===============================
+            double forward = -gamepad1.left_stick_y;
+            double strafe = gamepad1.left_stick_x;
+            double rotate = gamepad1.right_stick_x;
 
-            double strafe = gamepad1.left_stick_x;           //L3 สไลด์ซ้ายขวา
+            double powerLF = (forward + strafe + rotate) * speedMultiplier;
+            double powerRF = (forward - strafe - rotate) * speedMultiplier;
+            double powerLR = (forward - strafe + rotate) * speedMultiplier;
+            double powerRR = (forward + strafe - rotate) * speedMultiplier;
 
-            double rotate = gamepad1.right_stick_x;          //R3 หันทางซ้ายหันทางขวา
-
-            //ระบบคำนวณกำลังล้อ Mecanum 4 ล้อ
-            double powerLF = (forwardBackward + strafe + rotate) * speedMultiplier;
-            double powerRF = (forwardBackward - strafe - rotate) * speedMultiplier;
-            double powerLR = (forwardBackward - strafe + rotate) * speedMultiplier;
-            double powerRR = (forwardBackward + strafe - rotate) * speedMultiplier;
-
-            //ป้องกันค่ากำลังเกิน 1.0
             double max = Math.max(1.0,
                     Math.max(Math.abs(powerLF),
                             Math.max(Math.abs(powerRF),
@@ -109,88 +91,80 @@ public class TELEOP_AMC_KHON_NEX extends LinearOpMode {
             powerLR /= max;
             powerRR /= max;
 
-            //ส่งกำลังไป Motor
             M_LF.setPower(powerLF);
             M_RF.setPower(powerRF);
             M_LR.setPower(powerLR);
             M_RR.setPower(powerRR);
 
-            // ==================================
-            //   P1 ระบบดึงบอลเข้า
-            // ==================================
 
+            // ===============================
+            // Intake System
+            // ===============================
             double intakePower = 0.18;
+
             if (gamepad1.b) {
-                intakePower = -0.60;                // ปล่อย Artifact ออก B
+                intakePower = -0.60; // reverse
             } else if (gamepad1.left_trigger > 0.1) {
-                intakePower = 0.18;                     // ดึง Artifact เข้าด้วยความเร็ว 0.18 L2
+                intakePower = 0.18;  // slow intake
             } else if (gamepad1.right_trigger > 0.1) {
-                intakePower = 0.50;                     // ดึง Artifact เข้าด้วยความเร็ว 0.50 R2
+                intakePower = 0.50;  // fast intake
             }
+
             M_AIN.setPower(intakePower);
 
-            ElapsedTime timer = new ElapsedTime();
-            boolean isButtonAPressed = false;
-            boolean hasMotorStarted  = false;
-            double delayMillis = 1000;   // 1 วินาที
 
-            waitForStart();
-
-            while (opModeIsActive()) {
-
-                // ==================================
-                //   P2 ปุ่ม A ควบคุมมอเตอร์ M_S0
-                // ==================================
-
-                if (gamepad2.a) {
-                    M_S0.setPower(1.0);   // กด A → หมุนเต็ม 1.0
-                } else {
-                    M_S0.setPower(0.5);   // ไม่กด → หมุนคงที่ 0.5
-                }
-
-                // ==================================
-                //   ระบบยิงด้วยปุ่ม B
-                // ==================================
-
-                // เมื่อกด B ครั้งแรก
-                if (gamepad2.b && !isButtonAPressed) {
-                    M_S1.setPower(-1.0);     // มอเตอร์ยิงลมเริ่มหมุน
-                    timer.reset();           // เริ่มจับเวลา
-                    isButtonAPressed = true;
-                    hasMotorStarted = false;
-                }
-
-                // รอเวลาครบ delay ก่อนเปิดมอเตอร์ดันลูก
-                if (isButtonAPressed && !hasMotorStarted) {
-                    double elapsed = timer.milliseconds();
-
-                    telemetry.addData("Delay Progress", "%.0f / %.0f ms", elapsed, delayMillis);
-
-                    // เมื่อรอครบดีเลย์
-                    if (elapsed >= delayMillis) {
-                        M_S0.setPower(1.0);     // มอเตอร์ดันลูก
-                        M_bl.setPower(-1.0);    // มอเตอร์ยิงจริง
-                        hasMotorStarted = true;
-                    }
-                }
-
-                // เมื่อปล่อยปุ่ม B → M_S1 หมุนช้า ๆ, มอเตอร์อื่นหยุด
-                if (!gamepad2.b) {
-                    M_S1.setPower(-0.5);  // หมุนช้า ๆ
-                    M_S0.setPower(0);
-                    M_bl.setPower(0);
-
-                    // รีเซ็ตตัวแปรเมื่อก่อนหน้ากด A
-                    if (isButtonAPressed) {
-                        isButtonAPressed = false;
-                        hasMotorStarted = false;
-                    }
-                }
-
-                telemetry.update();
+            // ===============================
+            // Spin-up Motor (A button)
+            // ===============================
+            if (gamepad2.a) {
+                M_S0.setPower(1.0);
+            } else {
+                M_S0.setPower(0.5);
             }
 
-            sleep(20); //ลดการกินCPU
+
+            // ===============================
+            // Shooting Motor (B button)
+            // ===============================
+
+            // Press B → start wind-up
+            if (gamepad2.b && !isButtonAPressed) {
+                M_S1.setPower(-1.0);  // wind-up
+                shooterTimer.reset();
+                isButtonAPressed = true;
+                hasMotorStarted = false;
+            }
+
+            // After delay → shoot
+            if (isButtonAPressed && !hasMotorStarted) {
+                if (shooterTimer.milliseconds() >= delayMillis) {
+                    M_S0.setPower(1.0);   // feed
+                    M_bl.setPower(-1.0);  // shoot
+                    hasMotorStarted = true;
+                }
+            }
+
+            // Release B → stop
+            if (!gamepad2.b) {
+                M_S1.setPower(-0.5);  // slow wind
+                M_S0.setPower(0);
+                M_bl.setPower(0);
+                isButtonAPressed = false;
+                hasMotorStarted = false;
+            }
+
+
+            // ===============================
+            telemetry.addData("LF", powerLF);
+            telemetry.addData("RF", powerRF);
+            telemetry.addData("LR", powerLR);
+            telemetry.addData("RR", powerRR);
+
+            telemetry.addData("Intake", intakePower);
+            telemetry.addData("Shoot Delay", shooterTimer.milliseconds());
+            telemetry.update();
+
+            sleep(20);
         }
     }
 }
