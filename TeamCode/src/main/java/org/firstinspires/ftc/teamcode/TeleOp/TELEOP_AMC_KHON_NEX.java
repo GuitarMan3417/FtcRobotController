@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -131,12 +131,22 @@ public class TELEOP_AMC_KHON_NEX extends LinearOpMode {
 
             ElapsedTime timer = new ElapsedTime();
             boolean isButtonAPressed = false;
-            boolean hasMotorStarted = false;
+            boolean hasMotorStarted  = false;
             double delayMillis = 1000;   // 1 วินาที
 
             waitForStart();
 
             while (opModeIsActive()) {
+
+                // ==================================
+                //   P2 ปุ่ม A ควบคุมมอเตอร์ M_S0
+                // ==================================
+
+                if (gamepad2.a) {
+                    M_S0.setPower(1.0);   // กด A → หมุนเต็ม 1.0
+                } else {
+                    M_S0.setPower(0.5);   // ไม่กด → หมุนคงที่ 0.5
+                }
 
                 // ==================================
                 //   ระบบยิงด้วยปุ่ม B

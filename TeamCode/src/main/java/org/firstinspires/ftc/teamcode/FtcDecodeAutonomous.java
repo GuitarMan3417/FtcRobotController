@@ -31,7 +31,7 @@ public class FtcDecodeAutonomous extends LinearOpMode {
     // (1) Ticks ต่อรอบของเพลาเอาต์พุต: 
     //    112 Ticks/Motor Rev * 12:1 Gear Ratio = 1344 Ticks
     static final double     COUNTS_PER_MOTOR_REV    = 1344.0;
-    static final double     DRIVE_GEAR_REDUCTION    = 1.0;      // อัตราทดของชุดเกียร์ขับเคลื่อน (1.0 = ไม่มีการทดเพิ่มเติม)
+    static final double     DRIVE_GEAR_REDUCTION    = 12.0;      // อัตราทดของชุดเกียร์ขับเคลื่อน (1.0 = ไม่มีการทดเพิ่มเติม)
 
     // (2) เส้นผ่านศูนย์กลางล้อ 104 mm แปลงเป็นนิ้ว: 104 / 25.4 ≈ 4.0945 นิ้ว
     static final double     WHEEL_DIAMETER_INCHES   = 4.0945;
