@@ -9,6 +9,8 @@ import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
@@ -19,6 +21,8 @@ public class AutoTest2 extends OpMode {
     private Follower follower;
     private Timer pathTimer, opModeTimer;
     public PathChain Path1, Path2, Path3, Path4, Path5, Path6, Path7, Path8, Path9;
+
+
     public void buildPaths(){
         Path1 = follower
                 .pathBuilder()
@@ -182,6 +186,7 @@ public class AutoTest2 extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         buildPaths();
         follower.setStartingPose(new Pose(56,8, Math.toRadians(90)));
+
     }
     @Override
     public void loop(){

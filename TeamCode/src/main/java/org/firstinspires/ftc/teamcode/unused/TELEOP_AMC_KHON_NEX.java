@@ -1,12 +1,13 @@
-package org.firstinspires.ftc.teamcode.TeleOp;
+package org.firstinspires.ftc.teamcode.unused;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
+@Disabled
 @TeleOp(name = "TELEOP_AMC_KHON_NEX", group = "TeleOp")
 public class TELEOP_AMC_KHON_NEX extends LinearOpMode {
 

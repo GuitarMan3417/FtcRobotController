@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.autonomousCode;
+package org.firstinspires.ftc.teamcode.unused;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
@@ -6,11 +6,12 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-
+@Disabled
 @Autonomous(name="Autonomous: Artifact Catch", group = "Autonomous")
 public class autonomous_ArtifactCatch extends OpMode {
     private int pathState;

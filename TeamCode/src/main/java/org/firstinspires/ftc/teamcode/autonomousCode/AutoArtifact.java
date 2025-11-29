@@ -20,6 +20,7 @@ public class AutoArtifact extends OpMode {
     private Follower follower;
     private Timer pathTimer, opModeTimer;
     public PathChain Path1, Path2, Path3, Path4, Path5, Path6, Path7, Path8, Path9;
+
     public void buildPaths(){
         Path1 = follower
                 .pathBuilder()
@@ -99,7 +100,6 @@ public class AutoArtifact extends OpMode {
                 follower.followPath(Path1);
                 pathState++;
                 setPathState(pathState);
-                follower.breakFollowing();
                 break;
             case 1:
                 if(!follower.isBusy()){
@@ -183,15 +183,12 @@ public class AutoArtifact extends OpMode {
         DcMotor M_LR = hardwareMap.get(DcMotor.class, "M_LR");
         DcMotor M_RR = hardwareMap.get(DcMotor.class, "M_RR");
 
-        M_LF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        M_RF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        M_LR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        M_RR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         // ===========================
 
         buildPaths();
         follower.setStartingPose(new Pose(56,8, Math.toRadians(90)));
-        follower.setMaxPower(0.4);
+        follower.setMaxPower(1);
     }
 
 

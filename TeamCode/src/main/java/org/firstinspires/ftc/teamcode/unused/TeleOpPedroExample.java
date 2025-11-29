@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.TeleOp;
+package org.firstinspires.ftc.teamcode.unused;
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
@@ -8,6 +8,7 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -16,6 +17,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import java.util.function.Supplier;
 
 @Configurable
+@Disabled
 @TeleOp (name="Pedro TeleOp: Example", group = "TeleOp")
 public class TeleOpPedroExample extends OpMode {
     private Follower follower;

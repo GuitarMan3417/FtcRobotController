@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 
 @TeleOp(name="TeleOp: Control", group = "TeleOp")
-public class TeleOpManualExperiment extends LinearOpMode {
+public class TeleOpControlFinal extends LinearOpMode {
 
     DcMotor M_AIN, M_S0, M_S1, M_bl, M_LF, M_RF, M_LR, M_RR;
     Servo SVR_L0, SVR_L1;
