@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.TeleOp;
+package org.firstinspires.ftc.teamcode.unused;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "TeleOp: Auto Parking Enabled", group = "TeleOp")
-public class TeleOpAutoPark extends LinearOpMode {
+@TeleOp(name = "TeleOp2", group = "TeleOp")
+public class TeleOp2 extends LinearOpMode {
 
     // ==============================
     //   ประกาศตัวแปรอุปกรณ์ทั้งหมด
@@ -42,10 +42,10 @@ public class TeleOpAutoPark extends LinearOpMode {
         //   ตั้งทิศทางมอเตอร์ (สำคัญมากสำหรับ Mecanum ให้วิ่งตรง)
         // ========================================================
 
-        M_LF.setDirection(DcMotorSimple.Direction.REVERSE);  // ล้อซ้ายหน้า
-        M_LR.setDirection(DcMotorSimple.Direction.REVERSE);  // ล้อซ้ายหลัง
-        M_RF.setDirection(DcMotorSimple.Direction.FORWARD);  // ล้อขวาหน้า กลับทิศ
-        M_RR.setDirection(DcMotorSimple.Direction.FORWARD);  // ล้อขวาหลัง กลับทิศ
+        M_LF.setDirection(DcMotorSimple.Direction.FORWARD);  // ล้อซ้ายหน้า
+        M_LR.setDirection(DcMotorSimple.Direction.FORWARD);  // ล้อซ้ายหลัง
+        M_RF.setDirection(DcMotorSimple.Direction.REVERSE);  // ล้อขวาหน้า กลับทิศ
+        M_RR.setDirection(DcMotorSimple.Direction.REVERSE);  // ล้อขวาหลัง กลับทิศ
 
         // ====================================
         //   ทำให้มอเตอร์เบรกเมื่อปล่อยคันโยก
@@ -79,7 +79,7 @@ public class TeleOpAutoPark extends LinearOpMode {
         waitForStart();
 
         // ใช้คูณความเร็ว (1.0 = เต็ม)
-        double speedMultiplier = 1.0;
+        double speedMultiplier = 0.5;
 
         while (opModeIsActive()) {
 
@@ -180,7 +180,7 @@ public class TeleOpAutoPark extends LinearOpMode {
             //   แสดงข้อมูลบนหน้าจอ Driver Hub
             // ========================================================
 
-            telemetry.addLine("=== 24552 KhonNex ===");
+            telemetry.addLine("24552 AMC KHONE NEX");
             telemetry.addData("LF/RF/LR/RR", "%.2f  %.2f  %.2f  %.2f",
                     powerLF, powerRF, powerLR, powerRR);
             telemetry.addData("Servo L0", "%.0f°", currentPos * 180.0);

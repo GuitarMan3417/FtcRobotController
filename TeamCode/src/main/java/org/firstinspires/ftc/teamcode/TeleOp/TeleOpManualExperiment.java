@@ -6,46 +6,51 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import java.util.Timer;
-import java.util.TimerTask;
-@TeleOp(name="ExperimentalOp", group = "TeleOp")
+
+@TeleOp(name="TeleOp: Control", group = "TeleOp")
 public class TeleOpManualExperiment extends LinearOpMode {
 
     DcMotor M_AIN, M_S0, M_S1, M_bl, M_LF, M_RF, M_LR, M_RR;
     Servo SVR_L0, SVR_L1;
     //System Timer
 
-    TimerTask motorAct = new TimerTask() {
-        @Override
-        public void run() {
-            M_bl.setPower(1);
-        }
-    };
+
 
     private int shootingAngle = 0; //Initial shooting angle
     private int angleAdd = 1; //Servo angle addition value
     int timerState = 0;
     int createTimer = 0;
-    long runtime = System.nanoTime();
-    public Timer motorTimer = new Timer();
-    public void shootingAct() throws InterruptedException {
-        if(gamepad2.b){
-            telemetry.addLine("Shooting!");
-            M_S1.setPower(-1);
-            M_S0.setPower(1);
-            Thread.sleep(600);
-            M_bl.setPower(-1);
+    Thread shootingAct = new Thread(new Runnable() {
+        @Override
+        public void run(){
+
+            if(gamepad2.b){
+                telemetry.addLine("Shooting!");
+                M_S1.setPower(-1);
+                M_S0.setPower(1);
+                try{
+                    Thread.sleep(600);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                M_bl.setPower(-1);
 
 
+
+            }
+            else{
+                M_bl.setPower(0);
+                M_S1.setPower(-0.35);
+
+            }
         }
-        else{
-            M_bl.setPower(0);
-            M_S1.setPower(-0.35);
 
-        }
-    }
+    });
+
+
     @Override
     public void runOpMode() throws InterruptedException {
+
         M_LF = hardwareMap.get(DcMotor.class, "M_LF");
         M_RF = hardwareMap.get(DcMotor.class, "M_RF");
         M_LR = hardwareMap.get(DcMotor.class, "M_LR");
@@ -60,7 +65,6 @@ public class TeleOpManualExperiment extends LinearOpMode {
         // ==================================
         //   ตั้งทิศทางของมอเตอร์สำหรับ Mecanum
         // ==================================
-
         M_LF.setDirection(DcMotorSimple.Direction.FORWARD); // ล้อซ้ายบน
         M_LR.setDirection(DcMotorSimple.Direction.FORWARD); // ล้อขวาบน
         M_RF.setDirection(DcMotorSimple.Direction.REVERSE); // ล้อซ้ายล่าง
@@ -76,10 +80,7 @@ public class TeleOpManualExperiment extends LinearOpMode {
         M_bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         waitForStart();
         while (opModeIsActive()){
-            if(createTimer == 1){
-                Timer motorTimer = new Timer();
-                createTimer = 2;
-            }
+
             if(gamepad2.right_bumper){
                 shootingAngle += angleAdd;
             }
@@ -104,11 +105,11 @@ public class TeleOpManualExperiment extends LinearOpMode {
             M_AIN.setPower(intakePower);
 
             //Spin-Up
-            M_S0.setPower(gamepad2.a ? 1:0.25); //A pressed = spin up
+            M_S0.setPower(gamepad2.a ? 1:0); //A pressed = spin up
             M_S0.setPower(gamepad2.x ? -1:M_S0.getPower()); //X pressed = reverse direction with maximum speed
 
             //Blocking motor & shooting motor
-            shootingAct();
+            shootingAct.start();
 
             //Driving
             double forwardBackward = -gamepad1.left_stick_y; //L3 เดินหน้าเดินหลัง
@@ -118,12 +119,11 @@ public class TeleOpManualExperiment extends LinearOpMode {
             double rotate = gamepad1.right_stick_x;          //R3 หันทางซ้ายหันทางขวา
 
             //ระบบคำนวณกำลังล้อ Mecanum 4 ล้อ
-            double speedMultiplier = 0.5;
+            double speedMultiplier = 0.55;
             double powerLF = (forwardBackward + strafe + rotate) * speedMultiplier;
             double powerRF = (forwardBackward - strafe - rotate) * speedMultiplier;
             double powerLR = (forwardBackward - strafe + rotate) * speedMultiplier;
             double powerRR = (forwardBackward + strafe - rotate) * speedMultiplier;
-
             //ป้องกันค่ากำลังเกิน 1.0
             double max = Math.max(1.0,
                     Math.max(Math.abs(powerLF),
@@ -137,7 +137,18 @@ public class TeleOpManualExperiment extends LinearOpMode {
 
             //ส่งกำลังไป Motor
             M_LF.setPower(powerLF);
-            M_RF.setPower(powerRF);
+
+            if(gamepad1.left_stick_x > -0.001 && gamepad1.left_stick_x < 0.001 && gamepad1.left_stick_y < 0.001 && gamepad1.left_stick_y > -0.001 && gamepad1.right_stick_x > -0.001 && gamepad1.right_stick_x < 0.001){
+                M_RF.setPower(0);
+            }
+            else if(gamepad1.left_stick_y < 0.001 && gamepad1.left_stick_y > -0.001){
+                M_RF.setPower(powerRF);
+            }
+            else{
+                M_RF.setPower(powerRF+0.07);
+            }
+
+
             M_LR.setPower(powerLR);
             M_RR.setPower(powerRR);
             telemetry.addData("M_AIN", M_AIN.getPower());
@@ -145,8 +156,11 @@ public class TeleOpManualExperiment extends LinearOpMode {
             telemetry.addData("M_bl", M_bl.getPower());
             telemetry.addData("M_S1", M_S1.getPower());
             telemetry.addData("SVR_L0", SVR_L0.getPosition());
-            telemetry.addData("Timer State", timerState);
-            telemetry.addData("Create Timer", createTimer);
+            telemetry.addLine("--Driving Section--");
+            telemetry.addData("Power LF", M_LF.getPower());
+            telemetry.addData("Power RF", M_RF.getPower());
+            telemetry.addData("Power LR", M_LR.getPower());
+            telemetry.addData("Power RR", M_RR.getPower());
             telemetry.update();
 
         }
