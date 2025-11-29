@@ -51,7 +51,7 @@
       .addPath(
         new BezierLine(new Pose(13.500, 35.500), new Pose(56.000, 87.500))
       )
-      .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(null))
+      .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(0))
       .build();
   }
 }
