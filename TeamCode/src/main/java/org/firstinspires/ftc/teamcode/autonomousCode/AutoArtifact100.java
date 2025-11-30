@@ -11,7 +11,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-
+//Intake 1 standby 0.18
+//Shoot stby 0.35 shoot 1
 @Autonomous(name="AutoArtifact100", group = "Autonomous")
 public class AutoArtifact100 extends OpMode {
     DcMotor M_LF, M_RF, M_LR, M_RR;   // มอเตอร์ล้อทั้ง 4 (Mecanum)
@@ -22,6 +23,7 @@ public class AutoArtifact100 extends OpMode {
     private Follower follower;
     private Timer pathTimer, opModeTimer;
     public PathChain Path1, Path2, Path3, Path4, Path5, Path6, Path7, Path8, Path9;
+
     public void buildPaths(){
         Path1 = follower
                 .pathBuilder()
@@ -102,12 +104,15 @@ public class AutoArtifact100 extends OpMode {
                     M_S1.setPower(-1.0);
                     M_bl.setPower(-1.0);
                     M_AIN.setPower(1);
-//} else {
+                } else {
                     // ครบ 1 วิแล้วปิดมอเตอร์
-                 //   M_S0.setPower(0);
-                  //  M_S1.setPower(0);
-                   // M_bl.setPower(0);
-                 //   M_AIN.setPower(0);
+
+                    M_S0.setPower(0);
+                    M_S1.setPower(0.35);
+                    M_bl.setPower(0);
+                    M_AIN.setPower(0.18);
+
+
 
                     // ไป Path2
                     follower.followPath(Path2);
@@ -117,8 +122,8 @@ public class AutoArtifact100 extends OpMode {
 
             case 3:
                 if(!follower.isBusy()){
-                    M_bl.setPower(0);
                     follower.setMaxPower(0.2);
+                    M_AIN.setPower(1);
                     follower.followPath(Path3);
                     setPathState(4);
                 }
@@ -126,7 +131,9 @@ public class AutoArtifact100 extends OpMode {
 
             case 4:
                 if(!follower.isBusy()){
+                    M_AIN.setPower(0.18);
                     follower.setMaxPower(0.5);
+
                     follower.followPath(Path4);
                     setPathState(5);
                 }
@@ -134,13 +141,29 @@ public class AutoArtifact100 extends OpMode {
 
             case 5:
                 if(!follower.isBusy()){
-                    follower.followPath(Path5);
-                    setPathState(6);
+                    follower.setMaxPower(0.5);
+                    if(pathTimer.getElapsedTimeSeconds() < 5){
+                        // มอเตอร์ทำงานระหว่างหยุด 1 วิ
+                        M_S0.setPower(1.0);
+                        M_S1.setPower(-1.0);
+                        M_bl.setPower(-1.0);
+                        M_AIN.setPower(1);
+                    } else {
+                        // ครบ 1 วิแล้วปิดมอเตอร์
+                        M_S0.setPower(0);
+                        M_S1.setPower(0.35);
+                        M_bl.setPower(0);
+                        M_AIN.setPower(0.18);
+                        follower.followPath(Path5);
+                        setPathState(6);
+                    }
+
                 }
                 break;
 
             case 6:
                 if(!follower.isBusy()){
+                    M_AIN.setPower(1);
                     follower.setMaxPower(0.2);
                     follower.followPath(Path6);
                     setPathState(7);
@@ -148,15 +171,31 @@ public class AutoArtifact100 extends OpMode {
                 break;
 
             case 7:
+                M_AIN.setPower(1);
                 if(!follower.isBusy()){
+                    M_AIN.setPower(0.18);
                     follower.setMaxPower(0.5);
                     follower.followPath(Path7);
                     setPathState(8);
+
                 }
                 break;
 
             case 8:
                 if(!follower.isBusy()){
+                    if(pathTimer.getElapsedTimeSeconds() < 5){
+                        // มอเตอร์ทำงานระหว่างหยุด 1 วิ
+                        M_S0.setPower(1.0);
+                        M_S1.setPower(-1.0);
+                        M_bl.setPower(-1.0);
+                        M_AIN.setPower(1);
+                    } else {
+                        // ครบ 1 วิแล้วปิดมอเตอร์
+                        M_S0.setPower(0);
+                        M_S1.setPower(0.35);
+                        M_bl.setPower(0);
+                        M_AIN.setPower(0.18);
+                    }
                     setPathState(-1);  // จบ
                 }
                 break;
