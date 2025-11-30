@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Autonomous(name="AutoArtifact100", group = "Autonomous")
 public class AutoArtifact100 extends OpMode {
     DcMotor M_LF, M_RF, M_LR, M_RR;   // มอเตอร์ล้อทั้ง 4 (Mecanum)
-    DcMotor M_S0, M_S1, M_bl;
+    DcMotor M_S0, M_S1, M_bl, M_AIN;
 
     private int pathState;
 
@@ -34,15 +34,15 @@ public class AutoArtifact100 extends OpMode {
         Path2 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(56.000, 87.500), new Pose(39.000, 59.600))
+                        new BezierLine(new Pose(56.000, 87.500), new Pose(45.000, 66.000))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(176))
+                .setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(176))
                 .build();
 
         Path3 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(39.000, 59.600), new Pose(15.000, 59.600))
+                        new BezierLine(new Pose(45.000, 63.000), new Pose(7.000, 66.000))
                 )
                 .setTangentHeadingInterpolation()
                 .build();
@@ -50,23 +50,23 @@ public class AutoArtifact100 extends OpMode {
         Path4 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(15.000, 59.600), new Pose(56.000, 87.500))
+                        new BezierLine(new Pose(7.000, 66.000), new Pose(56.000, 87.500))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(135))
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(135))
                 .build();
 
         Path5 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(56.000, 87.500), new Pose(39.000, 35.500))
+                        new BezierLine(new Pose(56.000, 87.500), new Pose(45.000, 35.500))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(176))
+                .setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(176))
                 .build();
 
         Path6 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(39.000, 35.500), new Pose(15.000, 35.500))
+                        new BezierLine(new Pose(45.000, 35.500), new Pose(7.000, 35.500))
                 )
                 .setTangentHeadingInterpolation()
                 .build();
@@ -74,11 +74,12 @@ public class AutoArtifact100 extends OpMode {
         Path7 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(13.500, 35.500), new Pose(56.000, 87.500))
+                        new BezierLine(new Pose(7.000, 35.500), new Pose(56.000, 87.500))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(135))
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(135))
                 .build();
     }
+
 
 
     public void pathUpdate(){
@@ -95,16 +96,18 @@ public class AutoArtifact100 extends OpMode {
                 break;
 
             case 2:     // หยุด 1 วินาที + สั่งให้มอเตอร์ทำงาน
-                if(pathTimer.getElapsedTimeSeconds() < 1){
+                if(pathTimer.getElapsedTimeSeconds() < 5){
                     // มอเตอร์ทำงานระหว่างหยุด 1 วิ
                     M_S0.setPower(1.0);
-                    M_S1.setPower(1.0);
-                    M_bl.setPower(1.0);
-                } else {
+                    M_S1.setPower(-1.0);
+                    M_bl.setPower(-1.0);
+                    M_AIN.setPower(1);
+//} else {
                     // ครบ 1 วิแล้วปิดมอเตอร์
-                    M_S0.setPower(0);
-                    M_S1.setPower(0);
-                    M_bl.setPower(0);
+                 //   M_S0.setPower(0);
+                  //  M_S1.setPower(0);
+                   // M_bl.setPower(0);
+                 //   M_AIN.setPower(0);
 
                     // ไป Path2
                     follower.followPath(Path2);
@@ -114,6 +117,8 @@ public class AutoArtifact100 extends OpMode {
 
             case 3:
                 if(!follower.isBusy()){
+                    M_bl.setPower(0);
+                    follower.setMaxPower(0.2);
                     follower.followPath(Path3);
                     setPathState(4);
                 }
@@ -121,6 +126,7 @@ public class AutoArtifact100 extends OpMode {
 
             case 4:
                 if(!follower.isBusy()){
+                    follower.setMaxPower(0.5);
                     follower.followPath(Path4);
                     setPathState(5);
                 }
@@ -135,6 +141,7 @@ public class AutoArtifact100 extends OpMode {
 
             case 6:
                 if(!follower.isBusy()){
+                    follower.setMaxPower(0.2);
                     follower.followPath(Path6);
                     setPathState(7);
                 }
@@ -142,6 +149,7 @@ public class AutoArtifact100 extends OpMode {
 
             case 7:
                 if(!follower.isBusy()){
+                    follower.setMaxPower(0.5);
                     follower.followPath(Path7);
                     setPathState(8);
                 }
@@ -174,6 +182,8 @@ public class AutoArtifact100 extends OpMode {
         M_S0 = hardwareMap.get(DcMotor.class, "M_S0");
         M_S1 = hardwareMap.get(DcMotor.class, "M_S1");
         M_bl = hardwareMap.get(DcMotor.class, "M_bl");
+        M_AIN = hardwareMap.get(DcMotor.class, "M_AIN");
+
 
         M_LF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         M_RF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

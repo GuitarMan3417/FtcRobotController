@@ -56,7 +56,10 @@ public class TELEOP_AMC_KHON_NEX extends LinearOpMode {
         // ===============================
         // Servo init
         // ===============================
-        SVR_L1.setPosition(0);   // 0 degree
+        double servo1Min = 0.0;
+        double servo1Max = 180.0;
+        double servo1Pos = servo1Min / 180.0; // เริ่มต้น 0°
+        SVR_L1.setPosition(servo1Pos);
 
         waitForStart();
 
@@ -118,11 +121,7 @@ public class TELEOP_AMC_KHON_NEX extends LinearOpMode {
             // Spin-up Motor (A button)
             // ===============================
             if (gamepad2.a) {
-                M_S0.setPower(1.0);
-            } else {
-                M_S0.setPower(0.5);
-            }
-
+                M_S0.setPower(1.0);}
 
             // ===============================
             // Shooting Motor (B button)
@@ -153,6 +152,17 @@ public class TELEOP_AMC_KHON_NEX extends LinearOpMode {
                 isButtonAPressed = false;
                 hasMotorStarted = false;
             }
+
+            double servo1Step = 0.01;  // ความไวในการปรับ (ยิ่งเล็กยิ่งละเอียด)
+
+            if (gamepad2.left_trigger > 0.1) servo1Pos -= servo1Step;
+            if (gamepad2.right_trigger > 0.1) servo1Pos += servo1Step;
+
+            // ล็อกไม่ให้เกิน 0° - 180°
+            servo1Pos = Math.max(servo1Min / 180.0,
+                    Math.min(servo1Max / 180.0, servo1Pos));
+
+            SVR_L1.setPosition(servo1Pos);
 
 
             // ===============================

@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 
-@Autonomous(name="Autonomous200", group = "Autonomous")
+@Autonomous(name="AutoArtifact200", group = "Autonomous")
 public class AutoArtifact200 extends OpMode {
     DcMotor M_LF, M_RF, M_LR, M_RR;   // มอเตอร์ล้อทั้ง 4 (Mecanum)
 
@@ -162,8 +162,8 @@ public class AutoArtifact200 extends OpMode {
         // ===========================
 
         buildPaths();
-        follower.setStartingPose(new Pose(56,8, Math.toRadians(90)));
-        follower.setMaxPower(1);
+        follower.setStartingPose(new Pose(88,8, Math.toRadians(90)));
+        follower.setMaxPower(0.5);
     }
 
 
