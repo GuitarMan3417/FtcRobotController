@@ -120,7 +120,7 @@ public class TeleOpControlFinal extends LinearOpMode {
             double rotate = gamepad1.right_stick_x;          //R3 หันทางซ้ายหันทางขวา
 
             //ระบบคำนวณกำลังล้อ Mecanum 4 ล้อ
-            double speedMultiplier = 0.6;
+            double speedMultiplier = 0.40;
             double powerLF = (forwardBackward + strafe + rotate) * speedMultiplier;
             double powerRF = (forwardBackward - strafe - rotate) * speedMultiplier;
             double powerLR = (forwardBackward - strafe + rotate) * speedMultiplier;

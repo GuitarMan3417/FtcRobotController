@@ -4,26 +4,82 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
-import com.pedropathing.util.Timer;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-//Intake 1 standby 0.18
-//Shoot stby 0.35 shoot 1
-@SuppressWarnings("all") // Suppress all warnings for this file
-@Autonomous(name="AutoArtifact100", group = "Autonomous")
-public class AutoArtifact100 extends OpMode {
-    DcMotor M_LF, M_RF, M_LR, M_RR;   // มอเตอร์ล้อทั้ง 4 (Mecanum)
+import java.util.List;
+
+@Autonomous(name = "AUTO_ALIGN_PATH2")
+public class AutoArtifactApriltag extends OpMode {
+
+    // --- DRIVE MOTORS ---
+    DcMotor M_LF, M_RF, M_LR, M_RR;
     DcMotor M_S0, M_S1, M_bl, M_AIN;
 
-    private int pathState;
+    // --- PEDRO ---
+    Follower follower;
+    public PathChain Path1, Path2, Path3, Path4, Path5, Path6, Path7, Path8, Path9;
 
-    private Follower follower;
-    private Timer pathTimer, opModeTimer;
-    public PathChain Path1, Path2, Path3, Path4, Path5, Path6, Path7;
+
+    // --- STATE ---
+    int pathState = 0;
+    ElapsedTime pathTimer;
+
+    // -------------------------
+    //      APRILTAG CAMERA
+    // -------------------------
+    private VisionPortal visionPortal;
+    private AprilTagProcessor aprilTag;
+
+    int TAG_ID = 20;                // ⭐ หาแท็ก ID 20
+    double CENTER_TOLERANCE = 20;   // px
+    double ROTATE_POWER = 0.50;
+
+
+    @Override
+    public void init() {
+
+        // ---------------------------
+        // MOTOR
+        // ---------------------------
+        M_LF = hardwareMap.get(DcMotor.class, "M_LF");
+        M_RF = hardwareMap.get(DcMotor.class, "M_RF");
+        M_LR = hardwareMap.get(DcMotor.class, "M_LR");
+        M_RR = hardwareMap.get(DcMotor.class, "M_RR");
+        M_S0 = hardwareMap.get(DcMotor.class, "M_S0");
+        M_S1 = hardwareMap.get(DcMotor.class, "M_S1");
+        M_bl = hardwareMap.get(DcMotor.class, "M_bl");
+        M_AIN = hardwareMap.get(DcMotor.class, "M_AIN");
+
+        M_RF.setDirection(DcMotor.Direction.REVERSE);
+        M_RR.setDirection(DcMotor.Direction.REVERSE);
+
+        // ---------------------------
+        // PEDRO FOLLOWER
+        // ---------------------------
+        follower = Constants.createFollower(hardwareMap);
+        buildPaths();
+
+        // ---------------------------
+        // CAMERA + APRILTAG
+        // ----------------------------
+        aprilTag = new AprilTagProcessor.Builder().build();
+
+        visionPortal = new VisionPortal.Builder()
+                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                .addProcessor(aprilTag)
+                .build();
+        pathTimer = new ElapsedTime();
+    }
 
     public void buildPaths(){
         Path1 = follower
@@ -83,9 +139,68 @@ public class AutoArtifact100 extends OpMode {
                 .build();
     }
 
+    // ----------------------------------------------------
+    //      FUNCTION: ALIGN TO APRILTAG (ROTATE ONLY)
+    // ----------------------------------------------------
+    public boolean alignToTag() {
+
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+
+        if (currentDetections.isEmpty()) {
+            stopDrive();
+            return false;
+        }
+
+        AprilTagDetection tag = null;
+        for (AprilTagDetection detection : currentDetections) {
+            if (detection.id == TAG_ID) {
+                tag = detection;
+                break;
+            }
+        }
+        if (tag == null) {
+            stopDrive();
+            return false;
+        }
+
+        double error = tag.ftcPose.x;
+
+        if (Math.abs(error) < CENTER_TOLERANCE) {
+            stopDrive();
+            return true;
+        }
+
+        double p = ROTATE_POWER * Math.signum(error);
+
+        M_LF.setPower(p);
+        M_LR.setPower(p);
+        M_RF.setPower(-p);
+        M_RR.setPower(-p);
+
+        return false;
+    }
 
 
-    public void pathUpdate(){
+    public void stopDrive() {
+        M_LF.setPower(0);
+        M_RF.setPower(0);
+        M_LR.setPower(0);
+        M_RR.setPower(0);
+    }
+    
+    public void setPathState(int state) {
+        pathState = state;
+        if (pathTimer != null) {
+            pathTimer.reset();
+        }
+    }
+
+
+    // ----------------------------------------------------
+    //                  LOOP STATE MACHINE
+    // ----------------------------------------------------
+    @Override
+    public void loop() {
         switch(pathState){
             case 0:     // เริ่ม Path1
                 follower.followPath(Path1);
@@ -102,26 +217,25 @@ public class AutoArtifact100 extends OpMode {
                 // เมื่อถึงตำแหน่งที่ต้องการหมุน → ใส่เงื่อนไขตรงนี้
                 if (follower.getPose().getX() > 25) {
                     stopDrive();
-                    pathState = 3;   // ไปสเต็ปหมุนหาแท็ก, was 20 which is undefined
+                    setPathState(20);   // ไปสเต็ปหมุนหาแท็ก
                 }
                 break;
 
-            case 3:
+            case 20:
                 // ⭐ หมุนหา AprilTag ID 20
                 if (alignToTag()) {
-                    pathState = 4;   // หมุนสำเร็จแล้ว, was 3 (infinite loop)
+                    setPathState(4);   // หมุนสำเร็จแล้ว
                 }
                 break;
 
             case 4:
                 // ⭐ หมุนเสร็จ → ค่อยให้เคลื่อนต่อ Path2
-                // follower.resume(); // resume() does not exist in Follower.
-                // You may need to create a new path from the current pose.
-                pathState = 5; // was 4 (infinite loop)
+                follower.followPath(Path2);
+                setPathState(5);
                 break;
 
             case 5:     // หยุด 1 วินาที + สั่งให้มอเตอร์ทำงาน
-                if(pathTimer.getElapsedTimeSeconds() < 5){
+                if(pathTimer.seconds() < 5){
                     // มอเตอร์ทำงานระหว่างหยุด 1 วิ
                     M_S0.setPower(1.0);
                     M_S1.setPower(-1.0);
@@ -138,8 +252,8 @@ public class AutoArtifact100 extends OpMode {
 
 
                     // ไป Path2
-                    follower.followPath(Path2);
-                    setPathState(3);
+                    follower.followPath(Path3);
+                    setPathState(6);
                 }
                 break;
 
@@ -147,8 +261,8 @@ public class AutoArtifact100 extends OpMode {
                 if(!follower.isBusy()){
                     follower.setMaxPower(0.2);
                     M_AIN.setPower(1);
-                    follower.followPath(Path3);
-                    setPathState(4);
+                    follower.followPath(Path4);
+                    setPathState(7);
                 }
                 break;
 
@@ -157,15 +271,15 @@ public class AutoArtifact100 extends OpMode {
                     M_AIN.setPower(0.18);
                     follower.setMaxPower(0.5);
 
-                    follower.followPath(Path4);
-                    setPathState(5);
+                    follower.followPath(Path5);
+                    setPathState(8);
                 }
                 break;
 
             case 8:
                 if(!follower.isBusy()){
                     follower.setMaxPower(0.5);
-                    if(pathTimer.getElapsedTimeSeconds() < 5){
+                    if(pathTimer.seconds() < 5){
                         // มอเตอร์ทำงานระหว่างหยุด 1 วิ
                         M_S0.setPower(1.0);
                         M_S1.setPower(-1.0);
@@ -177,8 +291,8 @@ public class AutoArtifact100 extends OpMode {
                         M_S1.setPower(0.35);
                         M_bl.setPower(0);
                         M_AIN.setPower(0.18);
-                        follower.followPath(Path5);
-                        setPathState(6);
+                        follower.followPath(Path6);
+                        setPathState(9);
                     }
 
                 }
@@ -188,25 +302,21 @@ public class AutoArtifact100 extends OpMode {
                 if(!follower.isBusy()){
                     M_AIN.setPower(1);
                     follower.setMaxPower(0.2);
-                    follower.followPath(Path6);
-                    setPathState(7);
+                    follower.followPath(Path7);
+                    setPathState(10);
                 }
                 break;
 
             case 10:
-                M_AIN.setPower(1);
                 if(!follower.isBusy()){
-                    M_AIN.setPower(0.18);
-                    follower.setMaxPower(0.5);
-                    follower.followPath(Path7);
-                    setPathState(8);
+                    setPathState(11);
 
                 }
                 break;
 
             case 11:
                 if(!follower.isBusy()){
-                    if(pathTimer.getElapsedTimeSeconds() < 5){
+                    if(pathTimer.seconds() < 5){
                         // มอเตอร์ทำงานระหว่างหยุด 1 วิ
                         M_S0.setPower(1.0);
                         M_S1.setPower(-1.0);
@@ -223,64 +333,8 @@ public class AutoArtifact100 extends OpMode {
                 }
                 break;
         }
-    }
 
-    public void setPathState(int pState){
-        pathState = pState;
-        pathTimer.resetTimer();
-    }
-
-    // Placeholder method, implement your logic here
-    public boolean alignToTag() {
-        // Add your AprilTag alignment logic here
-        return true; // Return true when alignment is complete
-    }
-
-    // Stops all drive motors
-    public void stopDrive() {
-        M_LF.setPower(0);
-        M_RF.setPower(0);
-        M_LR.setPower(0);
-        M_RR.setPower(0);
-    }
-
-    @Override
-    public void init(){
-        pathTimer = new Timer();
-        opModeTimer = new Timer();
-        opModeTimer.resetTimer();
-        follower = Constants.createFollower(hardwareMap);
-
-        // ===== ระบบเบรกมอเตอร์ =====
-        M_LF = hardwareMap.get(DcMotor.class, "M_LF");
-        M_RF = hardwareMap.get(DcMotor.class, "M_RF");
-        M_LR = hardwareMap.get(DcMotor.class, "M_LR");
-        M_RR = hardwareMap.get(DcMotor.class, "M_RR");
-        M_S0 = hardwareMap.get(DcMotor.class, "M_S0");
-        M_S1 = hardwareMap.get(DcMotor.class, "M_S1");
-        M_bl = hardwareMap.get(DcMotor.class, "M_bl");
-        M_AIN = hardwareMap.get(DcMotor.class, "M_AIN");
-
-
-        M_LF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        M_RF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        M_LR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        M_RR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        // ===========================
-
-        buildPaths();
-        follower.setStartingPose(new Pose(56,8, Math.toRadians(90)));
-        follower.setMaxPower(0.5);
-    }
-
-
-    @Override
-    public void loop(){
-        follower.update();
-        pathUpdate();
-        telemetry.addData("Path", pathState);
-        telemetry.addData("X", follower.getPose().getX());
-        telemetry.addData("Y", follower.getPose().getY());
-        telemetry.addData("Heading", follower.getHeading());
+        telemetry.addData("State", pathState);
+        telemetry.update();
     }
 }
