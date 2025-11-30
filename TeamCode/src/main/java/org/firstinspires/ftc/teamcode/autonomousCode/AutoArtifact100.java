@@ -13,8 +13,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 //Intake 1 standby 0.18
 //Shoot stby 0.35 shoot 1
-@Autonomous(name="AutoArtifact200", group = "Autonomous")
-public class AutoArtifact200 extends OpMode {
+@Autonomous(name="AutoArtifact100", group = "Autonomous")
+public class AutoArtifact100 extends OpMode {
     DcMotor M_LF, M_RF, M_LR, M_RR;   // มอเตอร์ล้อทั้ง 4 (Mecanum)
     DcMotor M_S0, M_S1, M_bl, M_AIN;
 
@@ -81,7 +81,6 @@ public class AutoArtifact200 extends OpMode {
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(45))
                 .build();
     }
-
 
     public void pathUpdate(){
         switch(pathState){
