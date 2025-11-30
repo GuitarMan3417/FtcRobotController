@@ -15,8 +15,10 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Autonomous(name="AutoArtifact100", group = "Autonomous")
 public class AutoArtifact100 extends OpMode {
     DcMotor M_LF, M_RF, M_LR, M_RR;   // มอเตอร์ล้อทั้ง 4 (Mecanum)
+    DcMotor M_S0, M_S1, M_bl;
 
     private int pathState;
+
     private Follower follower;
     private Timer pathTimer, opModeTimer;
     public PathChain Path1, Path2, Path3, Path4, Path5, Path6, Path7, Path8, Path9;
@@ -74,68 +76,85 @@ public class AutoArtifact100 extends OpMode {
                 .addPath(
                         new BezierLine(new Pose(13.500, 35.500), new Pose(56.000, 87.500))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(135))
                 .build();
     }
 
 
     public void pathUpdate(){
         switch(pathState){
-            case 0:
+            case 0:     // เริ่ม Path1
                 follower.followPath(Path1);
-                pathState++;
-                setPathState(pathState);
+                setPathState(1);
                 break;
-            case 1:
+
+            case 1:     // รอ Path1 จบ
                 if(!follower.isBusy()){
-                    follower.followPath(Path2);
-                    pathState++;
-                    setPathState(pathState);
-                }
-                break;
-            case 2:
-                if(!follower.isBusy()){
-                    follower.followPath(Path3);
-                    pathState++;
-                    setPathState(pathState);
-                }
-                break;
-            case 3:
-                if(!follower.isBusy()){
-                    follower.followPath(Path4);
-                    pathState++;
-                    setPathState(pathState);
-                }
-                break;
-            case 4:
-                if(!follower.isBusy()){
-                    follower.followPath(Path5);
-                    pathState++;
-                    setPathState(pathState);
-                }
-                break;
-            case 5:
-                if(!follower.isBusy()){
-                    follower.followPath(Path6);
-                    pathState++;
-                    setPathState(pathState);
-                }
-                break;
-            case 6:
-                if(!follower.isBusy()){
-                    follower.followPath(Path7);
-                    pathState++;
-                    setPathState(pathState);
-                }
-                break;
-            case 7:
-                if(!follower.isBusy()){
-                    setPathState(-1);
+                    setPathState(2);  // ไปสถานะหยุด 1 วิ
                 }
                 break;
 
+            case 2:     // หยุด 1 วินาที + สั่งให้มอเตอร์ทำงาน
+                if(pathTimer.getElapsedTimeSeconds() < 1){
+                    // มอเตอร์ทำงานระหว่างหยุด 1 วิ
+                    M_S0.setPower(1.0);
+                    M_S1.setPower(1.0);
+                    M_bl.setPower(1.0);
+                } else {
+                    // ครบ 1 วิแล้วปิดมอเตอร์
+                    M_S0.setPower(0);
+                    M_S1.setPower(0);
+                    M_bl.setPower(0);
+
+                    // ไป Path2
+                    follower.followPath(Path2);
+                    setPathState(3);
+                }
+                break;
+
+            case 3:
+                if(!follower.isBusy()){
+                    follower.followPath(Path3);
+                    setPathState(4);
+                }
+                break;
+
+            case 4:
+                if(!follower.isBusy()){
+                    follower.followPath(Path4);
+                    setPathState(5);
+                }
+                break;
+
+            case 5:
+                if(!follower.isBusy()){
+                    follower.followPath(Path5);
+                    setPathState(6);
+                }
+                break;
+
+            case 6:
+                if(!follower.isBusy()){
+                    follower.followPath(Path6);
+                    setPathState(7);
+                }
+                break;
+
+            case 7:
+                if(!follower.isBusy()){
+                    follower.followPath(Path7);
+                    setPathState(8);
+                }
+                break;
+
+            case 8:
+                if(!follower.isBusy()){
+                    setPathState(-1);  // จบ
+                }
+                break;
         }
     }
+
     public void setPathState(int pState){
         pathState = pState;
         pathTimer.resetTimer();
@@ -152,6 +171,9 @@ public class AutoArtifact100 extends OpMode {
         DcMotor M_RF = hardwareMap.get(DcMotor.class, "M_RF");
         DcMotor M_LR = hardwareMap.get(DcMotor.class, "M_LR");
         DcMotor M_RR = hardwareMap.get(DcMotor.class, "M_RR");
+        M_S0 = hardwareMap.get(DcMotor.class, "M_S0");
+        M_S1 = hardwareMap.get(DcMotor.class, "M_S1");
+        M_bl = hardwareMap.get(DcMotor.class, "M_bl");
 
         M_LF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         M_RF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -161,7 +183,7 @@ public class AutoArtifact100 extends OpMode {
 
         buildPaths();
         follower.setStartingPose(new Pose(56,8, Math.toRadians(90)));
-        follower.setMaxPower(0.8);
+        follower.setMaxPower(0.5);
     }
 
 
