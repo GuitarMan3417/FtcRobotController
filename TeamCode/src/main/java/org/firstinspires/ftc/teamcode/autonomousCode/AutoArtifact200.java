@@ -34,7 +34,7 @@ public class AutoArtifact200 extends OpMode {
                 .addPath(
                         new BezierLine(new Pose(88.000, 87.500), new Pose(104.000, 59.600))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
                 .build();
 
         Path3 = follower
@@ -50,7 +50,7 @@ public class AutoArtifact200 extends OpMode {
                 .addPath(
                         new BezierLine(new Pose(130.000, 59.600), new Pose(88.000, 87.500))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(45))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(45))
                 .build();
 
         Path5 = follower
@@ -58,7 +58,7 @@ public class AutoArtifact200 extends OpMode {
                 .addPath(
                         new BezierLine(new Pose(88.000, 87.500), new Pose(104.000, 35.000))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
                 .build();
 
         Path6 = follower
@@ -74,7 +74,7 @@ public class AutoArtifact200 extends OpMode {
                 .addPath(
                         new BezierLine(new Pose(130.000, 35.000), new Pose(88.000, 87.500))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(45))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(45))
                 .build();
     }
 
