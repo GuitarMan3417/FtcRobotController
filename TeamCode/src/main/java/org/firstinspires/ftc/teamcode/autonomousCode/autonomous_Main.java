@@ -12,8 +12,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Autonomous (name="Autonomous-LineSample", group="Autonomous")
+@Autonomous (name="Autonomous: Main", group="Autonomous")
 public class autonomous_Main extends OpMode {
+    public int runState = 0;
     //Webcam Declaration
     DcMotor M_AIN, M_S0, M_bl, M_S1;
     Servo SVR_L0, SVR_L1;
@@ -62,28 +63,28 @@ public class autonomous_Main extends OpMode {
         public void run(){
             shootPrep.start();
             try{
-               Thread.sleep(2000);
+               Thread.sleep(5000);
             }
             catch(InterruptedException e){
                 throw new RuntimeException(e);
             }
             shootAct.start();
             try{
-                Thread.sleep(2000);
+                Thread.sleep(5000);
             }
             catch(InterruptedException e){
                 throw new RuntimeException(e);
             }
             shootMecDisabled();
             try{
-                Thread.sleep(2000);
+                Thread.sleep(5000);
             }
             catch(InterruptedException e){
                 throw new RuntimeException(e);
             }
             shootAllDisabled();
             try{
-                Thread.sleep(2000);
+                Thread.sleep(5000);
             }
             catch(InterruptedException e){
                 throw new RuntimeException(e);
@@ -180,7 +181,11 @@ public class autonomous_Main extends OpMode {
         follower.update();
         pathUpdate();
          */
-        testFunc.start();
+        if(runState == 0){
+            testFunc.start();
+            runState++;
+        }
+
         telemetry.addData("Path", pathState);
         telemetry.addData("X", follower.getPose().getX());
         telemetry.addData("Y", follower.getPose().getY());
