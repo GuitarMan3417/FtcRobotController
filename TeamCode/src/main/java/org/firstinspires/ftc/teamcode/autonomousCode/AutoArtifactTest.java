@@ -19,7 +19,7 @@ public class AutoArtifactTest extends OpMode {
 
     DcMotor M_LF, M_RF, M_LR, M_RR;   // มอเตอร์ล้อทั้ง 4 (Mecanum)
     DcMotor M_S0, M_S1, M_bl, M_AIN;
-    Servo SVR_L2;
+    Servo SVR_sw;
 
     private int pathState;
 
@@ -27,7 +27,7 @@ public class AutoArtifactTest extends OpMode {
     private Timer pathTimer, opModeTimer;
     public PathChain Path1, Path2, Path3, Path4, Path5, Path6, Path7, Path8, Path9;
 
-    // ประกาศตัวแปรควบคุมการแกว่งของ SVR_L2
+    // ประกาศตัวแปรควบคุมการแกว่งของ SVR_sw
     double angleL2 = 0;          // องศาปัจจุบัน
     boolean goingUp_L2 = true;
     long lastL2Time = 0;
@@ -111,7 +111,7 @@ public class AutoArtifactTest extends OpMode {
 
             case 2:
 
-                // ------------ Servo SVR_L2 Swing by Degree ---------------
+                // ------------ Servo SVR_sw Swing by Degree ---------------
                 long now = System.currentTimeMillis();
 
                 if(now - lastL2Time >= 500){   // ทุก 0.5 วิ
@@ -125,7 +125,7 @@ public class AutoArtifactTest extends OpMode {
                         goingUp_L2 = true;
                     }
 
-                    SVR_L2.setPosition(degreeToServo(angleL2));
+                    SVR_sw.setPosition(degreeToServo(angleL2));
                 }
                 // ---------------------------------------------------------
 
