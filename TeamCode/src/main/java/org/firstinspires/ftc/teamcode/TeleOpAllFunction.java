@@ -52,7 +52,7 @@ public class TeleOpAllFunction extends LinearOpMode {
             // =========================
             // Shooting Angle Servo (Old)
             // =========================
-            shootingAngle = Math.max(35, Math.min(70, shootingAngle));
+            shootingAngle = Math.max(0, Math.min(180, shootingAngle));
             SVR_L0.setPosition((double) shootingAngle /180);
 
             // =========================
@@ -123,25 +123,35 @@ public class TeleOpAllFunction extends LinearOpMode {
             // =========================
             // Servo L0 & L1 Control (New)
             // =========================
-            double servoStep = 0.1; // ปรับขึ้นลงทีละ 0.01
-            double posL0 = SVR_L0.getPosition();
-            double posL1 = SVR_L1.getPosition();
+// ============= Servo L0 & L1: Angle Control =============
+            double servoStepDeg = 1;   // กดครั้งละ 1°
+            double angleMin = 0;
+            double angleMax = 30;
 
-            if(gamepad2.left_bumper){  // L1 = ขยับขึ้น
-                posL0 += servoStep;
-                posL1 += servoStep;
+// เก็บองศาปัจจุบัน
+            double angleL0 = SVR_L0.getPosition() * 180;
+            double angleL1 = SVR_L1.getPosition() * 180;
+
+// กด LB = เพิ่มองศา
+            if(gamepad2.left_bumper){
+                angleL0 += servoStepDeg;
+                angleL1 += servoStepDeg;
             }
-            if(gamepad2.right_bumper){ // R1 = ขยับลง
-                posL0 -= servoStep;
-                posL1 -= servoStep;
+
+// กด RB = ลดองศา
+            if(gamepad2.right_bumper){
+                angleL0 -= servoStepDeg;
+                angleL1 -= servoStepDeg;
             }
 
-            // จำกัดค่าระหว่าง 0-1
-            posL0 = Math.max(0, Math.min(1, posL0));
-            posL1 = Math.max(-0, Math.min(-1, posL1));
+// จำกัดองศาไม่ให้เกิน 0–30°
+            angleL0 = Math.max(angleMin, Math.min(angleMax, angleL0));
+            angleL1 = Math.max(angleMin, Math.min(angleMax, angleL1));
 
-            SVR_L0.setPosition(posL0);
-            SVR_L1.setPosition(posL1);
+// แปลงองศา → 0.0–1.0
+            SVR_L0.setPosition(angleL0 / 180.0);
+            SVR_L1.setPosition(-angleL1 / 180.0);
+
 
             // =========================
             // Telemetry
