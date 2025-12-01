@@ -138,7 +138,7 @@ public class TeleOpAllFunction extends LinearOpMode {
 
             // จำกัดค่าระหว่าง 0-1
             posL0 = Math.max(0, Math.min(1, posL0));
-            posL1 = Math.max(0, Math.min(1, posL1));
+            posL1 = Math.max(-0, Math.min(-1, posL1));
 
             SVR_L0.setPosition(posL0);
             SVR_L1.setPosition(posL1);
