@@ -252,6 +252,8 @@ public class AutoArtifactTest extends OpMode {
         M_S1 = hardwareMap.get(DcMotor.class, "M_S1");
         M_bl = hardwareMap.get(DcMotor.class, "M_bl");
         M_AIN = hardwareMap.get(DcMotor.class, "M_AIN");
+        SVR_sw = hardwareMap.get(Servo.class, "SVR_sw");
+
 
 
         M_LF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
