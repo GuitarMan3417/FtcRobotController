@@ -12,13 +12,16 @@ public class TeleOpAllFunction extends LinearOpMode {
     DcMotor M_AIN, M_S0, M_S1, M_bl, M_LF, M_RF, M_LR, M_RR;
     Servo SVR_L0, SVR_L1;
 
-    private int shootingAngle = 0; //Initial shooting angle
-    private int angleAdd = 1; //Servo angle addition value
+    // Servo Angle Control
+    double angle = 0;        // เริ่มที่ 0°
+    double angleMin = 0;
+    double angleMax = 30;
+    double servoStepDeg = 1; // เพิ่ม/ลดทีละ 1°
 
     @Override
     public void runOpMode() throws InterruptedException {
 
-        // Hardware Mapping
+        // ================= Hardware Mapping =================
         M_LF = hardwareMap.get(DcMotor.class, "M_LF");
         M_RF = hardwareMap.get(DcMotor.class, "M_RF");
         M_LR = hardwareMap.get(DcMotor.class, "M_LR");
@@ -30,13 +33,13 @@ public class TeleOpAllFunction extends LinearOpMode {
         SVR_L0 = hardwareMap.get(Servo.class, "SVR_L0");
         SVR_L1 = hardwareMap.get(Servo.class, "SVR_L1");
 
-        // Set Directions
+        // ================= Set Directions =================
         M_LF.setDirection(DcMotorSimple.Direction.FORWARD);
         M_LR.setDirection(DcMotorSimple.Direction.FORWARD);
         M_RF.setDirection(DcMotorSimple.Direction.REVERSE);
         M_RR.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        // Zero Power Behavior
+        // ================= Zero Power Behavior =================
         M_LF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         M_RF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         M_LR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -47,17 +50,10 @@ public class TeleOpAllFunction extends LinearOpMode {
         M_bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         waitForStart();
+
         while (opModeIsActive()) {
 
-            // =========================
-            // Shooting Angle Servo (Old)
-            // =========================
-            shootingAngle = Math.max(0, Math.min(180, shootingAngle));
-            SVR_L0.setPosition((double) shootingAngle /180);
-
-            // =========================
-            // Intake Motor
-            // =========================
+            // ================= Intake Motor =================
             double intakePower = 0;
             if(gamepad1.b){
                 intakePower = -0.65;
@@ -68,15 +64,11 @@ public class TeleOpAllFunction extends LinearOpMode {
             }
             M_AIN.setPower(intakePower);
 
-            // =========================
-            // Spin-Up Motor
-            // =========================
+            // ================= Spin-Up Motor =================
             M_S0.setPower(gamepad2.a ? 1 : 0);
             M_S0.setPower(gamepad2.x ? -1 : M_S0.getPower());
 
-            // =========================
-            // Blocking & Shooting Motor
-            // =========================
+            // ================= Blocking & Shooting Motor =================
             if(gamepad2.b){
                 M_S1.setPower(-1);
                 M_S0.setPower(1); // Spin-up during shoot
@@ -87,9 +79,7 @@ public class TeleOpAllFunction extends LinearOpMode {
                 M_S1.setPower(-0.35);
             }
 
-            // =========================
-            // Driving Control (Mecanum)
-            // =========================
+            // ================= Driving Control (Mecanum) =================
             double forwardBackward = -gamepad1.left_stick_y;
             double strafe = gamepad1.left_stick_x;
             double rotate = gamepad1.right_stick_x;
@@ -120,42 +110,23 @@ public class TeleOpAllFunction extends LinearOpMode {
             M_LR.setPower(powerLR);
             M_RR.setPower(powerRR);
 
-            // =========================
-            // Servo L0 & L1 Control (New)
-            // =========================
-// ============= Servo L0 & L1: Angle Control =============
-            double servoStepDeg = 1;   // กดครั้งละ 1°
-            double angleMin = 0;
-            double angleMax = 30;
-
-// เก็บองศาปัจจุบัน
-            double angleL0 = SVR_L0.getPosition() * 180;
-            double angleL1 = SVR_L1.getPosition() * 180;
-
-// กด LB = เพิ่มองศา
+            // ================= Servo L0 & L1 Control (0°-30°) =================
+            // เพิ่ม/ลดองศา
             if(gamepad2.left_bumper){
-                angleL0 += servoStepDeg;
-                angleL1 += servoStepDeg;
+                angle += servoStepDeg;
             }
-
-// กด RB = ลดองศา
             if(gamepad2.right_bumper){
-                angleL0 -= servoStepDeg;
-                angleL1 -= servoStepDeg;
+                angle -= servoStepDeg;
             }
 
-// จำกัดองศาไม่ให้เกิน 0–30°
-            angleL0 = Math.max(angleMin, Math.min(angleMax, angleL0));
-            angleL1 = Math.max(angleMin, Math.min(angleMax, angleL1));
+            // จำกัดองศา
+            angle = Math.max(angleMin, Math.min(angleMax, angle));
 
-// แปลงองศา → 0.0–1.0
-            SVR_L0.setPosition(angleL0 / 180.0);
-            SVR_L1.setPosition(-angleL1 / 180.0);
+            // แปลงเป็น servo position
+            SVR_L0.setPosition(angle / 180.0);        // ฝั่งซ้าย
+            SVR_L1.setPosition(1.0 - (angle / 180.0)); // ฝั่งขวา หมุนกลับด้าน
 
-
-            // =========================
-            // Telemetry
-            // =========================
+            // ================= Telemetry =================
             telemetry.addData("M_AIN", M_AIN.getPower());
             telemetry.addData("M_S0", M_S0.getPower());
             telemetry.addData("M_bl", M_bl.getPower());
@@ -168,7 +139,6 @@ public class TeleOpAllFunction extends LinearOpMode {
             telemetry.addData("Power LR", M_LR.getPower());
             telemetry.addData("Power RR", M_RR.getPower());
             telemetry.update();
-
         }
     }
 }
