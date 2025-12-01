@@ -52,7 +52,7 @@ public class TeleOpAllFunction extends LinearOpMode {
             // =========================
             // Shooting Angle Servo (Old)
             // =========================
-            shootingAngle = Math.max(0, Math.min(180, shootingAngle));
+            shootingAngle = Math.max(35, Math.min(70, shootingAngle));
             SVR_L0.setPosition((double) shootingAngle /180);
 
             // =========================
@@ -123,7 +123,7 @@ public class TeleOpAllFunction extends LinearOpMode {
             // =========================
             // Servo L0 & L1 Control (New)
             // =========================
-            double servoStep = 0.01; // ปรับขึ้นลงทีละ 0.01
+            double servoStep = 0.1; // ปรับขึ้นลงทีละ 0.01
             double posL0 = SVR_L0.getPosition();
             double posL1 = SVR_L1.getPosition();
 

@@ -118,7 +118,7 @@ public class AutoArtifactTest extends OpMode {
                     lastL2Time = now;
 
                     if(goingUp_L2){
-                        angleL2 = 90;         // ขึ้นไปที่ 90°
+                        angleL2 = -90;         // ขึ้นไปที่ 90°
                         goingUp_L2 = false;
                     } else {
                         angleL2 = 0;          // ลงกลับ 0°
