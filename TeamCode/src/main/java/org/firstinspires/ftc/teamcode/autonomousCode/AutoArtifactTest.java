@@ -8,21 +8,35 @@ import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 //Intake 1 standby 0.18
 //Shoot stby 0.35 shoot 1
 @Autonomous(name="AutoArtifact100", group = "Autonomous")
-public class AutoArtifact100 extends OpMode {
+public class AutoArtifactTest extends OpMode {
+
     DcMotor M_LF, M_RF, M_LR, M_RR;   // มอเตอร์ล้อทั้ง 4 (Mecanum)
     DcMotor M_S0, M_S1, M_bl, M_AIN;
+    Servo SVR_L2;
 
     private int pathState;
 
     private Follower follower;
     private Timer pathTimer, opModeTimer;
     public PathChain Path1, Path2, Path3, Path4, Path5, Path6, Path7, Path8, Path9;
+
+    // ประกาศตัวแปรควบคุมการแกว่งของ SVR_L2
+    double angleL2 = 0;          // องศาปัจจุบัน
+    boolean goingUp_L2 = true;
+    long lastL2Time = 0;
+
+    private double degreeToServo(double degree) {
+        return degree / 180.0;   // 0° = 0.0, 180° = 1.0
+    }
+
+
 
     public void buildPaths(){
         Path1 = follower
@@ -95,30 +109,46 @@ public class AutoArtifact100 extends OpMode {
                 }
                 break;
 
-            case 2:     // หยุด 1 วินาที + สั่งให้มอเตอร์ทำงาน
+            case 2:
+
+                // ------------ Servo SVR_L2 Swing by Degree ---------------
+                long now = System.currentTimeMillis();
+
+                if(now - lastL2Time >= 500){   // ทุก 0.5 วิ
+                    lastL2Time = now;
+
+                    if(goingUp_L2){
+                        angleL2 = 90;         // ขึ้นไปที่ 90°
+                        goingUp_L2 = false;
+                    } else {
+                        angleL2 = 0;          // ลงกลับ 0°
+                        goingUp_L2 = true;
+                    }
+
+                    SVR_L2.setPosition(degreeToServo(angleL2));
+                }
+                // ---------------------------------------------------------
+
                 if(pathTimer.getElapsedTimeSeconds() < 5){
-                    // มอเตอร์ทำงานระหว่างหยุด 1 วิ
+
                     M_S0.setPower(1.0);
                     M_S1.setPower(-1.0);
                     M_bl.setPower(-1.0);
                     M_AIN.setPower(1);
 
-
                 } else {
-                    // ครบ 1 วิแล้วปิดมอเตอร์
 
                     M_S0.setPower(0);
                     M_S1.setPower(0.35);
                     M_bl.setPower(0);
                     M_AIN.setPower(0.18);
 
-
-
-                    // ไป Path2
                     follower.followPath(Path2);
                     setPathState(3);
                 }
                 break;
+
+
 
             case 3:
                 if(!follower.isBusy()){
