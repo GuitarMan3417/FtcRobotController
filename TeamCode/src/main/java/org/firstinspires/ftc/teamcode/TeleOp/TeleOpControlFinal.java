@@ -37,8 +37,17 @@ public class TeleOpControlFinal extends LinearOpMode {
                 }
                 M_bl.setPower(-1);
 
-
-
+            }
+            else if(gamepad2.left_stick_y > 0.2){
+                telemetry.addLine("Shooting!");
+                M_S1.setPower(-1);
+                M_S0.setPower(1);
+                try{
+                    Thread.sleep(600);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                M_bl.setPower(-1);
             }
             else{
                 M_bl.setPower(0);
@@ -112,12 +121,19 @@ public class TeleOpControlFinal extends LinearOpMode {
 
             //Intake Motor
             double intakePower = 0;
-            if(gamepad1.b){
+            if(gamepad1.left_trigger > 0.01){
+
+                intakePower = -0.65;
+            }
+            if(gamepad2.left_trigger > 0.01){
 
                 intakePower = -0.65;
             }
 
             else if (gamepad1.right_trigger > 0.1) {
+                intakePower = 0.55;  // ดูดเร็ว (กด R2)
+            }
+            else if (gamepad2.right_trigger > 0.1) {
                 intakePower = 0.55;  // ดูดเร็ว (กด R2)
             }
             else{
