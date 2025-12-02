@@ -135,15 +135,6 @@ public class AutoArtifact100 extends OpMode {
                 if(!follower.isBusy()){
                     M_AIN.setPower(0.18);
                     follower.setMaxPower(0.5);
-
-                    follower.followPath(Path4);
-                    setPathState(5);
-                }
-                break;
-
-            case 5:
-                if(!follower.isBusy()){
-                    follower.setMaxPower(0.5);
                     if(pathTimer.getElapsedTimeSeconds() < 5){
                         // มอเตอร์ทำงานระหว่างหยุด 1 วิ
                         M_S0.setPower(1.0);
@@ -162,6 +153,16 @@ public class AutoArtifact100 extends OpMode {
 
                 }
                 break;
+
+            case 5:
+            if(!follower.isBusy()){
+                M_AIN.setPower(0.18);
+                follower.setMaxPower(0.5);
+
+                follower.followPath(Path4);
+                setPathState(5);
+            }
+            break;
 
             case 6:
                 if(!follower.isBusy()){
