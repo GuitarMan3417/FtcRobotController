@@ -16,17 +16,19 @@ public class TeleOpControlFinal extends LinearOpMode {
 
     double speedMultiplier = 0.40;
 
-    private double shootingAngle = 0; //Initial shooting angle
+    private double shootingPower1 = 0.46; //Initial shooting angle
+    private double shootingPower2 = 0;
     private double angleAdd = 0.1; //Servo angle addition value
     int timerState = 0;
     int createTimer = 0;
+
     Thread shootingAct = new Thread(new Runnable() {
         @Override
         public void run(){
 
             if(gamepad2.b){
                 telemetry.addLine("Shooting!");
-                M_S1.setPower(-0.85);
+                M_S1.setPower(-0.80);
                 M_S0.setPower(1);
                 try{
                     Thread.sleep(600);
@@ -79,20 +81,33 @@ public class TeleOpControlFinal extends LinearOpMode {
         M_S0.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         M_S1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         M_bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        SVR_L0.setPosition(0.46);
+        SVR_L1.setPosition(0);
+        SVR_sw.setPosition(0.1);
         waitForStart();
+
         while (opModeIsActive()){
 
             if(gamepad2.right_bumper){
-                shootingAngle += angleAdd;
+                shootingPower1 = (Math.max(0.18, Math.min(0.46, SVR_L0.getPosition())) - 0.001); //Scale Angle from 0-180 to 0-1
+                shootingPower2 = (Math.max(0, Math.min(0.28, SVR_L1.getPosition())) + (0.001));
+
             }
             if(gamepad2.left_bumper){
-                shootingAngle -= angleAdd;
+                shootingPower1 = (Math.max(0.18, Math.min(0.46, SVR_L0.getPosition())) + 0.001); //Scale Angle from 0-180 to 0-1
+                shootingPower2 = (Math.max(0, Math.min(0.28, SVR_L1.getPosition())) - (0.001));
             }
-            shootingAngle = Math.max(0, Math.min(180, shootingAngle));
+            if(gamepad2.y){
+                SVR_sw.setPosition(0.5);
+            }
+            else{
+                SVR_sw.setPosition(0.1);
+            }
+            SVR_L0.setPosition(shootingPower1);
+            SVR_L1.setPosition(shootingPower2);
 
-            SVR_L0.setPosition(1 - (shootingAngle/180)); //Scale Angle from 0-180 to 0-1
-            SVR_L1.setPosition(shootingAngle/ 180);
-            SVR_sw.setPosition(shootingAngle/ 180);
+
+
 
 
             //Intake Motor
@@ -165,7 +180,7 @@ public class TeleOpControlFinal extends LinearOpMode {
             telemetry.addData("M_S0", M_S0.getPower());
             telemetry.addData("M_bl", M_bl.getPower());
             telemetry.addData("M_S1", M_S1.getPower());
-            telemetry.addData("Shooting Angle", shootingAngle);
+
             telemetry.addData("SVR_L0", SVR_L0.getPosition());
             telemetry.addData("SVR_L1", SVR_L1.getPosition());
             telemetry.addData("SVR_sw", SVR_sw.getPosition());

@@ -52,7 +52,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class ConceptScanServo extends LinearOpMode {
 
-    static final double INCREMENT   = 0.01;     // amount to slew servo each CYCLE_MS cycle
+    static final double INCREMENT   = 0.1;     // amount to slew servo each CYCLE_MS cycle
     static final int    CYCLE_MS    =   50;     // period of each cycle
     static final double MAX_POS     =  1.0;     // Maximum rotational position
     static final double MIN_POS     =  0.0;     // Minimum rotational position
@@ -70,6 +70,7 @@ public class ConceptScanServo extends LinearOpMode {
         // Change the text in quotes to match any servo name on your robot.
         SVR_L0 = hardwareMap.get(Servo.class, "SVR_L0");
         SVR_L1 = hardwareMap.get(Servo.class, "SVR_L1");
+        SVR_sw = hardwareMap.get(Servo.class, "SVR_sw");
         // Wait for the start button
         telemetry.addData(">", "Press Start to scan Servo." );
         telemetry.update();
@@ -103,8 +104,8 @@ public class ConceptScanServo extends LinearOpMode {
             telemetry.update();
 
             // Set the servo to the new position and pause;
-            SVR_L0.setPosition(position);
-            SVR_L1.setPosition(position);
+            SVR_sw.setPosition(position);
+
 
 
             sleep(CYCLE_MS);

@@ -27,25 +27,17 @@ public class AutoArtifact200 extends OpMode {
 
         @Override
         public void run() {
-            for(int procCounter = 0; procCounter < 5; procCounter++){
-                SVR_sw.setPosition(90);
-                try{
-                    Thread.sleep(1000);
-                }
-                catch(InterruptedException e){
-                    throw new RuntimeException(e);
-                }
-
-                SVR_sw.setPosition(0);
-                try{
-                    Thread.sleep(1000);
-                }
-                catch(InterruptedException e){
-                    throw new RuntimeException(e);
-                }
+            try{
+                Thread.sleep(3500);
             }
+            catch (InterruptedException e){
+                throw new RuntimeException(e);
+            }
+            SVR_sw.setPosition(0.5);
 
         }
+
+
     });
     public void buildPaths(){
         Path1 = follower
@@ -121,15 +113,16 @@ public class AutoArtifact200 extends OpMode {
 
             case 2:     // หยุด 1 วินาที + สั่งให้มอเตอร์ทำงาน
                 if(pathTimer.getElapsedTimeSeconds() < 5){
+
                     // มอเตอร์ทำงานระหว่างหยุด 1 วิ
                     M_S0.setPower(1.0);
-                    M_S1.setPower(-0.85);
+                    M_S1.setPower(-0.8);
                     M_bl.setPower(-1.0);
                     servoSwipe.start();
                     M_AIN.setPower(1);
                 } else {
                     // ครบ 1 วิแล้วปิดมอเตอร์
-
+                    SVR_sw.setPosition(0);
                     M_S0.setPower(0);
                     M_S1.setPower(-0.35);
                     M_bl.setPower(0);
@@ -167,13 +160,15 @@ public class AutoArtifact200 extends OpMode {
                     follower.setMaxPower(0.5);
                     if(pathTimer.getElapsedTimeSeconds() < 5){
                         // มอเตอร์ทำงานระหว่างหยุด 1 วิ
+
                         M_S0.setPower(1.0);
-                        M_S1.setPower(-0.85);
+                        M_S1.setPower(-0.8);
                         M_bl.setPower(-1.0);
                         servoSwipe.start();
                         M_AIN.setPower(1);
                     } else {
                         // ครบ 1 วิแล้วปิดมอเตอร์
+                        SVR_sw.setPosition(0);
                         M_S0.setPower(0);
                         M_S1.setPower(-0.35);
                         M_bl.setPower(0);
@@ -209,13 +204,15 @@ public class AutoArtifact200 extends OpMode {
                 if(!follower.isBusy()){
                     if(pathTimer.getElapsedTimeSeconds() < 5){
                         // มอเตอร์ทำงานระหว่างหยุด 1 วิ
+
                         M_S0.setPower(1.0);
-                        M_S1.setPower(-0.85);
+                        M_S1.setPower(-0.8);
                         M_bl.setPower(-1.0);
                         servoSwipe.start();
                         M_AIN.setPower(1);
                     } else {
                         // ครบ 1 วิแล้วปิดมอเตอร์
+                        SVR_sw.setPosition(0);
                         M_S0.setPower(0);
                         M_S1.setPower(-0.35);
                         M_bl.setPower(0);

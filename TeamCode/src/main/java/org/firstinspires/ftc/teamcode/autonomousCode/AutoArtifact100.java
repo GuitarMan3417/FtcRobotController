@@ -8,6 +8,7 @@ import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
@@ -17,13 +18,18 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 public class AutoArtifact100 extends OpMode {
     DcMotor M_LF, M_RF, M_LR, M_RR;   // มอเตอร์ล้อทั้ง 4 (Mecanum)
     DcMotor M_S0, M_S1, M_bl, M_AIN;
+    Servo SVR_sw;
 
     private int pathState;
+    private double servoDelay = 4.3; //Delay before servoAct
+    private double systemDelay = 5.5; //Path Duration Timer
+    private double maxSpeed = 0.65;
 
     private Follower follower;
     private Timer pathTimer, opModeTimer;
-    private double maxS1Power = -0.9;
+    private double maxS1Power = -0.8;
     public PathChain Path1, Path2, Path3, Path4, Path5, Path6, Path7, Path8, Path9;
+
 
     public void buildPaths(){
         Path1 = follower
@@ -98,17 +104,19 @@ public class AutoArtifact100 extends OpMode {
                 break;
 
             case 2:     // หยุด 1 วินาที + สั่งให้มอเตอร์ทำงาน
-                if(pathTimer.getElapsedTimeSeconds() < 5){
+                if(pathTimer.getElapsedTimeSeconds() < systemDelay){
+
                     // มอเตอร์ทำงานระหว่างหยุด 1 วิ
                     M_S0.setPower(1.0);
-                    M_S1.setPower(maxS1Power);
+                    M_S1.setPower(-0.8);
                     M_bl.setPower(-1.0);
+                    if(pathTimer.getElapsedTimeSeconds() > servoDelay){
+                        SVR_sw.setPosition(0.5);
+                    }
                     M_AIN.setPower(1);
-
-
                 } else {
                     // ครบ 1 วิแล้วปิดมอเตอร์
-
+                    SVR_sw.setPosition(0);
                     M_S0.setPower(0);
                     M_S1.setPower(-0.35);
                     M_bl.setPower(0);
@@ -124,7 +132,7 @@ public class AutoArtifact100 extends OpMode {
 
             case 3:
                 if(!follower.isBusy()){
-                    follower.setMaxPower(0.2);
+                    follower.setMaxPower(maxSpeed - 0.4);
                     M_AIN.setPower(1);
                     follower.followPath(Path3);
                     setPathState(4);
@@ -134,15 +142,28 @@ public class AutoArtifact100 extends OpMode {
             case 4:
                 if(!follower.isBusy()){
                     M_AIN.setPower(0.18);
-                    follower.setMaxPower(0.5);
-                    if(pathTimer.getElapsedTimeSeconds() < 5){
+                    follower.setMaxPower(maxSpeed);
+
+                    follower.followPath(Path4);
+                    setPathState(5);
+                }
+                break;
+
+            case 5:
+                if(!follower.isBusy()){
+                    follower.setMaxPower(maxSpeed);
+                    if(pathTimer.getElapsedTimeSeconds() < systemDelay){
                         // มอเตอร์ทำงานระหว่างหยุด 1 วิ
+                        if(pathTimer.getElapsedTimeSeconds() > servoDelay){
+                            SVR_sw.setPosition(0.5);
+                        }
                         M_S0.setPower(1.0);
-                        M_S1.setPower(maxS1Power);
+                        M_S1.setPower(-0.8);
                         M_bl.setPower(-1.0);
                         M_AIN.setPower(1);
                     } else {
                         // ครบ 1 วิแล้วปิดมอเตอร์
+                        SVR_sw.setPosition(0);
                         M_S0.setPower(0);
                         M_S1.setPower(-0.35);
                         M_bl.setPower(0);
@@ -150,24 +171,15 @@ public class AutoArtifact100 extends OpMode {
                         follower.followPath(Path5);
                         setPathState(6);
                     }
-
                 }
+
+
                 break;
-
-            case 5:
-            if(!follower.isBusy()){
-                M_AIN.setPower(0.18);
-                follower.setMaxPower(0.5);
-
-                follower.followPath(Path4);
-                setPathState(5);
-            }
-            break;
 
             case 6:
                 if(!follower.isBusy()){
                     M_AIN.setPower(1);
-                    follower.setMaxPower(0.2);
+                    follower.setMaxPower(maxSpeed - 0.4);
                     follower.followPath(Path6);
                     setPathState(7);
                 }
@@ -177,7 +189,7 @@ public class AutoArtifact100 extends OpMode {
                 M_AIN.setPower(1);
                 if(!follower.isBusy()){
                     M_AIN.setPower(0.18);
-                    follower.setMaxPower(0.5);
+                    follower.setMaxPower(maxSpeed);
                     follower.followPath(Path7);
                     setPathState(8);
 
@@ -186,20 +198,26 @@ public class AutoArtifact100 extends OpMode {
 
             case 8:
                 if(!follower.isBusy()){
-                    if(pathTimer.getElapsedTimeSeconds() < 5){
+                    if(pathTimer.getElapsedTimeSeconds() < systemDelay){
                         // มอเตอร์ทำงานระหว่างหยุด 1 วิ
+
                         M_S0.setPower(1.0);
-                        M_S1.setPower(maxS1Power);
+                        M_S1.setPower(-0.8);
                         M_bl.setPower(-1.0);
+                        if(pathTimer.getElapsedTimeSeconds() > servoDelay){
+                            SVR_sw.setPosition(0.5);
+                        }
                         M_AIN.setPower(1);
                     } else {
                         // ครบ 1 วิแล้วปิดมอเตอร์
+                        SVR_sw.setPosition(0);
                         M_S0.setPower(0);
-                        M_S1.setPower(-0.35);
+
                         M_bl.setPower(0);
                         M_AIN.setPower(0.18);
+                        setPathState(-1);  // จบ
                     }
-                    setPathState(-1);  // จบ
+
                 }
                 break;
         }
@@ -225,6 +243,7 @@ public class AutoArtifact100 extends OpMode {
         M_S1 = hardwareMap.get(DcMotor.class, "M_S1");
         M_bl = hardwareMap.get(DcMotor.class, "M_bl");
         M_AIN = hardwareMap.get(DcMotor.class, "M_AIN");
+        SVR_sw = hardwareMap.get(Servo.class, "SVR_sw");
 
 
         M_LF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -235,7 +254,7 @@ public class AutoArtifact100 extends OpMode {
 
         buildPaths();
         follower.setStartingPose(new Pose(56,8, Math.toRadians(90)));
-        follower.setMaxPower(0.5);
+        follower.setMaxPower(maxSpeed);
     }
 
 
@@ -247,5 +266,6 @@ public class AutoArtifact100 extends OpMode {
         telemetry.addData("X", follower.getPose().getX());
         telemetry.addData("Y", follower.getPose().getY());
         telemetry.addData("Heading", follower.getHeading());
+        telemetry.addData("Path Timer", pathTimer.getElapsedTimeSeconds());
     }
 }
