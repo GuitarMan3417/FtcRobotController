@@ -15,9 +15,14 @@ public class ServoTest extends LinearOpMode {
     double upDegree = 150;     // องศาเมื่อกด L1 (ขึ้น)
     double downDegree = 30;    // องศาเมื่อกด R1 (ลง)
 
-    // ฟังก์ชันแปลง องศา → ค่า 0.0–1.0
+    // แปลง องศา → Position 0–1
     private double degToPos(double degree) {
         return Range.clip(degree / 180.0, 0.0, 1.0);
+    }
+
+    // แปลง Position 0–1 → องศา
+    private double posToDeg(double pos) {
+        return pos * 180.0;
     }
 
     @Override
@@ -49,8 +54,12 @@ public class ServoTest extends LinearOpMode {
                 SVR_L1.setPosition(posL1);
             }
 
-            telemetry.addData("SVR_L0 Position", SVR_L0.getPosition());
-            telemetry.addData("SVR_L1 Position", SVR_L1.getPosition());
+            // ---------- TELEMETRY แสดงองศาแทนค่า position -----------
+            double L0_deg = posToDeg(SVR_L0.getPosition());
+            double L1_deg = posToDeg(1 - SVR_L1.getPosition()); // กลับด้านเป็นองศาที่แท้จริง
+
+            telemetry.addData("SVR_L0 Degree", "%.1f°", L0_deg);
+            telemetry.addData("SVR_L1 Degree", "%.1f°", L1_deg);
             telemetry.update();
         }
     }
