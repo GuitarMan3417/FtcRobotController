@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 //Intake 1 standby 0.18
 //Shoot stby 0.35 shoot 1
-@Autonomous(name="AutoArtifact100", group = "Autonomous")
+@Autonomous(name="AutoArtifactTest", group = "Autonomous")
 public class AutoArtifactTest extends OpMode {
 
     DcMotor M_LF, M_RF, M_LR, M_RR;   // มอเตอร์ล้อทั้ง 4 (Mecanum)

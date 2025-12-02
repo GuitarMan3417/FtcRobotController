@@ -8,22 +8,45 @@ import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 //Intake 1 standby 0.18
 //Shoot stby 0.35 shoot 1
-@Autonomous(name="AutoArtifact200", group = "Autonomous")
+@Autonomous(name="AutoArtifact: Red", group = "Autonomous")
 public class AutoArtifact200 extends OpMode {
     DcMotor M_LF, M_RF, M_LR, M_RR;   // มอเตอร์ล้อทั้ง 4 (Mecanum)
     DcMotor M_S0, M_S1, M_bl, M_AIN;
-
+    Servo SVR_L0, SVR_L1, SVR_sw;
     private int pathState;
-
     private Follower follower;
     private Timer pathTimer, opModeTimer;
     public PathChain Path1, Path2, Path3, Path4, Path5, Path6, Path7, Path8, Path9;
+    Thread servoSwipe = new Thread(new Runnable() {
 
+        @Override
+        public void run() {
+            for(int procCounter = 0; procCounter < 5; procCounter++){
+                SVR_sw.setPosition(90);
+                try{
+                    Thread.sleep(1000);
+                }
+                catch(InterruptedException e){
+                    throw new RuntimeException(e);
+                }
+
+                SVR_sw.setPosition(0);
+                try{
+                    Thread.sleep(1000);
+                }
+                catch(InterruptedException e){
+                    throw new RuntimeException(e);
+                }
+            }
+
+        }
+    });
     public void buildPaths(){
         Path1 = follower
                 .pathBuilder()
@@ -100,14 +123,15 @@ public class AutoArtifact200 extends OpMode {
                 if(pathTimer.getElapsedTimeSeconds() < 5){
                     // มอเตอร์ทำงานระหว่างหยุด 1 วิ
                     M_S0.setPower(1.0);
-                    M_S1.setPower(-1.0);
+                    M_S1.setPower(-0.85);
                     M_bl.setPower(-1.0);
+                    servoSwipe.start();
                     M_AIN.setPower(1);
                 } else {
                     // ครบ 1 วิแล้วปิดมอเตอร์
 
                     M_S0.setPower(0);
-                    M_S1.setPower(0.35);
+                    M_S1.setPower(-0.35);
                     M_bl.setPower(0);
                     M_AIN.setPower(0.18);
 
@@ -144,13 +168,14 @@ public class AutoArtifact200 extends OpMode {
                     if(pathTimer.getElapsedTimeSeconds() < 5){
                         // มอเตอร์ทำงานระหว่างหยุด 1 วิ
                         M_S0.setPower(1.0);
-                        M_S1.setPower(-1.0);
+                        M_S1.setPower(-0.85);
                         M_bl.setPower(-1.0);
+                        servoSwipe.start();
                         M_AIN.setPower(1);
                     } else {
                         // ครบ 1 วิแล้วปิดมอเตอร์
                         M_S0.setPower(0);
-                        M_S1.setPower(0.35);
+                        M_S1.setPower(-0.35);
                         M_bl.setPower(0);
                         M_AIN.setPower(0.18);
                         follower.followPath(Path5);
@@ -185,13 +210,14 @@ public class AutoArtifact200 extends OpMode {
                     if(pathTimer.getElapsedTimeSeconds() < 5){
                         // มอเตอร์ทำงานระหว่างหยุด 1 วิ
                         M_S0.setPower(1.0);
-                        M_S1.setPower(-1.0);
+                        M_S1.setPower(-0.85);
                         M_bl.setPower(-1.0);
+                        servoSwipe.start();
                         M_AIN.setPower(1);
                     } else {
                         // ครบ 1 วิแล้วปิดมอเตอร์
                         M_S0.setPower(0);
-                        M_S1.setPower(0.35);
+                        M_S1.setPower(-0.35);
                         M_bl.setPower(0);
                         M_AIN.setPower(0.18);
                     }
@@ -243,5 +269,6 @@ public class AutoArtifact200 extends OpMode {
         telemetry.addData("X", follower.getPose().getX());
         telemetry.addData("Y", follower.getPose().getY());
         telemetry.addData("Heading", follower.getHeading());
+        telemetry.addData("SVR_sw", SVR_sw.getPosition());
     }
 }

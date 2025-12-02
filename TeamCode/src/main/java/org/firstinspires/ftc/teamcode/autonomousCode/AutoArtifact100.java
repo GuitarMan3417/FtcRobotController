@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 //Intake 1 standby 0.18
 //Shoot stby 0.35 shoot 1
-@Autonomous(name="AutoArtifact100", group = "Autonomous")
+@Autonomous(name="AutoArtifact: Blue", group = "Autonomous")
 public class AutoArtifact100 extends OpMode {
     DcMotor M_LF, M_RF, M_LR, M_RR;   // มอเตอร์ล้อทั้ง 4 (Mecanum)
     DcMotor M_S0, M_S1, M_bl, M_AIN;
@@ -22,29 +22,30 @@ public class AutoArtifact100 extends OpMode {
 
     private Follower follower;
     private Timer pathTimer, opModeTimer;
+    private double maxS1Power = -0.9;
     public PathChain Path1, Path2, Path3, Path4, Path5, Path6, Path7, Path8, Path9;
 
     public void buildPaths(){
         Path1 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(88.000, 8.000), new Pose(88.000, 87.500))
+                        new BezierLine(new Pose(56.000, 8.000), new Pose(56.000, 87.500))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(45))
+                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(135))
                 .build();
 
         Path2 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(88.000, 87.500), new Pose(104.000, 66.000))
+                        new BezierLine(new Pose(56.000, 87.500), new Pose(45.000, 66.000))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(176))
                 .build();
 
         Path3 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(104.000, 66.000), new Pose(130.000, 66.000))
+                        new BezierLine(new Pose(45.000, 66.000), new Pose(7.000, 66.000))
                 )
                 .setTangentHeadingInterpolation()
                 .build();
@@ -52,23 +53,23 @@ public class AutoArtifact100 extends OpMode {
         Path4 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(130.000, 66.000), new Pose(88.000, 87.500))
+                        new BezierLine(new Pose(7.000, 66.000), new Pose(56.000, 87.500))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(45))
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(135))
                 .build();
 
         Path5 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(88.000, 87.500), new Pose(104.000, 35.000))
+                        new BezierLine(new Pose(56.000, 87.500), new Pose(45.000, 35.500))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(176))
                 .build();
 
         Path6 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(104.000, 35.000), new Pose(130.000, 35.000))
+                        new BezierLine(new Pose(45.000, 35.500), new Pose(7.000, 35.500))
                 )
                 .setTangentHeadingInterpolation()
                 .build();
@@ -76,11 +77,12 @@ public class AutoArtifact100 extends OpMode {
         Path7 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(130.000, 35.000), new Pose(88.000, 87.500))
+                        new BezierLine(new Pose(7.000, 35.500), new Pose(56.000, 87.500))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(45))
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(135))
                 .build();
     }
+
 
     public void pathUpdate(){
         switch(pathState){
@@ -99,7 +101,7 @@ public class AutoArtifact100 extends OpMode {
                 if(pathTimer.getElapsedTimeSeconds() < 5){
                     // มอเตอร์ทำงานระหว่างหยุด 1 วิ
                     M_S0.setPower(1.0);
-                    M_S1.setPower(-1.0);
+                    M_S1.setPower(maxS1Power);
                     M_bl.setPower(-1.0);
                     M_AIN.setPower(1);
 
@@ -108,7 +110,7 @@ public class AutoArtifact100 extends OpMode {
                     // ครบ 1 วิแล้วปิดมอเตอร์
 
                     M_S0.setPower(0);
-                    M_S1.setPower(0.35);
+                    M_S1.setPower(-0.35);
                     M_bl.setPower(0);
                     M_AIN.setPower(0.18);
 
@@ -145,13 +147,13 @@ public class AutoArtifact100 extends OpMode {
                     if(pathTimer.getElapsedTimeSeconds() < 5){
                         // มอเตอร์ทำงานระหว่างหยุด 1 วิ
                         M_S0.setPower(1.0);
-                        M_S1.setPower(-1.0);
+                        M_S1.setPower(maxS1Power);
                         M_bl.setPower(-1.0);
                         M_AIN.setPower(1);
                     } else {
                         // ครบ 1 วิแล้วปิดมอเตอร์
                         M_S0.setPower(0);
-                        M_S1.setPower(0.35);
+                        M_S1.setPower(-0.35);
                         M_bl.setPower(0);
                         M_AIN.setPower(0.18);
                         follower.followPath(Path5);
@@ -186,13 +188,13 @@ public class AutoArtifact100 extends OpMode {
                     if(pathTimer.getElapsedTimeSeconds() < 5){
                         // มอเตอร์ทำงานระหว่างหยุด 1 วิ
                         M_S0.setPower(1.0);
-                        M_S1.setPower(-1.0);
+                        M_S1.setPower(maxS1Power);
                         M_bl.setPower(-1.0);
                         M_AIN.setPower(1);
                     } else {
                         // ครบ 1 วิแล้วปิดมอเตอร์
                         M_S0.setPower(0);
-                        M_S1.setPower(0.35);
+                        M_S1.setPower(-0.35);
                         M_bl.setPower(0);
                         M_AIN.setPower(0.18);
                     }
@@ -231,7 +233,7 @@ public class AutoArtifact100 extends OpMode {
         // ===========================
 
         buildPaths();
-        follower.setStartingPose(new Pose(88,8, Math.toRadians(90)));
+        follower.setStartingPose(new Pose(56,8, Math.toRadians(90)));
         follower.setMaxPower(0.5);
     }
 
