@@ -6,11 +6,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name="TeleOp: Control", group = "TeleOp")
+@TeleOp(name="TeleOp: Control111", group = "TeleOp")
 public class TeleOpAllFunction extends LinearOpMode {
 
     DcMotor M_AIN, M_S0, M_S1, M_bl, M_LF, M_RF, M_LR, M_RR;
-    Servo SVR_L0, SVR_L1;
+    Servo SVR_L0, SVR_L1, SVR_sw;
 
     // Servo Angle Control
     double angle = 0;        // เริ่มที่ 0°
@@ -32,6 +32,7 @@ public class TeleOpAllFunction extends LinearOpMode {
         M_bl = hardwareMap.get(DcMotor.class, "M_bl");
         SVR_L0 = hardwareMap.get(Servo.class, "SVR_L0");
         SVR_L1 = hardwareMap.get(Servo.class, "SVR_L1");
+        SVR_sw = hardwareMap.get(Servo.class, "SVR_sw");
 
         // ================= Set Directions =================
         M_LF.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -125,7 +126,7 @@ public class TeleOpAllFunction extends LinearOpMode {
             // แปลงเป็น servo position
             SVR_L0.setPosition(angle / 180.0);        // ฝั่งซ้าย
             SVR_L1.setPosition(1.0 - (angle / 180.0)); // ฝั่งขวา หมุนกลับด้าน
-
+            SVR_sw.setPosition(angle / 180);
             // ================= Telemetry =================
             telemetry.addData("M_AIN", M_AIN.getPower());
             telemetry.addData("M_S0", M_S0.getPower());
@@ -133,6 +134,7 @@ public class TeleOpAllFunction extends LinearOpMode {
             telemetry.addData("M_S1", M_S1.getPower());
             telemetry.addData("SVR_L0", SVR_L0.getPosition());
             telemetry.addData("SVR_L1", SVR_L1.getPosition());
+            telemetry.addData("SVR_sw", SVR_sw.getPosition());
             telemetry.addLine("--Driving Section--");
             telemetry.addData("Power LF", M_LF.getPower());
             telemetry.addData("Power RF", M_RF.getPower());

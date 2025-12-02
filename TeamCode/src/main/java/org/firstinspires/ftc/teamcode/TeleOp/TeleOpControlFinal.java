@@ -11,13 +11,13 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class TeleOpControlFinal extends LinearOpMode {
 
     DcMotor M_AIN, M_S0, M_S1, M_bl, M_LF, M_RF, M_LR, M_RR;
-    Servo SVR_L0, SVR_L1;
+    Servo SVR_L0, SVR_L1, SVR_sw;
     //System Timer
 
+    double speedMultiplier = 0.40;
 
-
-    private int shootingAngle = 0; //Initial shooting angle
-    private int angleAdd = 1; //Servo angle addition value
+    private double shootingAngle = 0; //Initial shooting angle
+    private double angleAdd = 0.1; //Servo angle addition value
     int timerState = 0;
     int createTimer = 0;
     Thread shootingAct = new Thread(new Runnable() {
@@ -26,7 +26,7 @@ public class TeleOpControlFinal extends LinearOpMode {
 
             if(gamepad2.b){
                 telemetry.addLine("Shooting!");
-                M_S1.setPower(-1);
+                M_S1.setPower(-0.85);
                 M_S0.setPower(1);
                 try{
                     Thread.sleep(600);
@@ -61,6 +61,7 @@ public class TeleOpControlFinal extends LinearOpMode {
         M_bl = hardwareMap.get(DcMotor.class, "M_bl"); //Blocking motor (Core Hex Recommended)
         SVR_L0 = hardwareMap.get(Servo.class, "SVR_L0");
         SVR_L1 = hardwareMap.get(Servo.class, "SVR_L1");
+        SVR_sw = hardwareMap.get(Servo.class, "SVR_sw");
 
         // ==================================
         //   ตั้งทิศทางของมอเตอร์สำหรับ Mecanum
@@ -88,7 +89,11 @@ public class TeleOpControlFinal extends LinearOpMode {
                 shootingAngle -= angleAdd;
             }
             shootingAngle = Math.max(0, Math.min(180, shootingAngle));
-            SVR_L0.setPosition((double) shootingAngle /180); //Scale Angle from 0-180 to 0-1
+
+            SVR_L0.setPosition(1 - (shootingAngle/180)); //Scale Angle from 0-180 to 0-1
+            SVR_L1.setPosition(shootingAngle/ 180);
+            SVR_sw.setPosition(shootingAngle/ 180);
+
 
             //Intake Motor
             double intakePower = 0;
@@ -120,7 +125,13 @@ public class TeleOpControlFinal extends LinearOpMode {
             double rotate = gamepad1.right_stick_x;          //R3 หันทางซ้ายหันทางขวา
 
             //ระบบคำนวณกำลังล้อ Mecanum 4 ล้อ
-            double speedMultiplier = 0.40;
+            if(gamepad1.left_stick_y > -0.001 && gamepad1.left_stick_y < 0.001){
+                speedMultiplier = 0.35;
+            }
+            else{
+                speedMultiplier = 0.5;
+            }
+
             double powerLF = (forwardBackward + strafe + rotate) * speedMultiplier;
             double powerRF = (forwardBackward - strafe - rotate) * speedMultiplier;
             double powerLR = (forwardBackward - strafe + rotate) * speedMultiplier;
@@ -148,15 +159,16 @@ public class TeleOpControlFinal extends LinearOpMode {
             else{
                 M_RF.setPower(powerRF+0.07);
             }
-
-
             M_LR.setPower(powerLR);
             M_RR.setPower(powerRR);
             telemetry.addData("M_AIN", M_AIN.getPower());
             telemetry.addData("M_S0", M_S0.getPower());
             telemetry.addData("M_bl", M_bl.getPower());
             telemetry.addData("M_S1", M_S1.getPower());
+            telemetry.addData("Shooting Angle", shootingAngle);
             telemetry.addData("SVR_L0", SVR_L0.getPosition());
+            telemetry.addData("SVR_L1", SVR_L1.getPosition());
+            telemetry.addData("SVR_sw", SVR_sw.getPosition());
             telemetry.addLine("--Driving Section--");
             telemetry.addData("Power LF", M_LF.getPower());
             telemetry.addData("Power RF", M_RF.getPower());

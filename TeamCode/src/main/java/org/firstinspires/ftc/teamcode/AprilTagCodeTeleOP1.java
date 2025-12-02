@@ -12,7 +12,7 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-@TeleOp(name = "TeleOp: Control", group = "TeleOp")
+@TeleOp(name = "TeleOp: Control (With Apriltags)", group = "TeleOp")
 public class AprilTagCodeTeleOP1 extends LinearOpMode {
 
   DcMotor M_AIN, M_S0, M_S1, M_bl, M_LF, M_RF, M_LR, M_RR;
