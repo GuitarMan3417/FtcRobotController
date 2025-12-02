@@ -12,7 +12,7 @@ public class ServoTest extends LinearOpMode {
     private Servo SVR_L1;  // Servo ขวา (ต้องกลับด้าน)
 
     // ---- กำหนดองศาที่ต้องการ ---- //
-    double upDegree = 60;     // องศาเมื่อกด L1 (ขึ้น)
+    double upDegree = 65;     // องศาเมื่อกด L1 (ขึ้น)
     double downDegree = 30;    // องศาเมื่อกด R1 (ลง)
 
     // แปลง องศา → Position 0–1
@@ -41,7 +41,7 @@ public class ServoTest extends LinearOpMode {
             // ➤ กด L1 → Servo ขึ้นพร้อมกัน
             if (gamepad1.left_bumper) {
                 double posL0 = degToPos(upDegree);
-                double posL1 = degToPos(upDegree);
+                double posL1 = 1 - degToPos(upDegree);
                 SVR_L0.setPosition(posL0);
                 SVR_L1.setPosition(posL1);
             }
@@ -49,14 +49,14 @@ public class ServoTest extends LinearOpMode {
             // ➤ กด R1 → Servo ลงพร้อมกัน
             if (gamepad1.right_bumper) {
                 double posL0 = degToPos(downDegree);
-                double posL1 = degToPos(downDegree);
+                double posL1 = 1 - degToPos(downDegree);
                 SVR_L0.setPosition(posL0);
                 SVR_L1.setPosition(posL1);
             }
 
             // ---------- TELEMETRY แสดงองศาแทนค่า position -----------
             double L0_deg = posToDeg(SVR_L0.getPosition());
-            double L1_deg = posToDeg(SVR_L1.getPosition()); // กลับด้านเป็นองศาที่แท้จริง
+            double L1_deg = posToDeg(1 - SVR_L1.getPosition()); // กลับด้านเป็นองศาที่แท้จริง
 
             telemetry.addData("SVR_L0 Degree", "%.1f°", L0_deg);
             telemetry.addData("SVR_L1 Degree", "%.1f°", L1_deg);
