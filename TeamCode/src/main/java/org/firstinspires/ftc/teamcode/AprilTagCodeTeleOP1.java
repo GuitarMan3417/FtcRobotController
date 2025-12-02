@@ -12,6 +12,7 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
+@SuppressWarnings("unused")
 @TeleOp(name = "TeleOp: Control (With Apriltags)", group = "TeleOp")
 public class AprilTagCodeTeleOP1 extends LinearOpMode {
 
@@ -28,11 +29,11 @@ public class AprilTagCodeTeleOP1 extends LinearOpMode {
   int TARGET_TAG_2 = 23;
 
   // PID constants
-  double kP = 0.003;
-  double kI = 0.00001;
-  double kD = 0.0005;
-  double integral = 0;
-  double lastError = 0;
+  //  double kP = 0.003;
+  //  double kI = 0.00001;
+  //  double kD = 0.0005;
+  //  double integral = 0;
+  //  double lastError = 0;
 
   @Override
   public void runOpMode() throws InterruptedException {
@@ -87,7 +88,7 @@ public class AprilTagCodeTeleOP1 extends LinearOpMode {
       // =========================================
       if (gamepad1.a) {
         List<AprilTagDetection> tags = tagProcessor.getDetections();
-        autoAlignAprilTag(tags, TARGET_TAG_1, TARGET_TAG_2, 800);
+        autoAlignAprilTag(tags, TARGET_TAG_1, TARGET_TAG_2);
         continue; // skip normal drive control while auto-aligning
       }
 
@@ -105,58 +106,70 @@ public class AprilTagCodeTeleOP1 extends LinearOpMode {
       double powerLR = (forward - strafe + rotate) * speed;
       double powerRR = (forward + strafe - rotate) * speed;
 
-      M_LF.setPower(powerLF);
-      M_RF.setPower(powerRF);
-      M_LR.setPower(powerLR);
-      M_RR.setPower(powerRR);
+      setDrivePower(powerLF, powerRF, powerLR, powerRR);
     }
   }
 
   // -------------------------------
   // PID Auto-Align Function
   // -------------------------------
-  void autoAlignAprilTag(List<AprilTagDetection> tags, int target1, int target2, int frameWidth) {
-    boolean foundTag = false;
-    double tagX = 0;
+  void autoAlignAprilTag(List<AprilTagDetection> tags, int target1, int target2) {
+
+    AprilTagDetection targetTag = null;
+    int frameWidth = 800;
 
     for (AprilTagDetection tag : tags) {
       if (tag.id == target1 || tag.id == target2) {
-        foundTag = true;
-        tagX = tag.center.x;
+        targetTag = tag;
         break;
       }
     }
 
-    if (!foundTag) {
+    // =========================
+    // ไม่เจอแท็ก → หยุด
+    // =========================
+    if (targetTag == null) {
       setDrivePower(0, 0, 0, 0);
-      telemetry.addLine("No Tag Found");
+      telemetry.addLine("No tag found");
       telemetry.update();
       return;
     }
 
-    int centerX = frameWidth / 2;
+    double tagX = targetTag.center.x;
+    double centerX = frameWidth / 2.0;
+
+    // ระยะที่ถือว่า "ตรงกลางแล้ว"
+    int deadband = 15;
+
     double error = tagX - centerX;
 
-    // PID
-    integral += error;
-    double derivative = error - lastError;
-    double rotatePower = kP * error + kI * integral + kD * derivative;
+    // ตรงกลางแล้ว → หยุดหมุนเลย
+    if (Math.abs(error) <= deadband) {
+      setDrivePower(0, 0, 0, 0);
+      telemetry.addLine("Centered ✔");
+      telemetry.update();
+      return;
+    }
 
-    // clamp power
-    rotatePower = Math.max(-0.6, Math.min(0.6, rotatePower));
+    // =========================
+    //  ทิศทางหมุนแบบชัดเจน
+    // =========================
+    double rotatePower = 0.25;  // ความเร็วหมุนคงที่
 
-    // send to mecanum
-    M_LF.setPower(rotatePower);
-    M_RF.setPower(-rotatePower);
-M_LR.setPower(rotatePower);
-    M_RR.setPower(-rotatePower);
-
-    lastError = error;
+    if (error < 0) {
+      // แท็กอยู่ซ้ายของภาพ → หมุนขวา
+      setDrivePower(rotatePower, -rotatePower, rotatePower, -rotatePower);
+      telemetry.addLine("Tag Left → Rotate Right");
+    }
+    else {
+      // แท็กอยู่ขวาของภาพ → หมุนซ้าย
+      setDrivePower(-rotatePower, rotatePower, -rotatePower, rotatePower);
+      telemetry.addLine("Tag Right → Rotate Left");
+    }
 
     telemetry.addData("TagX", tagX);
+    telemetry.addData("CenterX", centerX);
     telemetry.addData("Error", error);
-    telemetry.addData("RotatePower", rotatePower);
-    telemetry.addLine("Auto-Aligning...");
     telemetry.update();
   }
 
