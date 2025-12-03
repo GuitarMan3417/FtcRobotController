@@ -28,7 +28,7 @@ public class TeleOpControlFinal extends LinearOpMode {
 
             if(gamepad2.b){
                 telemetry.addLine("Shooting!");
-                M_S1.setPower(-0.80);
+                M_S1.setPower(-0.70);
                 M_S0.setPower(1);
                 try{
                     Thread.sleep(600);
@@ -38,9 +38,9 @@ public class TeleOpControlFinal extends LinearOpMode {
                 M_bl.setPower(-1);
 
             }
-            else if(gamepad2.left_stick_y > 0.2){
+            else if(gamepad2.left_stick_y < -0.2){
                 telemetry.addLine("Shooting!");
-                M_S1.setPower(-1);
+                M_S1.setPower(-0.9);
                 M_S0.setPower(1);
                 try{
                     Thread.sleep(600);
@@ -98,13 +98,13 @@ public class TeleOpControlFinal extends LinearOpMode {
         while (opModeIsActive()){
 
             if(gamepad2.right_bumper){
-                shootingPower1 = (Math.max(0.18, Math.min(0.46, SVR_L0.getPosition())) - 0.001); //Scale Angle from 0-180 to 0-1
-                shootingPower2 = (Math.max(0, Math.min(0.28, SVR_L1.getPosition())) + (0.001));
+                shootingPower1 = (Math.max(0.20, Math.min(0.46, SVR_L0.getPosition())) - 0.001); //Scale Angle from 0-180 to 0-1
+                shootingPower2 = (Math.max(0, Math.min(0.20, SVR_L1.getPosition())) + (0.001));
 
             }
             if(gamepad2.left_bumper){
-                shootingPower1 = (Math.max(0.18, Math.min(0.46, SVR_L0.getPosition())) + 0.001); //Scale Angle from 0-180 to 0-1
-                shootingPower2 = (Math.max(0, Math.min(0.28, SVR_L1.getPosition())) - (0.001));
+                shootingPower1 = (Math.max(0.20, Math.min(0.46, SVR_L0.getPosition())) + 0.001); //Scale Angle from 0-180 to 0-1
+                shootingPower2 = (Math.max(0, Math.min(0.20, SVR_L1.getPosition())) - (0.001));
             }
             if(gamepad2.y){
                 SVR_sw.setPosition(0.5);
@@ -121,21 +121,16 @@ public class TeleOpControlFinal extends LinearOpMode {
 
             //Intake Motor
             double intakePower = 0;
-            if(gamepad1.left_trigger > 0.01){
-
-                intakePower = -0.65;
-            }
-            if(gamepad2.left_trigger > 0.01){
+            if(gamepad1.left_trigger > 0.1 || gamepad2.left_trigger > 0.1){
 
                 intakePower = -0.65;
             }
 
-            else if (gamepad1.right_trigger > 0.1) {
+
+            else if (gamepad1.right_trigger > 0.1 || gamepad2.right_trigger > 0.1) {
                 intakePower = 0.55;  // ดูดเร็ว (กด R2)
             }
-            else if (gamepad2.right_trigger > 0.1) {
-                intakePower = 0.55;  // ดูดเร็ว (กด R2)
-            }
+
             else{
                 intakePower = 0.18;
             }

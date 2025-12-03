@@ -12,7 +12,6 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-@SuppressWarnings("unused")
 @TeleOp(name = "TeleOp: Control (With Apriltags)", group = "TeleOp")
 public class AprilTagCodeTeleOP1 extends LinearOpMode {
 
@@ -89,8 +88,9 @@ public class AprilTagCodeTeleOP1 extends LinearOpMode {
       if (gamepad1.a) {
         List<AprilTagDetection> tags = tagProcessor.getDetections();
         autoAlignAprilTag(tags, TARGET_TAG_1, TARGET_TAG_2);
-        continue; // skip normal drive control while auto-aligning
+        continue;
       }
+
 
       // ================================================================
       //              NORMAL DRIVING CONTROL (เหมือนเดิม)
