@@ -15,8 +15,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 @TeleOp(name = "TeleOp: Control (With Apriltags)", group = "TeleOp")
 public class AprilTagCodeTeleOP1 extends LinearOpMode {
 
-  DcMotor M_AIN, M_S0, M_S1, M_bl, M_LF, M_RF, M_LR, M_RR;
-  Servo SVR_L0, SVR_L1;
+  DcMotor M_LF, M_RF, M_LR, M_RR;
 
   // -------------------------------
   // AprilTag Variables
@@ -25,14 +24,7 @@ public class AprilTagCodeTeleOP1 extends LinearOpMode {
   AprilTagProcessor tagProcessor;
 
   int TARGET_TAG_1 = 20;
-  int TARGET_TAG_2 = 23;
-
-  // PID constants
-  //  double kP = 0.003;
-  //  double kI = 0.00001;
-  //  double kD = 0.0005;
-  //  double integral = 0;
-  //  double lastError = 0;
+  int TARGET_TAG_2 = 24;
 
   @Override
   public void runOpMode() throws InterruptedException {
@@ -44,12 +36,6 @@ public class AprilTagCodeTeleOP1 extends LinearOpMode {
     M_RF = hardwareMap.get(DcMotor.class, "M_RF");
     M_LR = hardwareMap.get(DcMotor.class, "M_LR");
     M_RR = hardwareMap.get(DcMotor.class, "M_RR");
-    M_AIN = hardwareMap.get(DcMotor.class, "M_AIN");
-    M_S0 = hardwareMap.get(DcMotor.class, "M_S0");
-    M_S1 = hardwareMap.get(DcMotor.class, "M_S1");
-    M_bl = hardwareMap.get(DcMotor.class, "M_bl");
-    SVR_L0 = hardwareMap.get(Servo.class, "SVR_L0");
-    SVR_L1 = hardwareMap.get(Servo.class, "SVR_L1");
 
     // --------------------------
     // Mecanum Motor Directions
@@ -69,11 +55,11 @@ public class AprilTagCodeTeleOP1 extends LinearOpMode {
     // =============================
     tagProcessor = new AprilTagProcessor.Builder().build();
     visionPortal =
-        new VisionPortal.Builder()
-            .setCamera(hardwareMap.get(WebcamName.class, "webcam1"))
-            .addProcessor(tagProcessor)
-            .setCameraResolution(new Size(800, 448))
-            .build();
+            new VisionPortal.Builder()
+                    .setCamera(hardwareMap.get(WebcamName.class, "webcam1"))
+                    .addProcessor(tagProcessor)
+                    .setCameraResolution(new Size(800, 448))
+                    .build();
 
     telemetry.addLine("Camera opened. Waiting for start...");
     telemetry.update();
@@ -91,13 +77,12 @@ public class AprilTagCodeTeleOP1 extends LinearOpMode {
         continue;
       }
 
-
       // ================================================================
-      //              NORMAL DRIVING CONTROL (เหมือนเดิม)
+      //              NORMAL DRIVING CONTROL
       // ================================================================
       double forward = -gamepad1.left_stick_y;
-      double strafe = gamepad1.left_stick_x;
-      double rotate = gamepad1.right_stick_x;
+      double strafe  =  gamepad1.left_stick_x;
+      double rotate  =  gamepad1.right_stick_x;
 
       double speed = 0.40;
 
@@ -111,7 +96,7 @@ public class AprilTagCodeTeleOP1 extends LinearOpMode {
   }
 
   // -------------------------------
-  // PID Auto-Align Function
+  // SMOOTH AUTO-ALIGN FUNCTION
   // -------------------------------
   void autoAlignAprilTag(List<AprilTagDetection> tags, int target1, int target2) {
 
@@ -126,7 +111,7 @@ public class AprilTagCodeTeleOP1 extends LinearOpMode {
     }
 
     // =========================
-    // ไม่เจอแท็ก → หยุด
+    // No Tag → Stop
     // =========================
     if (targetTag == null) {
       setDrivePower(0, 0, 0, 0);
@@ -138,12 +123,11 @@ public class AprilTagCodeTeleOP1 extends LinearOpMode {
     double tagX = targetTag.center.x;
     double centerX = frameWidth / 2.0;
 
-    // ระยะที่ถือว่า "ตรงกลางแล้ว"
-    int deadband = 15;
+    int deadband = 15;  // ถือว่าตรงกลาง
 
     double error = tagX - centerX;
 
-    // ตรงกลางแล้ว → หยุดหมุนเลย
+    // ถ้าอยู่ใน Deadband → หยุด
     if (Math.abs(error) <= deadband) {
       setDrivePower(0, 0, 0, 0);
       telemetry.addLine("Centered ✔");
@@ -151,25 +135,33 @@ public class AprilTagCodeTeleOP1 extends LinearOpMode {
       return;
     }
 
-    // =========================
-    //  ทิศทางหมุนแบบชัดเจน
-    // =========================
-    double rotatePower = 0.25;  // ความเร็วหมุนคงที่
+    // =============================
+    //    SMOOTH ROTATION CONTROL
+    // =============================
+    double maxPower = 0.30;   // ความเร็วสูงสุด
+    double minPower = 0.10;   // ความเร็วขั้นต่ำ
+    double K = 0.0018;        // ค่านุ่ม
 
+    double rotatePower = Math.abs(error) * K;
+
+    // จำกัดความเร็ว
+    rotatePower = Math.max(minPower, Math.min(maxPower, rotatePower));
+
+    // =========================
+    // หมุนตามทิศที่แท็กอยู่
+    // =========================
     if (error < 0) {
-      // แท็กอยู่ซ้ายของภาพ → หมุนขวา
-      setDrivePower(rotatePower, -rotatePower, rotatePower, -rotatePower);
-      telemetry.addLine("Tag Left → Rotate Right");
-    }
-    else {
-      // แท็กอยู่ขวาของภาพ → หมุนซ้าย
       setDrivePower(-rotatePower, rotatePower, -rotatePower, rotatePower);
+      telemetry.addLine("Tag Left → Rotate Right");
+    } else {
+      setDrivePower(rotatePower, -rotatePower, rotatePower, -rotatePower);
       telemetry.addLine("Tag Right → Rotate Left");
     }
 
     telemetry.addData("TagX", tagX);
     telemetry.addData("CenterX", centerX);
     telemetry.addData("Error", error);
+    telemetry.addData("RotatePower", rotatePower);
     telemetry.update();
   }
 
