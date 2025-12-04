@@ -219,7 +219,7 @@ public class AutoArtifact400 extends OpMode {
         // ===========================
 
         buildPaths();
-        follower.setStartingPose(new Pose(15,128, Math.toRadians(-48)));
+        follower.setStartingPose(new Pose(129,128, Math.toRadians(-48)));
         follower.setMaxPower(maxSpeed);
     }
 
