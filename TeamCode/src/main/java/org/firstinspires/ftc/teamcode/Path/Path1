@@ -1,4 +1,4 @@
-   Path1 = follower
+    Path1 = follower
       .pathBuilder()
       .addPath(
         new BezierLine(new Pose(56.000, 8.000), new Pose(56.000, 87.500))
@@ -9,7 +9,7 @@
     Path2 = follower
       .pathBuilder()
       .addPath(
-        new BezierLine(new Pose(56.000, 87.500), new Pose(45.000, 66.000))
+        new BezierLine(new Pose(56.000, 87.500), new Pose(45.000, 59.600))
       )
       .setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(176))
       .build();
@@ -17,7 +17,7 @@
     Path3 = follower
       .pathBuilder()
       .addPath(
-        new BezierLine(new Pose(45.000, 66.000), new Pose(7.000, 66.000))
+        new BezierLine(new Pose(45.000, 59.600), new Pose(7.000, 59.600))
       )
       .setTangentHeadingInterpolation()
       .build();
@@ -25,7 +25,7 @@
     Path4 = follower
       .pathBuilder()
       .addPath(
-        new BezierLine(new Pose(7.000, 66.000), new Pose(56.000, 87.500))
+        new BezierLine(new Pose(7.000, 59.600), new Pose(56.000, 87.500))
       )
       .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(135))
       .build();
