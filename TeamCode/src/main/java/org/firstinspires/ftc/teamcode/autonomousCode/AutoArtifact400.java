@@ -14,8 +14,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 //Intake 1 standby 0.18
 //Shoot stby 0.35 shoot 1
-@Autonomous(name="AutoArtifact: Blue2", group = "Autonomous")
-public class AutoArtifact300 extends OpMode {
+@Autonomous(name="AutoArtifact: Red2", group = "Autonomous")
+public class AutoArtifact400 extends OpMode {
     DcMotor M_LF, M_RF, M_LR, M_RR;   // มอเตอร์ล้อทั้ง 4 (Mecanum)
     DcMotor M_S0, M_S1, M_bl, M_AIN;
     Servo SVR_sw;
@@ -35,23 +35,23 @@ public class AutoArtifact300 extends OpMode {
         Path1 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(15.000, 128.000), new Pose(53.800, 89.500))
+                        new BezierLine(new Pose(129.200, 128.000), new Pose(90.200, 89.500))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(-48), Math.toRadians(135))
+                .setLinearHeadingInterpolation(Math.toRadians(-135), Math.toRadians(45))
                 .build();
 
         Path2 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(53.800, 89.500), new Pose(40.900, 83.795))
+                        new BezierLine(new Pose(90.200, 89.500), new Pose(103.454, 83.795))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(-180))
+                .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
                 .build();
 
         Path3 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(40.900, 83.795), new Pose(12.901, 83.795))
+                        new BezierLine(new Pose(103.454, 83.795), new Pose(134.785, 83.304))
                 )
                 .setTangentHeadingInterpolation()
                 .build();
@@ -59,15 +59,15 @@ public class AutoArtifact300 extends OpMode {
         Path4 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(12.901, 83.795), new Pose(40.900, 70.200))
+                        new BezierLine(new Pose(134.785, 83.304), new Pose(103.454, 69.900))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(-180), Math.toRadians(90))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(90))
                 .build();
 
         Path5 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(40.900, 70.200), new Pose(12.532, 70.200))
+                        new BezierLine(new Pose(103.454, 69.900), new Pose(132.300, 69.900))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(90))
                 .build();
@@ -75,11 +75,12 @@ public class AutoArtifact300 extends OpMode {
         Path6 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(12.532, 70.200), new Pose(53.816, 89.447))
+                        new BezierLine(new Pose(132.300, 69.900), new Pose(90.184, 89.447))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(135))
+                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(45))
                 .build();
     }
+
 
     public void pathUpdate(){
         switch(pathState){
