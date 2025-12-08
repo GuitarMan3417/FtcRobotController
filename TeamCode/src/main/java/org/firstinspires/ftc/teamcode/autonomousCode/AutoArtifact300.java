@@ -210,7 +210,6 @@ public class AutoArtifact300 extends OpMode {
         M_AIN = hardwareMap.get(DcMotor.class, "M_AIN");
         SVR_sw = hardwareMap.get(Servo.class, "SVR_sw");
 
-
         M_LF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         M_RF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         M_LR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
