@@ -37,7 +37,7 @@ public class AutoArtifact300 extends OpMode {
                 .addPath(
                         new BezierLine(new Pose(15.000, 128.000), new Pose(53.800, 89.500))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(-48), Math.toRadians(135))
+                .setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(135))
                 .build();
 
         Path2 = follower
