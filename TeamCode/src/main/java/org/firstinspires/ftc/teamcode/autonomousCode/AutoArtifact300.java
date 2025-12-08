@@ -27,7 +27,7 @@ public class AutoArtifact300 extends OpMode {
 
     private Follower follower;
     private Timer pathTimer, opModeTimer;
-    private double maxS1Power = -0.78;
+    private double maxS1Power = -0.85;
     public PathChain Path1, Path2, Path3, Path4, Path5, Path6, Path7;
 
 
@@ -61,7 +61,7 @@ public class AutoArtifact300 extends OpMode {
                 .addPath(
                         new BezierLine(new Pose(12.901, 83.795), new Pose(40.900, 70.200))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(-180), Math.toRadians(90))
+                .setLinearHeadingInterpolation(Math.toRadians(-180), Math.toRadians(0))
                 .build();
 
         Path5 = follower
@@ -69,7 +69,7 @@ public class AutoArtifact300 extends OpMode {
                 .addPath(
                         new BezierLine(new Pose(40.900, 70.200), new Pose(12.532, 70.200))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(90))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                 .build();
 
         Path6 = follower
@@ -77,18 +77,21 @@ public class AutoArtifact300 extends OpMode {
                 .addPath(
                         new BezierLine(new Pose(12.532, 70.200), new Pose(53.816, 89.447))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(135))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(135))
                 .build();
     }
+
 
     public void pathUpdate(){
         switch(pathState){
             case 0:     // เริ่ม Path1
+                M_S1.setPower(maxS1Power);
                 follower.followPath(Path1);
                 setPathState(1);
                 break;
 
             case 1:     // รอ Path1 จบ
+                M_S1.setPower(maxS1Power);
                 if(!follower.isBusy()){
                     setPathState(2);  // ไปสถานะหยุด 1 วิ
                 }
@@ -155,6 +158,7 @@ public class AutoArtifact300 extends OpMode {
                 if(!follower.isBusy()){
                     M_AIN.setPower(1);
                     follower.setMaxPower(maxSpeed - 0.4);
+                    M_S1.setPower(maxS1Power);
                     follower.followPath(Path6);
                     setPathState(7);
                 }
