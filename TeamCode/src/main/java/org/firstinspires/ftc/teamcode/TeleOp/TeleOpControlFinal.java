@@ -54,6 +54,7 @@ public class TeleOpControlFinal extends LinearOpMode {
                 M_S1.setPower(-0.35);
 
             }
+            M_bl.setPower(gamepad2.x ? 1:M_bl.getPower());
         }
 
     });
@@ -139,6 +140,7 @@ public class TeleOpControlFinal extends LinearOpMode {
             //Spin-Up
             M_S0.setPower(gamepad2.a ? 1:0); //A pressed = spin up
             M_S0.setPower(gamepad2.x ? -1:M_S0.getPower()); //X pressed = reverse direction with maximum speed
+
 
             //Blocking motor & shooting motor
             shootingAct.start();
