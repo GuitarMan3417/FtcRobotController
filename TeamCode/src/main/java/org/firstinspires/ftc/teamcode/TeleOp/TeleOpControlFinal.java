@@ -28,7 +28,7 @@ public class TeleOpControlFinal extends LinearOpMode {
 
             if(gamepad2.b){
                 telemetry.addLine("Shooting!");
-                M_S1.setPower(-0.65);
+                M_S1.setPower(-0.78);
                 M_S0.setPower(1);
                 try{
                     Thread.sleep(600);

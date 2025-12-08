@@ -27,7 +27,7 @@ public class AutoArtifact100 extends OpMode {
 
     private Follower follower;
     private Timer pathTimer, opModeTimer;
-    private double maxS1Power = -0.8;
+    private double maxS1Power = -0.78;
     public PathChain Path1, Path2, Path3, Path4, Path5, Path6, Path7, Path8, Path9;
 
 
@@ -100,6 +100,7 @@ public class AutoArtifact100 extends OpMode {
             case 1:     // รอ Path1 จบ
                 if(!follower.isBusy()){
                     setPathState(2);  // ไปสถานะหยุด 1 วิ
+
                 }
                 break;
 
@@ -108,7 +109,7 @@ public class AutoArtifact100 extends OpMode {
 
                     // มอเตอร์ทำงานระหว่างหยุด 1 วิ
                     M_S0.setPower(1.0);
-                    M_S1.setPower(-0.65);
+                    M_S1.setPower(maxS1Power);
                     M_bl.setPower(-1.0);
                     if(pathTimer.getElapsedTimeSeconds() > servoDelay){
                         SVR_sw.setPosition(0.5);
@@ -158,7 +159,7 @@ public class AutoArtifact100 extends OpMode {
                             SVR_sw.setPosition(0.5);
                         }
                         M_S0.setPower(1.0);
-                        M_S1.setPower(-0.65);
+                        M_S1.setPower(maxS1Power);
                         M_bl.setPower(-1.0);
                         M_AIN.setPower(1);
                     } else {
@@ -202,7 +203,7 @@ public class AutoArtifact100 extends OpMode {
                         // มอเตอร์ทำงานระหว่างหยุด 1 วิ
 
                         M_S0.setPower(1.0);
-                        M_S1.setPower(-0.65);
+                        M_S1.setPower(maxS1Power);
                         M_bl.setPower(-1.0);
                         if(pathTimer.getElapsedTimeSeconds() > servoDelay){
                             SVR_sw.setPosition(0.5);

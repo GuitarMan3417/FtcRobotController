@@ -23,6 +23,7 @@ public class AutoArtifact200 extends OpMode {
     private Follower follower;
     private Timer pathTimer, opModeTimer;
     public PathChain Path1, Path2, Path3, Path4, Path5, Path6, Path7, Path8, Path9;
+    public double maxS1Speed = -0.78;
     Thread servoSwipe = new Thread(new Runnable() {
 
         @Override
@@ -116,7 +117,7 @@ public class AutoArtifact200 extends OpMode {
 
                     // มอเตอร์ทำงานระหว่างหยุด 1 วิ
                     M_S0.setPower(1.0);
-                    M_S1.setPower(-0.65);
+                    M_S1.setPower(maxS1Speed);
                     M_bl.setPower(-1.0);
                     servoSwipe.start();
                     M_AIN.setPower(1);
@@ -162,7 +163,7 @@ public class AutoArtifact200 extends OpMode {
                         // มอเตอร์ทำงานระหว่างหยุด 1 วิ
 
                         M_S0.setPower(1.0);
-                        M_S1.setPower(-0.65);
+                        M_S1.setPower(maxS1Speed);
                         M_bl.setPower(-1.0);
                         servoSwipe.start();
                         M_AIN.setPower(1);
@@ -206,7 +207,7 @@ public class AutoArtifact200 extends OpMode {
                         // มอเตอร์ทำงานระหว่างหยุด 1 วิ
 
                         M_S0.setPower(1.0);
-                        M_S1.setPower(-0.65);
+                        M_S1.setPower(maxS1Speed);
                         M_bl.setPower(-1.0);
                         servoSwipe.start();
                         M_AIN.setPower(1);
@@ -244,6 +245,9 @@ public class AutoArtifact200 extends OpMode {
         M_S1 = hardwareMap.get(DcMotor.class, "M_S1");
         M_bl = hardwareMap.get(DcMotor.class, "M_bl");
         M_AIN = hardwareMap.get(DcMotor.class, "M_AIN");
+        SVR_sw = hardwareMap.get(Servo.class, "SVR_sw");
+        SVR_L0 = hardwareMap.get(Servo.class, "SVR_L0");
+        SVR_L1 = hardwareMap.get(Servo.class, "SVR_L1");
 
 
         M_LF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
