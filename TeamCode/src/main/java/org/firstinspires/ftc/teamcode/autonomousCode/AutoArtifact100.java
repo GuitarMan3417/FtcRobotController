@@ -108,7 +108,7 @@ public class AutoArtifact100 extends OpMode {
 
                     // มอเตอร์ทำงานระหว่างหยุด 1 วิ
                     M_S0.setPower(1.0);
-                    M_S1.setPower(-0.8);
+                    M_S1.setPower(-0.65);
                     M_bl.setPower(-1.0);
                     if(pathTimer.getElapsedTimeSeconds() > servoDelay){
                         SVR_sw.setPosition(0.5);
@@ -158,7 +158,7 @@ public class AutoArtifact100 extends OpMode {
                             SVR_sw.setPosition(0.5);
                         }
                         M_S0.setPower(1.0);
-                        M_S1.setPower(-0.8);
+                        M_S1.setPower(-0.65);
                         M_bl.setPower(-1.0);
                         M_AIN.setPower(1);
                     } else {
@@ -202,7 +202,7 @@ public class AutoArtifact100 extends OpMode {
                         // มอเตอร์ทำงานระหว่างหยุด 1 วิ
 
                         M_S0.setPower(1.0);
-                        M_S1.setPower(-0.8);
+                        M_S1.setPower(-0.65);
                         M_bl.setPower(-1.0);
                         if(pathTimer.getElapsedTimeSeconds() > servoDelay){
                             SVR_sw.setPosition(0.5);
