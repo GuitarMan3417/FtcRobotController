@@ -23,7 +23,7 @@ public class AutoArtifact200 extends OpMode {
     private Follower follower;
     private Timer pathTimer, opModeTimer;
     public PathChain Path1, Path2, Path3, Path4, Path5, Path6, Path7, Path8, Path9;
-    public double maxS1Speed = -0.78;
+    public double maxS1Speed = -0.85;
     Thread servoSwipe = new Thread(new Runnable() {
 
         @Override
@@ -104,6 +104,7 @@ public class AutoArtifact200 extends OpMode {
             case 0:     // เริ่ม Path1
                 follower.followPath(Path1);
                 setPathState(1);
+                M_S1.setPower(maxS1Speed);
                 break;
 
             case 1:     // รอ Path1 จบ
@@ -143,6 +144,7 @@ public class AutoArtifact200 extends OpMode {
                     M_AIN.setPower(1);
                     follower.followPath(Path3);
                     setPathState(4);
+                    M_S1.setPower(maxS1Speed);
                 }
                 break;
 
@@ -187,6 +189,7 @@ public class AutoArtifact200 extends OpMode {
                     follower.setMaxPower(0.2);
                     follower.followPath(Path6);
                     setPathState(7);
+                    M_S1.setPower(maxS1Speed);
                 }
                 break;
 

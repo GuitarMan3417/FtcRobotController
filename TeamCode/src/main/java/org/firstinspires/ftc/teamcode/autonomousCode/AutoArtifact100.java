@@ -27,7 +27,7 @@ public class AutoArtifact100 extends OpMode {
 
     private Follower follower;
     private Timer pathTimer, opModeTimer;
-    private double maxS1Power = -0.78;
+    private double maxS1Power = -0.85 ;
     public PathChain Path1, Path2, Path3, Path4, Path5, Path6, Path7, Path8, Path9;
 
 
@@ -95,6 +95,7 @@ public class AutoArtifact100 extends OpMode {
             case 0:     // เริ่ม Path1
                 follower.followPath(Path1);
                 setPathState(1);
+                M_S1.setPower(maxS1Power);
                 break;
 
             case 1:     // รอ Path1 จบ
@@ -137,6 +138,7 @@ public class AutoArtifact100 extends OpMode {
                     M_AIN.setPower(1);
                     follower.followPath(Path3);
                     setPathState(4);
+                    M_S1.setPower(maxS1Power);
                 }
                 break;
 
@@ -183,6 +185,7 @@ public class AutoArtifact100 extends OpMode {
                     follower.setMaxPower(maxSpeed - 0.4);
                     follower.followPath(Path6);
                     setPathState(7);
+                    M_S1.setPower(maxS1Power);
                 }
                 break;
 
