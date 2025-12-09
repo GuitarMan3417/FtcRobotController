@@ -24,18 +24,18 @@ public class AutoArtifact400 extends OpMode {
     private double servoDelay = 4.3; //Delay before servoAct
     private double systemDelay = 6.2; //Path Duration Timer
     private double maxSpeed = 0.65;
-    private double maxS1Power = -0.85;
+    private double maxS1Power = -0.65;
 
     private Follower follower;
     private Timer pathTimer, opModeTimer;
-    public PathChain Path1, Path2, Path3, Path4, Path5, Path6, Path7;
+    public PathChain Path1, Path2, Path3, Path4, Path5, Path6;
 
 
     public void buildPaths(){
         Path1 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(129.200, 128.000), new Pose(90.200, 89.500))
+                        new BezierLine(new Pose(129.000, 128.000), new Pose(90.200, 89.500))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(45))
                 .build();
@@ -59,15 +59,15 @@ public class AutoArtifact400 extends OpMode {
         Path4 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(134.785, 83.304), new Pose(103.454, 69.900))
+                        new BezierLine(new Pose(134.785, 83.304), new Pose(104.300, 69.900))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(90))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(180))
                 .build();
 
         Path5 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(103.454, 69.900), new Pose(132.300, 69.900))
+                        new BezierLine(new Pose(104.300, 69.900), new Pose(132.300, 69.900))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
                 .build();
@@ -80,7 +80,6 @@ public class AutoArtifact400 extends OpMode {
                 .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(45))
                 .build();
     }
-
 
     public void pathUpdate(){
         switch(pathState){
@@ -166,6 +165,7 @@ public class AutoArtifact400 extends OpMode {
 
 
             case 7:
+                follower.setMaxPower(maxSpeed);
                 if(!follower.isBusy()){
                     if(pathTimer.getElapsedTimeSeconds() < systemDelay){
                         // มอเตอร์ทำงานระหว่างหยุด 1 วิ
@@ -176,7 +176,7 @@ public class AutoArtifact400 extends OpMode {
                         if(pathTimer.getElapsedTimeSeconds() > servoDelay){
                             SVR_sw.setPosition(0.5);
                         }
-                        M_AIN.setPower(1);
+                        M_AIN.setPower(+1);
                     } else {
                         // ครบ 1 วิแล้วปิดมอเตอร์
                         SVR_sw.setPosition(0);
@@ -189,7 +189,6 @@ public class AutoArtifact400 extends OpMode {
 
                 }
                 break;
-
         }
     }
 
@@ -223,7 +222,7 @@ public class AutoArtifact400 extends OpMode {
         // ===========================
 
         buildPaths();
-        follower.setStartingPose(new Pose(129,128, Math.toRadians(-135)));
+        follower.setStartingPose(new Pose(129,128, Math.toRadians(45)));
         follower.setMaxPower(maxSpeed);
     }
 
