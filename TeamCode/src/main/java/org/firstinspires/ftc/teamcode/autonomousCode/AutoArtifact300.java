@@ -167,6 +167,7 @@ public class AutoArtifact300 extends OpMode {
 
 
             case 7:
+                follower.setMaxPower(maxSpeed);
                 if(!follower.isBusy()){
                     if(pathTimer.getElapsedTimeSeconds() < systemDelay){
                         // มอเตอร์ทำงานระหว่างหยุด 1 วิ
