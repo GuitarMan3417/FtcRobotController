@@ -27,7 +27,7 @@ public class AutoArtifact300 extends OpMode {
 
     private Follower follower;
     private Timer pathTimer, opModeTimer;
-    private double maxS1Power = -0.65;
+    private double maxS1Power = -0.73;
     public PathChain Path1, Path2, Path3, Path4, Path5, Path6;
 
 
@@ -51,7 +51,7 @@ public class AutoArtifact300 extends OpMode {
         Path3 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(40.900, 83.795), new Pose(7.000, 83.795))
+                        new BezierLine(new Pose(40.900, 83.795), new Pose(12.000, 83.795))
                 )
                 .setTangentHeadingInterpolation()
                 .build();
@@ -59,7 +59,7 @@ public class AutoArtifact300 extends OpMode {
         Path4 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(7.000, 83.795), new Pose(40.900, 70.200))
+                        new BezierLine(new Pose(12.000, 83.795), new Pose(40.900, 70.200))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(-180), Math.toRadians(0))
                 .build();
@@ -67,7 +67,7 @@ public class AutoArtifact300 extends OpMode {
         Path5 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(40.900, 70.200), new Pose(7.000, 70.200))
+                        new BezierLine(new Pose(40.900, 70.200), new Pose(12.000, 70.200))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                 .build();
@@ -75,7 +75,7 @@ public class AutoArtifact300 extends OpMode {
         Path6 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(7.000, 70.200), new Pose(40.918, 102.223))
+                        new BezierLine(new Pose(12.000, 70.200), new Pose(40.918, 102.223))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(135))
                 .build();
