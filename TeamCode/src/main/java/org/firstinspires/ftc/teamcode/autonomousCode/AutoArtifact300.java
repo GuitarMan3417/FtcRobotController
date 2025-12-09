@@ -82,6 +82,7 @@ public class AutoArtifact300 extends OpMode {
     }
 
 
+
     public void pathUpdate(){
         switch(pathState){
             case 0:     // เริ่ม Path1
@@ -221,7 +222,7 @@ public class AutoArtifact300 extends OpMode {
         // ===========================
 
         buildPaths();
-        follower.setStartingPose(new Pose(15,128, Math.toRadians(-48)));
+        follower.setStartingPose(new Pose(15,128, Math.toRadians(135)));
         follower.setMaxPower(maxSpeed);
     }
 
