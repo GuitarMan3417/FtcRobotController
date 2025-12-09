@@ -177,7 +177,7 @@ public class AutoArtifact300 extends OpMode {
                         if(pathTimer.getElapsedTimeSeconds() > servoDelay){
                             SVR_sw.setPosition(0.5);
                         }
-                        M_AIN.setPower(1);
+                        M_AIN.setPower(+1);
                     } else {
                         // ครบ 1 วิแล้วปิดมอเตอร์
                         SVR_sw.setPosition(0);
