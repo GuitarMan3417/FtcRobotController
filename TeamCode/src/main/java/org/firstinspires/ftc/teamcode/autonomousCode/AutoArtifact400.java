@@ -24,7 +24,7 @@ public class AutoArtifact400 extends OpMode {
     private double servoDelay = 4.3; //Delay before servoAct
     private double systemDelay = 6.2; //Path Duration Timer
     private double maxSpeed = 0.65;
-    public double maxS1Speed = -0.78;
+    private double maxS1Power = -0.85;
 
     private Follower follower;
     private Timer pathTimer, opModeTimer;
@@ -69,7 +69,7 @@ public class AutoArtifact400 extends OpMode {
                 .addPath(
                         new BezierLine(new Pose(103.454, 69.900), new Pose(132.300, 69.900))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(90))
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
                 .build();
 
         Path6 = follower
@@ -77,7 +77,7 @@ public class AutoArtifact400 extends OpMode {
                 .addPath(
                         new BezierLine(new Pose(132.300, 69.900), new Pose(90.184, 89.447))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(45))
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(45))
                 .build();
     }
 
@@ -85,11 +85,13 @@ public class AutoArtifact400 extends OpMode {
     public void pathUpdate(){
         switch(pathState){
             case 0:     // เริ่ม Path1
+                M_S1.setPower(maxS1Power);
                 follower.followPath(Path1);
                 setPathState(1);
                 break;
 
             case 1:     // รอ Path1 จบ
+                M_S1.setPower(maxS1Power);
                 if(!follower.isBusy()){
                     setPathState(2);  // ไปสถานะหยุด 1 วิ
                 }
@@ -100,7 +102,7 @@ public class AutoArtifact400 extends OpMode {
 
                     // มอเตอร์ทำงานระหว่างหยุด 1 วิ
                     M_S0.setPower(1.0);
-                    M_S1.setPower(maxS1Speed);
+                    M_S1.setPower(maxS1Power);
                     M_bl.setPower(-1.0);
                     if(pathTimer.getElapsedTimeSeconds() > servoDelay){
                         SVR_sw.setPosition(0.5);
@@ -156,6 +158,7 @@ public class AutoArtifact400 extends OpMode {
                 if(!follower.isBusy()){
                     M_AIN.setPower(1);
                     follower.setMaxPower(maxSpeed - 0.4);
+                    M_S1.setPower(maxS1Power);
                     follower.followPath(Path6);
                     setPathState(7);
                 }
@@ -168,7 +171,7 @@ public class AutoArtifact400 extends OpMode {
                         // มอเตอร์ทำงานระหว่างหยุด 1 วิ
 
                         M_S0.setPower(1.0);
-                        M_S1.setPower(maxS1Speed);
+                        M_S1.setPower(maxS1Power);
                         M_bl.setPower(-1.0);
                         if(pathTimer.getElapsedTimeSeconds() > servoDelay){
                             SVR_sw.setPosition(0.5);
@@ -186,6 +189,7 @@ public class AutoArtifact400 extends OpMode {
 
                 }
                 break;
+
         }
     }
 
