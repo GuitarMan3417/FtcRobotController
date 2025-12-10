@@ -28,14 +28,14 @@ public class AutoArtifactBlue222TW1 extends OpMode {
     private Follower follower;
     private Timer pathTimer, opModeTimer;
     private double maxS1Power = -0.55;
-    public PathChain Path1, Path2, Path3, Path4, Path5, Path6, Path7;
+    public PathChain Path1, Path2, Path3, Path4, Path5, Path6, Path7, Path8;
 
 
     public void buildPaths(){
         Path1 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(21.045, 122.458), new Pose(40.433, 102.904))
+                        new BezierLine(new Pose(21.045, 122.458), new Pose(41.924, 102.076))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(139), Math.toRadians(139))
                 .build();
@@ -43,7 +43,7 @@ public class AutoArtifactBlue222TW1 extends OpMode {
         Path2 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(40.433, 102.904), new Pose(40.433, 83.900))
+                        new BezierLine(new Pose(41.924, 102.076), new Pose(49.712, 84.677))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(139), Math.toRadians(180))
                 .build();
@@ -51,7 +51,7 @@ public class AutoArtifactBlue222TW1 extends OpMode {
         Path3 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(40.433, 83.900), new Pose(13.400, 83.900))
+                        new BezierLine(new Pose(49.712, 84.677), new Pose(17.399, 84.677))
                 )
                 .setTangentHeadingInterpolation()
                 .build();
@@ -59,7 +59,7 @@ public class AutoArtifactBlue222TW1 extends OpMode {
         Path4 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(13.400, 83.900), new Pose(40.598, 102.904))
+                        new BezierLine(new Pose(17.399, 84.677), new Pose(42.255, 101.579))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(139))
                 .build();
@@ -67,7 +67,7 @@ public class AutoArtifactBlue222TW1 extends OpMode {
         Path5 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(40.598, 102.904), new Pose(40.433, 60.000))
+                        new BezierLine(new Pose(42.255, 101.579), new Pose(50.209, 61.312))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(139), Math.toRadians(180))
                 .build();
@@ -75,7 +75,7 @@ public class AutoArtifactBlue222TW1 extends OpMode {
         Path6 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(40.433, 60.000), new Pose(13.400, 60.000))
+                        new BezierLine(new Pose(50.209, 61.312), new Pose(17.068, 60.815))
                 )
                 .setTangentHeadingInterpolation()
                 .build();
@@ -83,9 +83,17 @@ public class AutoArtifactBlue222TW1 extends OpMode {
         Path7 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(13.400, 60.000), new Pose(48.387, 113.510))
+                        new BezierLine(new Pose(17.068, 60.815), new Pose(42.421, 101.247))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(145))
+                .build();
+
+        Path8 = follower
+                .pathBuilder()
+                .addPath(
+                        new BezierLine(new Pose(42.421, 101.247), new Pose(38.4, 135.7))
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(135))
                 .build();
     }
 
@@ -204,13 +212,13 @@ public class AutoArtifactBlue222TW1 extends OpMode {
 
             case 8:
                 if(!follower.isBusy()){
-                    if(pathTimer.getElapsedTimeSeconds() < systemDelay){
+                    if(pathTimer.getElapsedTimeSeconds() < 6){
                         // มอเตอร์ทำงานระหว่างหยุด 1 วิ
 
                         M_S0.setPower(1.0);
                         M_S1.setPower(maxS1Power);
                         M_bl.setPower(-1.0);
-                        if(pathTimer.getElapsedTimeSeconds() > servoDelay){
+                        if(pathTimer.getElapsedTimeSeconds() > 4.2){
                             SVR_sw.setPosition(0.5);
                         }
                         M_AIN.setPower(1);
@@ -221,9 +229,15 @@ public class AutoArtifactBlue222TW1 extends OpMode {
 
                         M_bl.setPower(0);
                         M_AIN.setPower(0.18);
-                        setPathState(-1);  // จบ
+                        follower.followPath(Path8);
+                        setPathState(9);  // จบ
                     }
 
+                }
+            case 9:
+                if(!follower.isBusy()){
+
+                    setPathState(-1);
                 }
                 break;
         }

@@ -27,11 +27,11 @@ public class AutoArtifactRed111AsbRobotic extends OpMode {
 
     private Follower follower;
     private Timer pathTimer, opModeTimer;
-    private double maxS1Power = -0.65 ;
+    private double maxS1Power = -0.57 ;
     public PathChain Path1, Path2, Path3, Path4, Path5, Path6, Path7, Path8, Path9;
 
 
-    public void buildPaths(){
+    public void buildPaths() {
         Path1 = follower
                 .pathBuilder()
                 .addPath(
@@ -43,7 +43,7 @@ public class AutoArtifactRed111AsbRobotic extends OpMode {
         Path2 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(103.402, 102.407), new Pose(104.000, 60.000))
+                        new BezierLine(new Pose(103.402, 102.407), new Pose(95.000, 66.000))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
                 .build();
@@ -51,7 +51,7 @@ public class AutoArtifactRed111AsbRobotic extends OpMode {
         Path3 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(104.000, 60.000), new Pose(130.000, 60.000))
+                        new BezierLine(new Pose(95.000, 66.000), new Pose(130.000, 66.000))
                 )
                 .setTangentHeadingInterpolation()
                 .build();
@@ -59,7 +59,7 @@ public class AutoArtifactRed111AsbRobotic extends OpMode {
         Path4 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(130.000, 60.000), new Pose(103.402, 102.739))
+                        new BezierLine(new Pose(130.000, 66.000), new Pose(103.402, 102.739))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(45))
                 .build();
@@ -67,7 +67,7 @@ public class AutoArtifactRed111AsbRobotic extends OpMode {
         Path5 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(103.402, 102.739), new Pose(104.000, 35.000))
+                        new BezierLine(new Pose(103.402, 102.739), new Pose(95.000, 35.000))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
                 .build();
@@ -75,7 +75,7 @@ public class AutoArtifactRed111AsbRobotic extends OpMode {
         Path6 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(104.000, 35.000), new Pose(130.000, 35.000))
+                        new BezierLine(new Pose(95.000, 35.000), new Pose(130.000, 35.000))
                 )
                 .setTangentHeadingInterpolation()
                 .build();
@@ -83,17 +83,9 @@ public class AutoArtifactRed111AsbRobotic extends OpMode {
         Path7 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(130.000, 35.000), new Pose(103.567, 102.573))
+                        new BezierLine(new Pose(130.000, 35.000), new Pose(95.779, 113.675))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(45))
-                .build();
-
-        Path8 = follower
-                .pathBuilder()
-                .addPath(
-                        new BezierLine(new Pose(103.567, 102.573), new Pose(95.945, 114.338))
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(27))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(38))
                 .build();
     }
 
