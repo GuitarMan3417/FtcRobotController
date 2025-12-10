@@ -14,8 +14,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 //Intake 1 standby 0.18
 //Shoot stby 0.35 shoot 1
-@Autonomous(name="AutoArtifact: Blue222", group = "Autonomous")
-public class AutoArtifactTest300 extends OpMode {
+@Autonomous(name="AutoArtifact: Blue - ShootSleep", group = "Autonomous")
+public class AutoBlueShootSleep extends OpMode {
     DcMotor M_LF, M_RF, M_LR, M_RR;   // มอเตอร์ล้อทั้ง 4 (Mecanum)
     DcMotor M_S0, M_S1, M_bl, M_AIN;
     Servo SVR_sw;
@@ -27,7 +27,7 @@ public class AutoArtifactTest300 extends OpMode {
 
     private Follower follower;
     private Timer pathTimer, opModeTimer;
-    private double maxS1Power = -0.73;
+    private double maxS1Power = -0.55;
     public PathChain Path1, Path2, Path3, Path4, Path5, Path6;
 
 
@@ -35,7 +35,7 @@ public class AutoArtifactTest300 extends OpMode {
         Path1 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(9.914, 120.308), new Pose(40.488, 102.760))
+                        new BezierLine(new Pose(15.000, 128.000), new Pose(41.240, 101.794))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(135))
                 .build();
@@ -43,31 +43,7 @@ public class AutoArtifactTest300 extends OpMode {
         Path2 = follower
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(40.703, 102.438), new Pose(40.488, 86.973))
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(-180))
-                .build();
-
-        Path3 = follower
-                .pathBuilder()
-                .addPath(
-                        new BezierLine(new Pose(40.488, 86.973), new Pose(9.558, 86.651))
-                )
-                .setTangentHeadingInterpolation()
-                .build();
-
-        Path4 = follower
-                .pathBuilder()
-                .addPath(
-                        new BezierLine(new Pose(9.558, 86.651), new Pose(44.139, 98.679))
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(-180), Math.toRadians(135))
-                .build();
-
-        Path5 = follower
-                .pathBuilder()
-                .addPath(
-                        new BezierLine(new Pose(44.139, 98.679), new Pose(18.472, 105.660))
+                        new BezierLine(new Pose(41.240, 101.794), new Pose(30.000, 130.400))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(135))
                 .build();
@@ -77,101 +53,48 @@ public class AutoArtifactTest300 extends OpMode {
         public void pathUpdate(){
         switch(pathState){
             case 0:     // เริ่ม Path1
-                M_S1.setPower(maxS1Power);
                 follower.followPath(Path1);
+                M_S1.setPower(-0.57);
                 setPathState(1);
                 break;
 
             case 1:     // รอ Path1 จบ
-                M_S1.setPower(maxS1Power);
-                M_S0.setPower(1);
                 if(!follower.isBusy()){
-                    setPathState(2);  // ไปสถานะหยุด 1 วิ
-                }
-                break;
-
-            case 2:     // หยุด 1 วินาที + สั่งให้มอเตอร์ทำงาน
-                if(pathTimer.getElapsedTimeSeconds() < 6.2){
-
-                    // มอเตอร์ทำงานระหว่างหยุด 1 วิ
-                    M_S0.setPower(1.0);
-                    M_S1.setPower(maxS1Power);
-                    M_bl.setPower(-1.0);
-                    if(pathTimer.getElapsedTimeSeconds() > 4){
-                        SVR_sw.setPosition(0.5);
-                    }
-                    M_AIN.setPower(1);
-                } else {
-                    // ครบ 1 วิแล้วปิดมอเตอร์
-                    SVR_sw.setPosition(0);
-                    M_S0.setPower(0);
-                    M_S1.setPower(-0.35);
-                    M_bl.setPower(0);
-                    M_AIN.setPower(0.18);
-
-
-
-                    // ไป Path2
-                    follower.followPath(Path2);
-                    setPathState(3);
-                }
-                break;
-
-            case 3:
-                if(!follower.isBusy()){
-                    follower.setMaxPower(maxSpeed - 0.4);
-                    M_AIN.setPower(1);
-                    M_S0.setPower(1);
-                    follower.followPath(Path3);
-                    setPathState(4);
-                }
-                break;
-
-            case 4:
-                if(!follower.isBusy()){
-                    M_AIN.setPower(0.18);
-                    follower.setMaxPower(maxSpeed);
-                    M_S0.setPower(0.7);
-                    follower.followPath(Path4);
-                    setPathState(5);
-                }
-                break;
-
-
-            case 5  :
-                follower.setMaxPower(maxSpeed);
-                if(!follower.isBusy()){
-                    if(pathTimer.getElapsedTimeSeconds() < 8){
-                        // มอเตอร์ทำงานระหว่างหยุด 1 วิ
-
+                    if(pathTimer.getElapsedTimeSeconds() < 6.2){
                         M_S0.setPower(1.0);
                         M_S1.setPower(maxS1Power);
                         M_bl.setPower(-1.0);
-                        if(pathTimer.getElapsedTimeSeconds() > 6){
+                        if(pathTimer.getElapsedTimeSeconds() > 4){
                             SVR_sw.setPosition(0.5);
                         }
-                        M_AIN.setPower(+1);
-                    } else {
-                        // ครบ 1 วิแล้วปิดมอเตอร์
+                        M_AIN.setPower(1);
+                    }
+                    else{
                         SVR_sw.setPosition(0);
                         M_S0.setPower(0);
-
+                        M_S1.setPower(-0.35);
                         M_bl.setPower(0);
                         M_AIN.setPower(0.18);
-                        follower.followPath(Path5);
-                        setPathState(6);  // จบ
+
+
+
+                        // ไป Path2
+                        follower.followPath(Path2);
+                        setPathState(2);
                     }
+
                 }
                 break;
-            case 6:
-                if(!follower.isBusy()){
+            case 2:
+                if (!follower.isBusy()){
                     M_S1.setPower(0);
                     M_bl.setPower(0);
                     M_S0.setPower(0);
                     M_AIN.setPower(0);
                     setPathState(-1);
                 }
-                break;
+
+
         }
     }
 
@@ -204,7 +127,7 @@ public class AutoArtifactTest300 extends OpMode {
         // ===========================
 
         buildPaths();
-        follower.setStartingPose(new Pose(9.914,120.308, Math.toRadians(135)));
+        follower.setStartingPose(new Pose(15,128, Math.toRadians(135)));
         follower.setMaxPower(maxSpeed);
     }
 

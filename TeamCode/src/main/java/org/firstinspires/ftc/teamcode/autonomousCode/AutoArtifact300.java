@@ -6,6 +6,7 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 //Intake 1 standby 0.18
 //Shoot stby 0.35 shoot 1
+@Disabled
 @Autonomous(name="AutoArtifact: Blue2", group = "Autonomous")
 public class AutoArtifact300 extends OpMode {
     DcMotor M_LF, M_RF, M_LR, M_RR;   // มอเตอร์ล้อทั้ง 4 (Mecanum)
@@ -166,15 +168,14 @@ public class AutoArtifact300 extends OpMode {
 
 
             case 7:
-                follower.setMaxPower(maxSpeed);
-                if(!follower.isBusy()){
-                    if(pathTimer.getElapsedTimeSeconds() < systemDelay){
+
+                    if(pathTimer.getElapsedTimeSeconds() < 8){
                         // มอเตอร์ทำงานระหว่างหยุด 1 วิ
 
                         M_S0.setPower(1.0);
                         M_S1.setPower(maxS1Power);
                         M_bl.setPower(-1.0);
-                        if(pathTimer.getElapsedTimeSeconds() > servoDelay){
+                        if(pathTimer.getElapsedTimeSeconds() > 6){
                             SVR_sw.setPosition(0.5);
                         }
                         M_AIN.setPower(+1);
@@ -186,7 +187,7 @@ public class AutoArtifact300 extends OpMode {
                         M_bl.setPower(0);
                         M_AIN.setPower(0.18);
                         setPathState(-1);  // จบ
-                    }
+
 
                 }
                 break;
